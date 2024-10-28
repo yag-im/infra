@@ -255,6 +255,7 @@ module "sqldb" {
   # users
   appsvc_user               = "appsvc"
   mccsvc_user               = "mccsvc"
+  portsvc_user              = "portsvc"
   sessionsvc_user           = "sessionsvc"
   yagsvc_user               = "yagsvc"
   # secrets
@@ -281,13 +282,13 @@ module "yagsvc" {
   flask_secret_key             = data.aws_ssm_parameter.yagsvc_flask_secret_key.value
   flask_security_password_salt = data.aws_ssm_parameter.yagsvc_flask_security_password_salt.value
   sqldb_password               = data.aws_ssm_parameter.sqldb_yagsvc_password.value
-  discord_oauth_client_id      = "1251213147776225341"
+  discord_oauth_client_id      = var.discord_oauth_client_id
   discord_oauth_client_secret  = data.aws_ssm_parameter.yagsvc_discord_oauth_client_secret.value
-  google_oauth_client_id       = "454405087013-0pc1gvsivodjea0dkhb5uqtop3acrkl8.apps.googleusercontent.com"
+  google_oauth_client_id       = var.google_oauth_client_id
   google_oauth_client_secret   = data.aws_ssm_parameter.yagsvc_google_oauth_client_secret.value
-  reddit_oauth_client_id       = "kXSkfBAREynS_KfNudZFUg"
-  reddit_oauth_client_secret   = "9x8SUgofw0VcAruQOiKB2EzulYqYIw" # single aws dev properties can't be shared for multiple reddit apps
-  twitch_oauth_client_id       = "g9pl60vjz9ejuucgbpnzm0eb78ug4d"
+  reddit_oauth_client_id       = var.reddit_oauth_client_id
+  reddit_oauth_client_secret   = var.reddit_oauth_client_secret
+  twitch_oauth_client_id       = var.twitch_oauth_client_id
   twitch_oauth_client_secret   = data.aws_ssm_parameter.yagsvc_twitch_oauth_client_secret.value
 }
 

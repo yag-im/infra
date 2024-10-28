@@ -6,6 +6,7 @@ secrets/
 .terraform.tfstate.lock.info
 terraform.tfstate.backup
 
+.env
 kubeconfig
 nohup.out
 secret.env

@@ -6,6 +6,7 @@ if [[ "$1" == "--first-pass" ]]; then
 else
 # direct ./update.sh launch - need to set env vars
     set -o allexport
+    source .env
     source ./secrets/.env
     set +o allexport
     . ./secrets/openrc

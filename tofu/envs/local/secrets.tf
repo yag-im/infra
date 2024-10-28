@@ -59,3 +59,8 @@ data "aws_ssm_parameter" "yagsvc_google_oauth_client_secret" {
 data "aws_ssm_parameter" "yagsvc_twitch_oauth_client_secret" {
   name = "/yagsvc/twitch_oauth_client_secret"
 }
+
+# ideally should be part of aws_ssm_parameter, but reddit doesn't allow to share same secret for multiple envs
+variable "reddit_oauth_client_secret" {
+  type = string
+}

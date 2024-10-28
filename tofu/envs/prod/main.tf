@@ -86,7 +86,7 @@ locals {
   ver_sessionsvc = "0.0.16"
   ver_sigsvc = "0.0.30"
   ver_sqldb = "0.0.14"
-  ver_webapp = "0.1.31"
+  ver_webapp = "0.1.32"
   ver_yagsvc = "0.0.32"
 }
 
@@ -351,13 +351,13 @@ module "yagsvc" {
   flask_secret_key             = data.aws_ssm_parameter.yagsvc_flask_secret_key.value
   flask_security_password_salt = data.aws_ssm_parameter.yagsvc_flask_security_password_salt.value
   sqldb_password               = data.aws_ssm_parameter.sqldb_yagsvc_password.value
-  discord_oauth_client_id      = "1251213147776225341"
+  discord_oauth_client_id      = var.discord_oauth_client_id
   discord_oauth_client_secret  = data.aws_ssm_parameter.yagsvc_discord_oauth_client_secret.value
-  google_oauth_client_id       = "454405087013-0pc1gvsivodjea0dkhb5uqtop3acrkl8.apps.googleusercontent.com"
+  google_oauth_client_id       = var.google_oauth_client_id
   google_oauth_client_secret   = data.aws_ssm_parameter.yagsvc_google_oauth_client_secret.value
-  reddit_oauth_client_id       = "nOQzj0p0Upq60PW4YsciQA"
+  reddit_oauth_client_id       = var.reddit_oauth_client_id
   reddit_oauth_client_secret   = data.aws_ssm_parameter.yagsvc_reddit_oauth_client_secret.value
-  twitch_oauth_client_id       = "g9pl60vjz9ejuucgbpnzm0eb78ug4d"
+  twitch_oauth_client_id       = var.twitch_oauth_client_id
   twitch_oauth_client_secret   = data.aws_ssm_parameter.yagsvc_twitch_oauth_client_secret.value
 }
 
