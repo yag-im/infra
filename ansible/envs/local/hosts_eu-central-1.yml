@@ -1,0 +1,12 @@
+all:
+  children:
+    jukebox_cluster:
+      hosts:
+        jukebox[1:2].eu-central-1.yag.vm:
+      vars:
+        appstor_internal_ip: "192.168.56.111" # sync-up with Vagrantfile        
+    appstor:
+      hosts:
+        appstor1.eu-central-1.yag.vm:
+  vars:
+    cluster_region: "eu-central-1"

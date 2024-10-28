@@ -1,0 +1,12 @@
+.terraform/
+secrets/
+
+*.tfstate
+.terraform.lock.hcl
+.terraform.tfstate.lock.info
+terraform.tfstate.backup
+
+kubeconfig
+nohup.out
+secret.env
+secrets.txt

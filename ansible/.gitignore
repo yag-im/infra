@@ -1,0 +1,5 @@
+.vagrant/
+secrets/
+
+.vault_pwd
+vault

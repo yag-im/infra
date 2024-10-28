@@ -1,0 +1,30 @@
+- ansible.builtin.copy:
+    src: "exports"
+    dest: "{{ app_path }}/exports"
+
+- name: "create and run docker container"
+  community.docker.docker_container:
+    image: erichough/nfs-server
+    state: started
+    recreate: true
+    name: appstor
+    privileged: true
+    stop_timeout: 10
+    volumes:
+      - "{{ app_data_path }}:/mnt"
+      - "{{ app_path }}/exports:/etc/exports:ro"
+      - "/lib/modules:/lib/modules:ro"
+    env:
+      NFS_VERSION: "4.2"
+      NFS_DISABLE_VERSION_3: "1"
+      NFS_LOG_LEVEL: "DEBUG"
+    published_ports:
+      - "{{ appstor_node_private_ip }}:2049:2049"
+    log_driver: json-file
+    log_options:
+      max-size: 100m
+      max-file: "10"
+    restart_policy: always
+  notify:
+    - "prune docker"
+  register: output

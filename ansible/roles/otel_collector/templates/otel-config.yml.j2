@@ -1,0 +1,95 @@
+receivers:
+  otlp/collector:
+    protocols:
+      grpc:
+        endpoint: "127.0.0.1:4317"
+        max_recv_msg_size_mib: 32
+  hostmetrics:
+    collection_interval: 15s
+    root_path: /hostfs
+    scrapers:
+      cpu:
+        metrics:
+          system.cpu.utilization:
+            enabled: true
+      load:
+      memory:
+        metrics:
+          system.memory.utilization:
+            enabled: true
+      network:
+        metrics:
+          system.network.conntrack.count:
+            enabled: true
+          system.network.conntrack.max:
+            enabled: true
+      paging:
+        metrics:
+          system.paging.utilization:
+            enabled: true    
+  hostmetrics/storage:
+    collection_interval: 1m
+    root_path: /hostfs
+    scrapers:
+      disk:
+      filesystem:
+        metrics:
+          system.filesystem.utilization:
+            enabled: true
+        include_fs_types:
+          fs_types: ["ext3", "ext4"]
+          match_type: strict
+  hostmetrics/processes:
+    collection_interval: 30s
+    root_path: /hostfs
+    scrapers:
+      processes:
+
+processors:
+  memory_limiter:
+    check_interval: 2s
+    limit_percentage: 80
+    spike_limit_percentage: 40
+  batch:
+  resource:
+    attributes:
+      - key: service.name
+        value: "jukebox"
+        action: insert
+      - key: host.id
+        from_attribute: host.name
+        action: upsert
+      - key: cluster.region
+        value: "{{ cluster_region }}"
+        action: insert
+  resourcedetection:
+    detectors:
+      - system
+      - env
+    timeout: 10s
+
+exporters:
+  otlp/gw:
+    endpoint: "{{ otelcol_gw_url }}"
+    tls:
+      insecure: true
+    compression: gzip
+
+extensions:
+  health_check:
+
+service:
+  extensions: [ health_check ]
+  pipelines:
+    metrics:
+      receivers: [ hostmetrics, hostmetrics/storage, hostmetrics/processes, otlp/collector ]
+      processors: [ memory_limiter, resource, resourcedetection, batch ]
+      exporters: [ otlp/gw ]
+    traces:
+      receivers: [ otlp/collector ]
+      processors: [ memory_limiter, resource, batch ]
+      exporters: [ otlp/gw ]
+    logs:
+      receivers: [ otlp/collector ]
+      processors: [ memory_limiter, resource, batch ]
+      exporters: [ otlp/gw ]

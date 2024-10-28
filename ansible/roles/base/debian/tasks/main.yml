@@ -1,0 +1,60 @@
+# time sync should come first, otherwise apt commands may fail
+- command: timedatectl set-timezone "{{ timezone }}"
+- command: timedatectl set-ntp on
+- ansible.builtin.service:
+    name: "systemd-timesyncd"
+    enabled: true
+    state: restarted
+
+- name: parent roles
+  include_role:
+    name: "{{ debian_parent_roles_item }}"
+  with_items: "{{ parent_roles }}"
+  loop_control:
+    loop_var: debian_parent_roles_item
+
+# dns task should come first, otherwise domains resolution will not work in any task below
+- name: tasks
+  include_tasks: "{{ debian_tasks_item }}"
+  with_items:
+    - dns.yml
+    - mail.yml
+  loop_control:
+    loop_var: debian_tasks_item
+  when:
+    infra_env != 'local'
+
+- name: update and upgrade packages
+  package:
+    upgrade: yes
+    update_cache: yes
+
+- package:
+    name: "{{ debian_packages }}"
+    state: latest
+    update_cache: yes
+  with_items: "{{ debian_packages }}"
+
+- ansible.builtin.copy:
+    src: .inputrc
+    dest: /home/{{ ansible_user }}
+
+- ansible.builtin.lineinfile:
+    path: /etc/security/limits.conf
+    line: "* soft core unlimited"
+
+- ansible.builtin.lineinfile:
+    path: /etc/sysctl.conf
+    line: "net.ipv4.ping_group_range = 0 2147483647"
+
+# otherwise systemd will remove shm segments after ssh session expiration
+- ansible.builtin.lineinfile:
+    path: /etc/systemd/logind.conf
+    line: "RemoveIPC=no"
+
+- name: child roles
+  include_role:
+    name: "{{ debian_child_roles_item }}"
+  with_items: "{{ child_roles }}"
+  loop_control:
+    loop_var: debian_child_roles_item

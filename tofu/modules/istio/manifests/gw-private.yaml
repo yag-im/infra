@@ -1,0 +1,8 @@
+labels:
+  istio: ${gw_selector}
+service:
+    ports:
+    - name: otlp
+      port: 4317
+      protocol: TCP
+      targetPort: 4317

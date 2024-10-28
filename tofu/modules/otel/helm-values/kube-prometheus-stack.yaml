@@ -1,0 +1,23 @@
+alertmanager:
+  enabled: false
+grafana:
+  enabled: false
+nodeExporter:
+  enabled: true
+prometheus:
+  enabled: true
+  prometheusSpec:
+    additionalScrapeConfigs: |
+      - job_name: prometheus
+        static_configs:
+          - targets:
+            - "${host_otelcol_gw}:${port_otelcol_gw_prometheus}"
+
+# https://github.com/dotdc/grafana-dashboards-kubernetes?tab=readme-ov-file#through-a-servicemonitor-
+#prometheus-node-exporter:
+#  prometheus:
+#    monitor:
+#      relabelings:
+#      - action: replace
+#        sourceLabels: [__meta_kubernetes_pod_node_name]
+#        targetLabel: nodename

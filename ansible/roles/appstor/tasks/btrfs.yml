@@ -1,0 +1,73 @@
+- name: install deps
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  with_items:
+    - btrfs-progs
+
+- stat:
+    path: "{{ app_data_path }}"
+  register: dmp
+
+- name: init fs
+  block:
+    - ansible.builtin.file:
+        path: "{{ app_data_path }}"
+        state: directory
+    
+    - command: "mkfs.btrfs -d {{ appstor_btrfs_profile }} -m {{ appstor_btrfs_profile }} {{ appstor_btrfs_devices | join(' ') }}"
+      ignore_errors: true  # fails when filesystem is already initialized
+    
+    - ansible.posix.mount:
+        path: "{{ app_data_path }}"
+        src: "{{ appstor_btrfs_devices[0] }}"
+        fstype: btrfs
+        state: mounted
+
+    - ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ app_data_path }}/apps"
+        - "{{ app_data_path }}/clones"
+    
+    # TODO: this should be run only once on init. Also somehow it changes ownership on /usr/sbin making sudo unusable
+    #- ansible.builtin.file:
+    #    path: "{{ app_data_path }}"
+    #    state: directory
+    #    owner: 1000
+    #    group: 1000
+
+  when: not dmp.stat.exists
+
+- stat:
+    path: /sbin/beesd
+  register: beesd
+
+- name: make bees
+  block:
+    - ansible.builtin.git:
+        repo: https://github.com/Zygo/bees.git
+        dest: /tmp/bees
+        single_branch: yes
+        version: master
+    - make:
+        chdir: /tmp/bees
+        target: install
+  when: not beesd.stat.exists  
+
+- ansible.builtin.command: /usr/sbin/blkid -s UUID -o value "{{ appstor_btrfs_devices[0] }}"
+  register: blkid_output
+
+- set_fact:
+    btrfs_uuid: "{{ blkid_output.stdout }}"
+
+- ansible.builtin.template:
+    src: beesd.conf.j2
+    dest: "/etc/bees/beesd.conf"
+
+- ansible.builtin.service:
+    name: beesd@{{ btrfs_uuid }}
+    state: restarted
+    enabled: yes

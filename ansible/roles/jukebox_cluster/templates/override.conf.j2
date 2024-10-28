@@ -1,0 +1,3 @@
+[Service]
+ExecStart=
+ExecStart=/usr/bin/dockerd -H fd:// -H tcp://{{ jukebox_cluster_node_private_ip }}:2375 --containerd=/run/containerd/containerd.sock

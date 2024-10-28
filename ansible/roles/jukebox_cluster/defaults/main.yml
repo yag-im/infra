@@ -1,0 +1,9 @@
+parent_roles:
+  - debian
+  - docker
+  - aws_ecr_consumer
+
+jukebox_cluster_deps:
+  - criu
+  - nfs-common
+

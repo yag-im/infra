@@ -1,0 +1,45 @@
+- name: install deps
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  with_items:
+    - lsyncd
+
+- ansible.builtin.file:
+    path: /var/log/lsyncd
+    state: directory
+
+- ansible.builtin.file:
+    path: "/var/log/lsyncd/{{ item }}"
+    state: touch
+  with_items:
+    - "lsyncd.log"
+    - "lsyncd.status"
+
+- ansible.builtin.file:
+    path: /etc/lsyncd
+    state: directory
+
+- ansible.builtin.template:
+    src: lsyncd.conf.lua.j2
+    dest: "/etc/lsyncd/lsyncd.conf.lua"
+
+- name: make sure lsyncd service is started and enabled via systemd
+  ansible.builtin.systemd:
+    name: lsyncd
+    state: started
+    enabled: yes
+
+- name: copy ssh keys
+  ansible.builtin.copy:
+    src: "{{ var_ssh_file }}"
+    dest: "/home/{{ ansible_user }}/.ssh/"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0600'
+  loop:
+    - "files/secrets/id_ed25519"
+    - "files/secrets/id_ed25519.pub"
+  loop_control:
+    loop_var: var_ssh_file

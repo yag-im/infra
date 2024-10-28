@@ -1,0 +1,37 @@
+mode: daemonset
+
+presets:
+  kubernetesAttributes:
+    enabled: true
+    extractAllPodLabels: true
+  kubeletMetrics:
+    enabled: false
+  logsCollection:
+    enabled: true
+    includeCollectorLogs: false
+  hostMetrics:
+    enabled: false
+config:  
+  receivers:
+    jaeger: null
+    #kubeletstats:
+      # fixes: Get \"https://minikube:10250/stats/summary\": tls: failed to verify certificate: x509: certificate signed by unknown authority"
+    #  insecure_skip_verify: true
+    #otlp: null
+    zipkin: null
+  
+  exporters:
+    #debug:
+    #  verbosity: detailed
+    otlp:
+      compression: gzip
+      endpoint: "${uri_otelcol_gw}"
+      tls:
+        insecure: true
+  service:
+   pipelines:
+      logs:
+        exporters: [ otlp ]
+      metrics:
+        exporters: [ otlp ]
+      traces: null

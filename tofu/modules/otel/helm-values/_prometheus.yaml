@@ -1,0 +1,17 @@
+server:
+  command:
+    - --log.level=debug
+    - --config.file=/etc/config/prometheus.yml
+alertmanager:
+  enabled: false
+kube-state-metrics:
+  enabled: false
+prometheus-node-exporter:
+  enabled: false
+prometheus-pushgateway:
+  enabled: false
+extraScrapeConfigs: |
+  - job_name: 'prometheus'
+    static_configs:
+      - targets:
+        - "${host_otelcol_gw}:${port_otelcol_gw_prometheus}"

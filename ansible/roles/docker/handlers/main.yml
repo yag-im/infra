@@ -1,0 +1,3 @@
+- name: prune docker
+  # command: "docker system prune -af --filter until=24h"
+  ansible.builtin.command: "docker ps"

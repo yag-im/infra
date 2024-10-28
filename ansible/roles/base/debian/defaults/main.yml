@@ -1,0 +1,22 @@
+parent_roles:
+  - genesis
+
+child_roles:
+  - otel_collector
+
+debian_packages:
+  - build-essential
+  - curl
+  - ethtool
+  - htop
+  - linux-perf
+  - ltrace
+  - net-tools
+  - pkg-config
+  - rng-tools
+  - rsync
+  - strace
+  - systemd-timesyncd
+  - tcpdump
+  - unzip
+  - vim

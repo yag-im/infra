@@ -1,0 +1,18 @@
+infra_env: local
+# otelcol gateway is hidden behind istio-gw-private ip
+otelcol_gw_ip: 10.97.25.171
+
+jukebox_cluster_node_private_ip: "{{ ansible_eth1.ipv4.address }}"
+jukebox_cluster_node_public_ip: "{{ ansible_eth2.ipv4.address }}"
+
+appstor_node_private_ip: "{{ ansible_eth1.ipv4.address }}"
+
+appstor_master: "appstor1.us-west-1.yag.vm"
+
+appstor_replicas:
+  - "appstor1.eu-central-1.yag.vm"
+
+appstor_btrfs_devices:
+  - "/dev/sdb"
+  - "/dev/sdc"
+appstor_btrfs_profile: raid1

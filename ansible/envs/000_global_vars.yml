@@ -1,0 +1,19 @@
+app_hostname: "{{ inventory_hostname_short }}"
+app_name: "{{ role_name }}"
+base_app_path: "/opt/yag"
+app_path: "{{ base_app_path }}/{{ app_name }}"
+app_data_path: "{{ base_app_path }}/data/{{ app_name }}"
+
+timezone: UTC
+
+aws_ecr_region: us-east-1
+aws_ecr_user: ecr-ro
+aws_ecr_user_access_key_id: "{{ vault_aws_ecr_user_access_key }}"
+aws_ecr_user_secret_access_key: "{{ vault_aws_ecr_user_secret_access_key }}"
+
+# used to connect from jukebox node to the otelcol-gw (k8s service behind a private istio gateway)
+# there is also otelcol_gw_ip defined in each env
+# TODO: implement some sort of internal DNS
+otelcol_gw_host: otelcol-gw.yag.internal
+otelcol_gw_port: 4317
+otelcol_gw_url: "{{ otelcol_gw_host }}:{{ otelcol_gw_port }}"

@@ -1,0 +1,58 @@
+- name: parent roles
+  include_role:
+    name: "{{ jukebox_cluster_parent_roles_item }}"
+  with_items: "{{ parent_roles }}"
+  loop_control:
+    loop_var: jukebox_cluster_parent_roles_item
+
+- ansible.builtin.file:
+    path: "{{ app_path }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+
+- ansible.builtin.file:
+    path: "{{ app_data_path }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+
+- name: install deps
+  package:
+    name: "{{ jukebox_cluster_deps }}"
+    state: latest
+    update_cache: yes
+  with_items: "{{ jukebox_cluster_deps }}"
+
+- name: create appstor volume
+  community.docker.docker_volume:
+    name: appstor-vol
+    driver_options:
+      type: nfs
+      device: ":/clones"
+      o: "addr={{ appstor_internal_ip }},rw,nfsvers=4,minorversion=2,proto=tcp,fsc,nocto"
+
+- ansible.builtin.copy:
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+
+- ansible.builtin.copy:
+    src: runc.conf
+    dest: /etc/criu/
+
+- name: create <service>.service.d directory
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+
+- name: expose docker rest api (internally)
+  ansible.builtin.template:
+    src: override.conf.j2
+    dest: "/etc/systemd/system/docker.service.d/override.conf"
+
+- name: make sure the service is started and enabled via systemd
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
+    enabled: yes
+    daemon_reload: yes

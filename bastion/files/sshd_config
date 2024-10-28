@@ -1,0 +1,10 @@
+AcceptEnv LANG LC_*
+AllowUsers infra
+AuthenticationMethods publickey
+ChallengeResponseAuthentication no
+PasswordAuthentication no
+PermitEmptyPasswords no
+PermitRootLogin no
+PubKeyAuthentication yes
+# https://www.reddit.com/r/sysadmin/comments/nbsacc/ssh_key_authentication_fails_when_usepamno/
+UsePAM yes

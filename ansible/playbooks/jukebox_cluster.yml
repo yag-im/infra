@@ -1,0 +1,5 @@
+- hosts:
+    - jukebox_cluster
+  gather_facts: yes
+  roles:
+    - jukebox_cluster

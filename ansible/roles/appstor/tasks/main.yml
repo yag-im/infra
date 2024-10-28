@@ -1,0 +1,65 @@
+- name: parent roles
+  include_role:
+    name: '{{ var_role_appstor }}'
+  loop:
+    - debian
+    - docker
+  loop_control:
+    loop_var: var_role_appstor
+
+- name: install deps
+  apt:
+    name: "{{ item }}"
+    state: latest
+    update_cache: yes
+  with_items:
+    - rsync
+
+- ansible.builtin.file:
+    path: "{{ app_path }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+
+- name: common privileged tasks
+  include_tasks: "{{ var_task }}"
+  with_items:
+    - btrfs.yml
+    # - zfs.yml
+  loop_control:
+    loop_var: var_task
+
+# zfs uses a built-in nfs server
+- name: non-privileged tasks
+  include_tasks: "{{ var_task }}"
+  with_items:
+    - nfs-server.yml
+  loop_control:
+    loop_var: var_task
+  args:
+    apply:
+      become: no
+
+- name: master privileged tasks
+  include_tasks: "{{ var_task }}"
+  with_items:
+    - lsyncd.yml
+  loop_control:
+    loop_var: var_task
+  when: inventory_hostname == appstor_master
+
+# TODO: masters' appstor node key is used by both replicas and jukeboxsvc nodes (for creating remote clones)
+# jukeboxsvc nodes should use a different key
+- name: add primary appstors' node key into authorized_keys (TODO only on replicas)
+  ansible.posix.authorized_key:
+    user: "{{ ansible_user }}"
+    key: "{{ lookup('file', 'files/secrets/id_ed25519.pub') }}"
+    state: present
+  #when: inventory_hostname in appstor_replicas
+
+- ansible.builtin.copy:
+    src: "clone_app.sh"
+    dest: "{{ app_path }}/clone_app.sh"
+    owner: 1000
+    group: 1000
+    mode: '0755'

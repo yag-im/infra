@@ -1,0 +1,27 @@
+{
+	"name": "yag-infra",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	// "--network host" below is required to access vagrant VMs (from ansible playbooks)
+	"runArgs": [
+		"--name=yag-infra",
+		"--network",
+		"host",
+		"--env-file",
+		"${localWorkspaceFolder}/.devcontainer/.env"
+	],
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"hashicorp.terraform",
+				"humao.rest-client"
+			]
+		}
+	},
+	"mounts": [
+		"source=${env:HOME}${env:USERPROFILE}/.aws,target=/home/vscode/.aws,type=bind",
+		"source=${env:HOME}${env:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind",
+		"source=${env:HOME}${env:USERPROFILE}/.vagrant.d,target=/home/vscode/.vagrant.d,type=bind"
+	]
+}

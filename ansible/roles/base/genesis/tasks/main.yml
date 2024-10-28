@@ -1,0 +1,11 @@
+- name: tasks
+  include_tasks: "{{ var_task_genesis }}"
+  with_items:
+    - ssh.yml
+  loop_control:
+    loop_var: var_task_genesis
+
+- name: set a hostname
+  ansible.builtin.hostname:
+    name: "{{ infra_hostname }}"
+  when: infra_hostname is defined

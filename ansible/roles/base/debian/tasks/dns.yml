@@ -1,0 +1,27 @@
+# https://wiki.debian.org/resolv.conf
+- ansible.builtin.copy:
+    src: leave_my_resolv_conf_alone
+    dest: /etc/dhcp/dhclient-enter-hooks.d/leave_my_resolv_conf_alone
+    mode: "0755"
+
+- ansible.builtin.lineinfile:
+    path: /etc/systemd/resolved.conf
+    line: "FallbackDNS=1.1.1.1 1.0.0.1"
+
+- ansible.builtin.service:
+    name: "systemd-resolved"
+    enabled: true
+    state: restarted
+
+- ansible.builtin.file:
+    src: "/run/systemd/resolve/stub-resolv.conf"
+    dest: "/etc/resolv.conf"
+    force: "yes"
+    state: "link"
+    follow: false
+
+- package:
+    name:
+      - dnsutils
+    state: latest
+    update_cache: true

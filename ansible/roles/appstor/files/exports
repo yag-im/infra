@@ -1,0 +1,3 @@
+/mnt *(rw,async,insecure,fsid=0,crossmnt,nohide,all_squash,no_subtree_check,anonuid=1000,anongid=1000)
+/mnt/apps *(rw,async,insecure,fsid=3,crossmnt,nohide,all_squash,no_subtree_check,anonuid=1000,anongid=1000)
+/mnt/clones *(rw,async,insecure,fsid=4,crossmnt,nohide,all_squash,no_subtree_check,anonuid=1000,anongid=1000)

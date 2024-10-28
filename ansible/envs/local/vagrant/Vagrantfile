@@ -1,0 +1,56 @@
+Vagrant.configure(2) do |config|
+    # on Linux only 192.168.56.0/21 are allowed
+    # simulating OVH VLAN: all nodes across multiple AZs are in the same private VLAN
+    jukebox_cluster = [
+        { :hostname => "appstor1.us-west-1.yag.vm",    :ip => "192.168.56.110", :ip_pub => "192.168.60.110", :forward_port => 2049, :host_forward_port => 12049, :cpus => 1, :mem => 1024 },
+        #{ :hostname => "appstor1.eu-central-1.yag.vm", :ip => "192.168.56.111", :ip_pub => "192.168.60.111", :forward_port => 2049, :host_forward_port => 12050, :cpus => 1, :mem => 1024 },
+        #{ :hostname => "jukebox1.us-west-1.yag.vm",    :ip => "192.168.56.20",  :ip_pub => "192.168.60.20",  :forward_port => 2375, :host_forward_port => 12375, :cpus => 2, :mem => 2048 },
+        #{ :hostname => "jukebox2.us-west-1.yag.vm",    :ip => "192.168.56.21",  :ip_pub => "192.168.60.21",  :forward_port => 2375, :host_forward_port => 12376, :cpus => 1, :mem => 2048 },        
+        #{ :hostname => "jukebox1.eu-central-1.yag.vm", :ip => "192.168.56.23",  :ip_pub => "192.168.60.23",  :forward_port => 2375, :host_forward_port => 12385, :cpus => 2, :mem => 2048 },
+        #{ :hostname => "jukebox2.eu-central-1.yag.vm", :ip => "192.168.56.24",  :ip_pub => "192.168.60.24",  :forward_port => 2375, :host_forward_port => 12386, :cpus => 1, :mem => 2048 }        
+    ]
+
+    # use default insecure vagrant key (/home/robert/.vagrant.d/insecure_private_keys/vagrant.key.ed25519)
+    # so the same key can be used by ansible later
+    config.ssh.insert_key = false
+
+    jukebox_cluster.each do |node|
+        config.vm.define node[:hostname] do |h|
+            h.vm.box = "debian/bookworm64"
+            h.vm.hostname = node[:hostname]
+            h.vm.network "private_network", ip: node[:ip], virtualbox__intnet: true
+            h.vm.network "private_network", ip: node[:ip_pub]
+            # forward docker REST API port to access from host (for dev purposes)
+            if node.has_key?(:forward_port)
+                h.vm.network "forwarded_port", guest_ip: node[:ip], guest: node[:forward_port], host: node[:host_forward_port], protocol: "tcp", auto_correct: false
+            end
+            h.vm.provision :hosts do |provisioner|
+                provisioner.autoconfigure = false
+                provisioner.sync_hosts = true
+                jukebox_cluster.each do |_n|
+                    provisioner.add_host _n[:ip], [_n[:hostname]]
+                    if _n.has_key?(:alias)
+                        provisioner.add_host _n[:ip], [_n[:alias]]
+                    end
+                end
+            end # end provisioner
+            h.vm.provider "virtualbox" do |v|
+                v.cpus = node[:cpus]
+                v.memory = node[:mem]
+                v.name = node[:hostname]
+                if node[:hostname].include?("appstor")
+                    disk1 = "/mnt/vagrant_disk/#{node[:hostname]}-disk1.vdi"
+                    disk2 = "/mnt/vagrant_disk/#{node[:hostname]}-disk2.vdi"
+                    unless File.exist?(disk1)
+                        v.customize ["createhd", "--filename", disk1, "--variant", "Fixed", "--size", 50 * 1024]
+                    end
+                    unless File.exist?(disk2)
+                        v.customize ["createhd", "--filename", disk2, "--variant", "Fixed", "--size", 50 * 1024]
+                    end
+                    v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", 1, "--device", 0, "--type", "hdd", "--medium", disk1]
+                    v.customize ["storageattach", :id, "--storagectl", "SATA Controller", "--port", 2, "--device", 0, "--type", "hdd", "--medium", disk2]
+                end
+            end #end provider
+        end # end config
+    end # end jukebox_cluster
+end

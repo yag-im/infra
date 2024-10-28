@@ -1,0 +1,11 @@
+agent:
+  mode: 'flow'
+  configMap:
+    create: true
+  clustering:
+    enabled: false
+  controller:
+    type: 'daemonset'
+  mounts:
+    varlog: true
+    dockercontainers: true

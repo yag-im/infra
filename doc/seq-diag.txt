@@ -1,0 +1,84 @@
+Copy code below to: https://sequencediagram.org/
+
+title yag: run app golden flow
+
+actor user
+participant ua
+participant sigsvc
+participant sessionsvc
+
+participant appsvc
+participant jukeboxsvc
+participant jukebox node
+participant yagsvc
+
+user->ua: open games catalog
+activate ua
+ua->yagsvc: get list of apps
+activate yagsvc
+ua<--yagsvc: list of apps
+deactivate yagsvc
+user->ua: click on game card
+ua->yagsvc: get app release details
+activate yagsvc
+ua<--yagsvc: app release details
+deactivate yagsvc
+user->ua: click "PLAY GAME" button
+ua->sigsvc: connect: ws_conn_id=...
+activate sigsvc
+ua<--sigsvc: welcome: peer C1
+ua->sigsvc: setPeerStatus: listener
+ua<--sigsvc: peerStatusChanged: listener
+ua->sigsvc: list: producers
+ua<--sigsvc: list: producers[...]
+ua->sigsvc: getSessionsList
+ua<--sigsvc: sessions: sessions[...]
+ua->sigsvc:createSession(\n    app_release_id\n    preferred_dcs\n    user_id\n    ws_conn:\n        id\n        consumer_id\n) -> session_id
+sigsvc->sessionsvc: create_session(...)
+activate sessionsvc
+sessionsvc->sessionsvc: SQLDB: get_user_sessions()
+alt New session
+sessionsvc->appsvc: run_app()
+activate appsvc
+appsvc->appsvc: SQLDB: get_app_release()
+appsvc->jukeboxsvc: run_container()
+activate jukeboxsvc
+jukeboxsvc->jukebox node: run_container()
+activate jukebox node
+jukeboxsvc<-jukebox node:container created
+appsvc<--jukeboxsvc: container created
+deactivate jukeboxsvc
+sessionsvc<--appsvc: app started
+deactivate appsvc
+sessionsvc->sessionsvc:SQLDB: create session (id=Sn)
+sigsvc<--sessionsvc:session created (id=Sn)
+ua<--sigsvc:sessionCreated (id=Sn)
+else Existing session
+sessionsvc->appsvc: resume_app()
+activate appsvc
+appsvc->jukeboxsvc: resume_container()
+activate jukeboxsvc
+jukeboxsvc->jukebox node: resume_container()
+jukeboxsvc<-jukebox node:container resumed
+appsvc<--jukeboxsvc: container resumed
+deactivate jukeboxsvc
+sessionsvc<--appsvc: app resumed
+deactivate appsvc
+sigsvc<--sessionsvc:session resumed (id=Sr)
+deactivate sessionsvc
+ua<--sigsvc:sessionCreated (id=Sr)
+end
+sigsvc<--jukebox node: connect(ws_conn_id=...)
+sigsvc<--jukebox node: peerStatusChanged: producer, peerId: ...
+ua<--sigsvc: peerStatusChanged: producer, peerId: ...
+user<--ua: show folded app window
+user->ua: unfold app window
+ua->sigsvc: startSession: id, ...
+sigsvc->jukebox node: startSession(id, ...)
+ua<--sigsvc: sessionStarted: id, ...
+abox over sigsvc,jukebox node: webrtc peer messages (sdp, ice)
+abox over ua,sigsvc: webrtc peer messages (sdp, ice)
+note over ua: start consuming the stream
+abox over ua,jukebox node: webrtc stream
+user->ua: input (keyboard, mouse)
+ua->jukebox node: input (keyboard, mouse) via webrtc data channel

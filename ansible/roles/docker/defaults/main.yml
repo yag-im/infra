@@ -1,0 +1,8 @@
+docker_packages:
+  - docker-ce
+  - docker-ce-cli
+  - containerd.io
+  - python3-docker
+
+docker_repo: deb https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
+docker_repo_key: https://download.docker.com/{{ ansible_system | lower }}/{{ ansible_distribution | lower }}/gpg

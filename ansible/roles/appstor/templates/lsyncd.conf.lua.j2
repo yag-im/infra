@@ -1,0 +1,37 @@
+settings {
+    logfile = "/var/log/lsyncd/lsyncd.log",
+    statusFile = "/var/log/lsyncd/lsyncd.status",
+    statusInterval = 10,
+    nodaemon = false
+}
+servers = 
+{
+    {{ appstor_replicas | map("regex_replace","(.+)","\"\\1\"") | join(',')}}
+}
+sources =
+{
+    "{{ app_data_path }}/apps/"
+}
+for _, source in ipairs(sources) do
+    for _, server in ipairs(servers) do
+        sync {
+            default.rsyncssh,
+            source = source,
+            host = "{{ ansible_user }}@" .. server,
+            targetdir = source,
+            delete = 'running',
+            delay = 5,
+            rsync = {
+                timeout = 3000,
+                archive = true,
+                compress = true
+            },
+            ssh = {
+                identityFile = "/home/{{ ansible_user }}/.ssh/id_ed25519",
+                options = {
+                    StrictHostKeyChecking = "no"
+                }
+            }
+        }        
+    end
+end

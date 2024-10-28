@@ -1,0 +1,50 @@
+- name: "config postfix installer - mailname"
+  ansible.builtin.debconf:
+    name: postfix
+    question: postfix/mailname
+    value: "acme.im"
+    vtype: string
+
+- name: "config postfix installer - main_mailer_type"
+  ansible.builtin.debconf:
+    name: postfix
+    question: postfix/main_mailer_type
+    value: "Internet Site"
+    vtype: string
+
+- package:
+    name:
+      - mailutils
+      - postfix
+    state: latest
+    update_cache: true
+
+- name: "postfix config: listen on loopback-only"
+  ansible.builtin.replace:
+    path: /etc/postfix/main.cf
+    regexp: "inet_interfaces = all"
+    replace: "inet_interfaces = loopback-only"
+
+- name: "postfix config: remove acme.im"
+  ansible.builtin.replace:
+    path: /etc/postfix/main.cf
+    regexp: "acme.im, "
+    replace: ""
+  notify: restart postfix
+
+- name: update email aliases
+  ansible.builtin.lineinfile:
+    dest: "/etc/aliases"
+    insertafter: "postmaster: root\n"
+    line: "root: {{ admin_email }}"
+  notify: newaliases
+
+- name: check if mdadm.conf file exists
+  stat:
+    path: /etc/mdadm/mdadm.conf
+  register: mdadm_conf_file
+
+- ansible.builtin.lineinfile:
+    path: /etc/mdadm/mdadm.conf
+    line: "MAILADDR {{ admin_email }}"
+  when: mdadm_conf_file.stat.exists == true

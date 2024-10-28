@@ -1,0 +1,3 @@
+GET http://sigsvc.yag.minikube/webrtc
+host: yag.mk:8080
+cookie: auth-token=Yx8e4L90
