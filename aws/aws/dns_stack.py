@@ -58,6 +58,7 @@ class DnsStack(Stack):
                 self,
                 id="yag-gmail-verification-rec",
                 zone=self.main_zone,
+                record_name="yag.im",
                 values=["google-site-verification=TWWcXxwWFb1p5-eT9mG70o4GAwHepA5plqmIBrDEWxw"],
                 ttl=Duration.seconds(300),
             )
@@ -73,6 +74,15 @@ class DnsStack(Stack):
                     aws_r53.MxRecordValue(priority=10, host_name="ALT3.ASPMX.L.GOOGLE.COM."),
                     aws_r53.MxRecordValue(priority=10, host_name="ALT4.ASPMX.L.GOOGLE.COM."),
                 ],
+            )
+
+            aws_r53.TxtRecord(
+                self,
+                id="github-domain-verification-rec",
+                zone=self.main_zone,
+                record_name="_gh-yag-im-o",
+                values=["ce1e203728"],
+                ttl=Duration.seconds(300),
             )
         else:
             # create {env}.yag.im record in yag prod account
