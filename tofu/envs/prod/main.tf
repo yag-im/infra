@@ -67,6 +67,8 @@ locals {
   aws_ecr_repo_region = "us-east-1"
   docker_images_repo_host = "070143334704.dkr.ecr.us-east-1.amazonaws.com" # set equal to aws_ecr_repo_host for dev and prod envs
   docker_images_repo_prefix = "im.acme.yag."
+  github_packages_repo_host = "ghcr.io"
+  github_packages_repo_name = "yag-im"
   hostnames = {
     bastion    = "bastion.${local.public_tld}"
     grafana    = "grafana.${local.public_tld}"
@@ -82,7 +84,7 @@ locals {
   ver_jukeboxsvc = "0.0.27"
   ver_mcc = "TBD"
   ver_mccsvc = "TBD"
-  ver_portsvc = "0.0.6"
+  ver_portsvc = "0.0.11"
   ver_sessionsvc = "0.0.16"
   ver_sigsvc = "0.0.30"
   ver_sqldb = "0.0.14"
@@ -270,8 +272,8 @@ module "ovh" {
 module "portsvc" {
   source                    = "../../modules/portsvc"
   create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}portsvc:${local.ver_portsvc}"
-  docker_image_pull_secrets = var.docker_image_pull_secrets
+  docker_image_name         = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/portsvc:${local.ver_portsvc}"
+  #docker_image_pull_secrets = var.docker_image_pull_secrets
   k8s_namespace             = "default"
   replicas                  = 2
   # app config
