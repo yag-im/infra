@@ -80,7 +80,7 @@ locals {
   private_tld = "yag.internal"
   ver_appsvc = "0.0.24"
   ver_bastion = "0.0.2"
-  ver_jobs = "0.0.5"
+  ver_jobs = "0.1.0"
   ver_jukeboxsvc = "0.0.27"
   ver_mcc = "TBD"
   ver_mccsvc = "TBD"
@@ -88,7 +88,7 @@ locals {
   ver_sessionsvc = "0.0.16"
   ver_sigsvc = "0.0.30"
   ver_sqldb = "0.0.14"
-  ver_webapp = "0.1.32"
+  ver_webapp = "0.2.0"
   ver_yagsvc = "0.0.32"
 }
 
@@ -172,8 +172,8 @@ module "bastion" {
 module "jobs" {
   source                       = "../../modules/jobs"
   create_istio_vs              = var.create_istio_vs
-  docker_image_name            = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}jobs:${local.ver_jobs}"
-  docker_image_pull_secrets    = var.docker_image_pull_secrets
+  docker_image_name            = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/jobs:${local.ver_jobs}"
+  # docker_image_pull_secrets    = var.docker_image_pull_secrets
   k8s_namespace                = "default"
   replicas                     = 1
 }
@@ -224,12 +224,12 @@ module "mcc" {
 module "webapp" {
   source                    = "../../modules/webapp"
   create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}webapp:${local.ver_webapp}"
-  docker_image_pull_secrets = var.docker_image_pull_secrets
+  docker_image_name         = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/webapp:${local.ver_webapp}"
+  # docker_image_pull_secrets = var.docker_image_pull_secrets
   k8s_namespace             = "default"
   replicas                  = 2
   app_env                   = "prod"
-  ga_id                     = "G-B1M52WX01L"
+  ga_id                     = var.ga_id
 }
 
 # https://help.ovhcloud.com/csm/en-public-cloud-compute-terraform?id=kb_article_view&sysparm_article=KB0050797
@@ -265,8 +265,8 @@ module "ovh" {
       end: "192.168.2.254"
     }
   ]
-  project_id   = "86a6b6677ce849e8a98a58f08a94a2ae" # OS_TENANT_ID from secrets/openrc
-  vrack_id     = "pn-2010809" # check https://us.ovhcloud.com/manager/#/dedicated/vrack
+  project_id   = var.ovh_project_id # OS_TENANT_ID from secrets/openrc
+  vrack_id     = var.ovh_vrack_id # check https://us.ovhcloud.com/manager/#/dedicated/vrack
 }
 
 module "portsvc" {

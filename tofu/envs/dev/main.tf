@@ -227,7 +227,7 @@ module "webapp" {
   k8s_namespace             = "default"
   replicas                  = 2
   app_env                   = "dev"
-  ga_id                     = "G-MSFJWCPYS9"
+  ga_id                     = var.ga_id
 }
 
 # https://help.ovhcloud.com/csm/en-public-cloud-compute-terraform?id=kb_article_view&sysparm_article=KB0050797
@@ -263,8 +263,8 @@ module "ovh" {
       end: "192.168.2.254"
     }
   ]
-  project_id   = "d60289206102496ba63a80be4fa0e921" # OS_TENANT_ID from secrets/openrc
-  vrack_id     = "pn-2007865" # check https://us.ovhcloud.com/manager/#/dedicated/vrack
+  project_id   = var.ovh_project_id # OS_TENANT_ID from secrets/openrc
+  vrack_id     = var.ovh_vrack_id # check https://us.ovhcloud.com/manager/#/dedicated/vrack
 }
 
 module "portsvc" {
