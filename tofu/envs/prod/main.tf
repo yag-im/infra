@@ -85,8 +85,8 @@ locals {
   ver_mcc = "TBD"
   ver_mccsvc = "TBD"
   ver_portsvc = "0.0.11"
-  ver_sessionsvc = "0.0.16"
-  ver_sigsvc = "0.0.30"
+  ver_sessionsvc = "0.0.17"
+  ver_sigsvc = "0.1.0"
   ver_sqldb = "0.0.14"
   ver_webapp = "0.2.0"
   ver_yagsvc = "0.1.3"
@@ -285,8 +285,8 @@ module "portsvc" {
 module "sessionsvc" {
   source                    = "../../modules/sessionsvc"
   create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}sessionsvc:${local.ver_sessionsvc}"
-  docker_image_pull_secrets = var.docker_image_pull_secrets
+  docker_image_name         = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/sessionsvc:${local.ver_sessionsvc}"
+  # docker_image_pull_secrets = var.docker_image_pull_secrets
   k8s_namespace             = "default"
   replicas                  = 2
   # app config
@@ -298,8 +298,8 @@ module "sessionsvc" {
 module "sigsvc" {
   source                       = "../../modules/sigsvc"
   create_istio_vs              = var.create_istio_vs
-  docker_image_name            = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}webrtc.sigsvc:${local.ver_sigsvc}"
-  docker_image_pull_secrets    = var.docker_image_pull_secrets
+  docker_image_name            = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/sigsvc:${local.ver_sigsvc}"
+  # docker_image_pull_secrets    = var.docker_image_pull_secrets
   k8s_namespace                = "default"
   replicas                     = 2
   # app config
