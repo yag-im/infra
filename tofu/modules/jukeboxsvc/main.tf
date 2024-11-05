@@ -42,6 +42,10 @@ resource "kubernetes_deployment" "jukeboxsvc" {
               name = "jukeboxsvc-cm"
             }
           }
+          volume_mount {
+            name = "jukeboxsvc-ssh-keys-volume"
+            mount_path = "/opt/yag/jukeboxsvc/.ssh"
+          }
           # dynamic "volume_mount" {
           #   for_each = var.appstor_pvcs
           #   content {
@@ -49,6 +53,13 @@ resource "kubernetes_deployment" "jukeboxsvc" {
           #     mount_path = "/mnt/appstor/${volume_mount.value.region}"
           #   }
           # }
+        }
+        volume {
+          name = "jukeboxsvc-ssh-keys-volume"
+          secret {
+            secret_name = "jukeboxsvc-ssh-keys"
+            default_mode = "0400"
+          }
         }
         # dynamic "volume" {
         #   for_each = var.appstor_pvcs
@@ -115,4 +126,15 @@ resource "kubernetes_config_map" "jukeboxsvc" {
     AWS_ECR_SECRET_KEY           = var.aws_ecr_secret_key
     SIGNALER_AUTH_TOKEN          = var.signaler_auth_token
   }
+}
+
+resource "kubernetes_secret" "jukeboxsvc" {
+  metadata {
+    name     = "jukeboxsvc-ssh-keys"
+  }
+  data = {
+    "id_ed25519" = "${file("${path.module}/files/secrets/${var.env}/id_ed25519")}"
+    "id_ed25519.pub" = "${file("${path.module}/files/secrets/${var.env}/id_ed25519.pub")}"
+  }
+  type = "Opaque"
 }

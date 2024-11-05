@@ -189,6 +189,7 @@ module "jukeboxsvc" {
   appstor_user              = "debian"
   aws_ecr_host              = local.aws_ecr_repo_host
   aws_ecr_region            = local.aws_ecr_repo_region
+  env                       = "dev"
   jukebox_nodes             = [
     /*{
       api_uri: "http://192.168.12.2:2375",

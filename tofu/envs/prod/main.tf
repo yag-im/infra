@@ -81,7 +81,7 @@ locals {
   ver_appsvc = "0.1.0"
   ver_bastion = "0.0.2"
   ver_jobs = "0.1.0"
-  ver_jukeboxsvc = "0.0.27"
+  ver_jukeboxsvc = "0.1.0"
   ver_mcc = "TBD"
   ver_mccsvc = "TBD"
   ver_portsvc = "0.0.11"
@@ -181,7 +181,7 @@ module "jobs" {
 module "jukeboxsvc" {
   source                    = "../../modules/jukeboxsvc"
   create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}jukeboxsvc:${local.ver_jukeboxsvc}"
+  docker_image_name         = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/jukeboxsvc:${local.ver_jukeboxsvc}"
   docker_image_pull_secrets = var.docker_image_pull_secrets
   k8s_namespace             = "default"
   replicas                  = 2
@@ -191,6 +191,7 @@ module "jukeboxsvc" {
   appstor_user              = "debian"
   aws_ecr_host              = local.aws_ecr_repo_host
   aws_ecr_region            = local.aws_ecr_repo_region
+  env                       = "prod"
   jukebox_nodes             = [
     {
       api_uri: "http://192.168.12.2:2375",

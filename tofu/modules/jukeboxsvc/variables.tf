@@ -67,6 +67,10 @@ variable "stun_uri" {
   type = string
 }
 
+variable "env" {
+  type = string
+}
+
 # app secrets
 
 variable "aws_ecr_access_key" {

@@ -38,6 +38,16 @@ Binds `/opt/yag/data/appstor` into `/mnt` and:
 
 ## docker volume
 
+Local dev:
+
+    docker volume create --driver local \
+        --opt type=none \
+        --opt o=bind \
+        --opt device=~/yag/data/ports/clones \
+        appstor-vol
+
+or
+
     docker volume create --driver local \
         -o type=nfs \
         -o o=addr="{appstor_dc_ip},rw,nfsvers=4,minorversion=2,proto=tcp,fsc,nocto" \
