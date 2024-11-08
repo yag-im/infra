@@ -9,8 +9,8 @@ Secrets locations (make sure they're not part of any source trees):
 
     ansible/envs/${ENV}/group_vars/all/vault
     ansible/envs/${ENV}/.vault_pwd                 - used from ansible playbooks
-    bastion/secrets                                - infra user keys
-    tofu/envs/${ENV}/secret.env                    - used to bootstrap a k8s cluster (minikube)
+    tofu/modules/bastion/files/secrets             - infra user keys
+    tofu/envs/${ENV}/secrets.env                   - used to bootstrap a k8s cluster (minikube)
     tofu/envs/${ENV}/secrets                       - used to bootstrap a k8s cluster (dev, prod)
     tofu/secrets.txt                               - used from k8s cluster, contains AWS SSM parameters init script
 

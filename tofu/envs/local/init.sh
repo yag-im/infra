@@ -7,7 +7,7 @@ set -e
 
 set -o allexport
     source ./.env
-    source ./secret.env
+    source ./secrets.env
 set +o allexport
 
 /usr/bin/expect -c '

@@ -79,7 +79,7 @@ locals {
   public_tld = "yag.im"
   private_tld = "yag.internal"
   ver_appsvc = "0.1.0"
-  ver_bastion = "0.0.2"
+  ver_bastion = "0.0.5"
   ver_jobs = "0.1.0"
   ver_jukeboxsvc = "0.1.0"
   ver_mcc = "TBD"
@@ -163,8 +163,8 @@ module aws_ecr {
 module "bastion" {
   source                    = "../../modules/bastion"
   create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}infra.bastion:${local.ver_bastion}"
-  docker_image_pull_secrets = var.docker_image_pull_secrets
+  docker_image_name         = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/bastion:${local.ver_bastion}"
+  # docker_image_pull_secrets = var.docker_image_pull_secrets
   k8s_namespace             = "default"
   env                       = "prod"
 }
@@ -182,7 +182,7 @@ module "jukeboxsvc" {
   source                    = "../../modules/jukeboxsvc"
   create_istio_vs           = var.create_istio_vs
   docker_image_name         = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/jukeboxsvc:${local.ver_jukeboxsvc}"
-  docker_image_pull_secrets = var.docker_image_pull_secrets
+  # docker_image_pull_secrets = var.docker_image_pull_secrets
   k8s_namespace             = "default"
   replicas                  = 2
   # app config

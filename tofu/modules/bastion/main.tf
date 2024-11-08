@@ -37,12 +37,32 @@ resource "kubernetes_deployment" "bastion" {
               memory = "50Mi"
             }
           }
-          env_from {
-            config_map_ref {
-              name = "bastion-cm"
-            }
-          }    
-        }        
+          volume_mount {
+            name = "bastion-ssh-keys-volume"
+            mount_path = "/home/infra/.ssh/authorized_keys"
+            sub_path = "authorized_keys"
+          }
+          volume_mount {
+            name = "bastion-ssh-keys-volume"
+            mount_path = "/home/infra/.ssh/id_ed25519"
+            sub_path = "id_ed25519"
+          }
+          volume_mount {
+            name = "bastion-ssh-keys-volume"
+            mount_path = "/home/infra/.ssh/id_ed25519.pub"
+            sub_path = "id_ed25519.pub"
+          }
+        }
+        volume {
+          name = "bastion-ssh-keys-volume"
+          secret {
+            secret_name = "bastion-ssh-keys"
+            default_mode = "0600"
+          }
+        }
+        security_context { 
+          fs_group = 1000
+        }
         dynamic "image_pull_secrets" {
           for_each = var.docker_image_pull_secrets
           content {
@@ -71,15 +91,14 @@ resource "kubernetes_service" "bastion" {
   }
 }
 
-resource "kubernetes_config_map" "bastion" {
+resource "kubernetes_secret" "bastion" {
   metadata {
-    name      = "bastion-cm"
-    namespace = var.k8s_namespace
+    name     = "bastion-ssh-keys"
   }
   data = {
-    AUTHORIZED_KEYS = "${file("${path.module}/files/authorized_keys")}"
-    ED25519_KEY_PUB = "${file("${path.module}/files/secrets/${var.env}/id_ed25519.pub")}"
-    # secrets
-    ED25519_KEY     = "${file("${path.module}/files/secrets/${var.env}/id_ed25519")}"
+    "id_ed25519" = "${file("${path.module}/files/secrets/${var.env}/id_ed25519")}"
+    "id_ed25519.pub" = "${file("${path.module}/files/secrets/${var.env}/id_ed25519.pub")}"
+    "authorized_keys" = "${file("${path.module}/files/secrets/authorized_keys")}"
   }
+  type = "Opaque"
 }

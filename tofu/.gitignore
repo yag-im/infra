@@ -9,5 +9,5 @@ terraform.tfstate.backup
 .env
 kubeconfig
 nohup.out
-secret.env
+secrets.env
 secrets.txt

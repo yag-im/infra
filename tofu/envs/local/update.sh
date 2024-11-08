@@ -2,7 +2,7 @@
 
 set -o allexport
     source ./.env
-    source ./secret.env
+    source ./secrets.env
 set +o allexport
 
 # we can't create VirtualServices on the very first pass (when called from __init.sh)
