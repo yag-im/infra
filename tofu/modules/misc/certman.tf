@@ -11,7 +11,7 @@ resource "helm_release" "cert_manager" {
   chart            = "cert-manager"
   name             = "cert-manager"
   namespace        = local.namespace_cert_manager
-  version          = "v1.14.5"
+  version          = "v1.16.1"
   timeout          = 120
   cleanup_on_fail  = true
   force_update     = true
@@ -49,6 +49,7 @@ resource "kubernetes_manifest" "letsencrypt_cluster_issuer" {
       }
     }
   }
+  depends_on = [helm_release.cert_manager]
 }
 
 resource "kubernetes_manifest" "certificate" {

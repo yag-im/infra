@@ -136,7 +136,7 @@ resource "kubernetes_manifest" "istio_gw_public" {
             protocol = "HTTP"
           }
           tls = {
-            httpsRedirect = true
+            httpsRedirect = false
           }
         },
       ]

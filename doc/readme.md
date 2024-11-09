@@ -62,7 +62,7 @@ Manual renew:
 
     cd /tmp
     curl -fsSL -o cmctl https://github.com/cert-manager/cmctl/releases/latest/download/cmctl_linux_amd64
-    cd /workspaces/infra/tofu/envs/dev
+    cd /workspaces/infra/tofu/envs/prod
     /tmp/cmctl inspect secret yag-im-tls -n istio-gw-public
     /tmp/cmctl status certificate yag-im-tls -n istio-gw-public
     /tmp/cmctl renew yag-im-tls -n istio-gw-public
