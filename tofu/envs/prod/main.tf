@@ -65,29 +65,24 @@ locals {
   ]
   aws_ecr_repo_host = "070143334704.dkr.ecr.us-east-1.amazonaws.com"
   aws_ecr_repo_region = "us-east-1"
-  docker_images_repo_host = "070143334704.dkr.ecr.us-east-1.amazonaws.com" # set equal to aws_ecr_repo_host for dev and prod envs
-  docker_images_repo_prefix = "im.acme.yag."
   github_packages_repo_host = "ghcr.io"
   github_packages_repo_name = "yag-im"
   hostnames = {
     bastion    = "bastion.${local.public_tld}"
     grafana    = "grafana.${local.public_tld}"
-    #mcc        = "mcc.${local.public_tld}"
     webapp     = local.public_tld
     otelcol_gw = "otelcol-gw.${local.private_tld}"
   }
   public_tld = "yag.im"
   private_tld = "yag.internal"
-  ver_appsvc = "0.1.1"
+  ver_appsvc = "0.1.2"
   ver_bastion = "0.0.5"
   ver_jobs = "0.1.0"
   ver_jukeboxsvc = "0.1.0"
-  ver_mcc = "TBD"
-  ver_mccsvc = "TBD"
   ver_portsvc = "0.0.11"
   ver_sessionsvc = "0.0.17"
   ver_sigsvc = "0.1.0"
-  ver_sqldb = "0.0.14"
+  ver_sqldb = "0.0.2"
   ver_webapp = "0.2.0"
   ver_yagsvc = "0.1.3"
 }
@@ -212,16 +207,6 @@ module "jukeboxsvc" {
   signaler_auth_token       = data.aws_ssm_parameter.sigsvc_auth_token.value
 }
 
-/*
-module "mcc" {
-  source                    = "../../modules/mcc"
-  create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}mcc:${local.ver_mcc}"
-  docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
-  replicas                  = 2
-}*/
-
 module "webapp" {
   source                    = "../../modules/webapp"
   create_istio_vs           = var.create_istio_vs
@@ -313,8 +298,8 @@ module "sigsvc" {
 
 module "sqldb" {
   source                    = "../../modules/sqldb"
-  docker_image_name         = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}sqldb:${local.ver_sqldb}"
-  docker_image_pull_secrets = var.docker_image_pull_secrets
+  docker_image_name         = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/sqldb:${local.ver_sqldb}"
+  # docker_image_pull_secrets = var.docker_image_pull_secrets
   k8s_namespace             = "default"
   # app config  
   pgdata                    = "/var/lib/postgresql/data"

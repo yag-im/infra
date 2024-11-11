@@ -65,15 +65,16 @@ resource "kubernetes_persistent_volume_claim" "sqldb_data" {
   }
 }
 
-resource "kubernetes_deployment" "sqldb" {
+resource "kubernetes_stateful_set" "sqldb" {
   metadata {
-    name = "sqldb-deployment"
+    name = "sqldb-stateful-set"
     labels = {
       app = "sqldb"
     }
     namespace = var.k8s_namespace
   }
   spec {
+    service_name = "sqldb"
     replicas = 1
     selector {
       match_labels = {
@@ -88,6 +89,7 @@ resource "kubernetes_deployment" "sqldb" {
       }
       spec {
         container {
+          # command = [ "sh", "-c", "echo Starting container... && sleep 6000" ]
           image             = var.docker_image_name
           image_pull_policy = "IfNotPresent"
           name              = "sqldb"
@@ -113,6 +115,13 @@ resource "kubernetes_deployment" "sqldb" {
           volume_mount {
             name       = "sqldb-data-mount"
             mount_path = var.pgdata
+          }
+          lifecycle {
+            pre_stop {
+              exec {
+                command = ["sh", "-c", "pg_ctl -D ${var.pgdata}/pgdata -w -t 60 -m fast stop"]
+              }
+            }
           }
         }
         dynamic "image_pull_secrets" {
@@ -145,7 +154,7 @@ resource "kubernetes_service" "sqldb" {
       port = 5432
       name = "tcp-sqldb"
     }
-    type = "ClusterIP"
+    cluster_ip = "None"
   }
 }
 
