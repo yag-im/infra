@@ -17,8 +17,8 @@ resource "ovh_cloud_project_network_private" "private_network" {
   depends_on   = [ovh_vrack_cloudproject.vcp_attach]
 }
 
- resource "ovh_cloud_project_network_private_subnet" "private_subnet" {
-  count = length(var.networks)
+resource "ovh_cloud_project_network_private_subnet" "private_subnet" {
+  count        = length(var.networks)
   service_name = var.project_id
   network_id   = ovh_cloud_project_network_private.private_network.id
   start        = var.networks[count.index]["start"]
@@ -27,10 +27,10 @@ resource "ovh_cloud_project_network_private" "private_network" {
   dhcp         = true # this needs to be true for fixed_ip_v4 to work for cloud instances (https://us.ovhcloud.com/manager/#/dedicated/ticket/410831)
   region       = var.networks[count.index]["ovh_region"]
   no_gateway   = false
- }
+}
 
 resource "openstack_networking_router_v2" "private_router" {
-  count = length(var.networks)
+  count               = length(var.networks)
   name                = "yag-pn-router"
   admin_state_up      = true
   external_network_id = data.openstack_networking_network_v2.ext_net[count.index].id
@@ -38,19 +38,19 @@ resource "openstack_networking_router_v2" "private_router" {
 }
 
 resource "openstack_networking_router_interface_v2" "private_router_interface" {
-  count = length(var.networks)
+  count     = length(var.networks)
   router_id = openstack_networking_router_v2.private_router[count.index].id
   region    = var.networks[count.index]["ovh_region"]
   subnet_id = ovh_cloud_project_network_private_subnet.private_subnet[count.index].id
 }
 
 resource "ovh_cloud_project_kube" "k8s_cluster" {
-  service_name = var.project_id
-  name         = "yag-k8s"
-  region       = var.k8s.ovh_region
+  service_name       = var.project_id
+  name               = "yag-k8s"
+  region             = var.k8s.ovh_region
   private_network_id = [for region in ovh_cloud_project_network_private.private_network.regions_attributes : region.openstackid if region.region == var.k8s.ovh_region][0]
   private_network_configuration {
-    default_vrack_gateway = [for network in var.networks : network.gateway if network.ovh_region == var.k8s.ovh_region][0]
+    default_vrack_gateway              = [for network in var.networks : network.gateway if network.ovh_region == var.k8s.ovh_region][0]
     private_network_routing_as_default = true
   }
   depends_on = [openstack_networking_router_interface_v2.private_router_interface]
@@ -76,5 +76,5 @@ resource "local_sensitive_file" "kubeconfig" {
   content         = ovh_cloud_project_kube.k8s_cluster.kubeconfig
   filename        = "kubeconfig"
   file_permission = "0644"
-  depends_on = [ovh_cloud_project_kube.k8s_cluster, ovh_cloud_project_kube_nodepool.node_pool]
+  depends_on      = [ovh_cloud_project_kube.k8s_cluster, ovh_cloud_project_kube_nodepool.node_pool]
 }

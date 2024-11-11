@@ -20,7 +20,7 @@ resource "helm_release" "kubernetes_dashboard" {
 
 resource "kubernetes_service_account" "dashboard_user" {
   metadata {
-    name = "dashboard-user"
+    name      = "dashboard-user"
     namespace = local.namespace_dashboard
   }
 }
@@ -32,20 +32,20 @@ resource "kubernetes_cluster_role_binding" "dashboard_user" {
 
   role_ref {
     api_group = "rbac.authorization.k8s.io"
-    kind = "ClusterRole"
-    name = "cluster-admin"
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
   }
 
   subject {
-    kind = "ServiceAccount"
-    name = "dashboard-user"
+    kind      = "ServiceAccount"
+    name      = "dashboard-user"
     namespace = local.namespace_dashboard
   }
 }
 
 resource "kubernetes_secret" "dashboard_user_token" {
   metadata {
-    name = "dashboard-user-token"
+    name      = "dashboard-user-token"
     namespace = local.namespace_dashboard
     annotations = {
       "kubernetes.io/service-account.name" = "dashboard-user"

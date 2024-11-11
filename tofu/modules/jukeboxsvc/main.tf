@@ -43,7 +43,7 @@ resource "kubernetes_deployment" "jukeboxsvc" {
             }
           }
           volume_mount {
-            name = "jukeboxsvc-ssh-keys-volume"
+            name       = "jukeboxsvc-ssh-keys-volume"
             mount_path = "/opt/yag/jukeboxsvc/.ssh"
           }
           # dynamic "volume_mount" {
@@ -57,7 +57,7 @@ resource "kubernetes_deployment" "jukeboxsvc" {
         volume {
           name = "jukeboxsvc-ssh-keys-volume"
           secret {
-            secret_name = "jukeboxsvc-ssh-keys"
+            secret_name  = "jukeboxsvc-ssh-keys"
             default_mode = "0400"
           }
         }
@@ -104,36 +104,36 @@ resource "kubernetes_config_map" "jukeboxsvc" {
     namespace = var.k8s_namespace
   }
   data = {
-    APPSTOR_NODES                = jsonencode(var.appstor_nodes)
-    APPSTOR_USER                 = var.appstor_user
-    AWS_ECR_HOST                 = var.aws_ecr_host
-    AWS_ECR_REGION               = var.aws_ecr_region
-    FLASK_DEBUG                  = true
-    FLASK_ENV                    = var.flask_env
-    FLASK_PROPAGATE_EXCEPTIONS   = true    
-    FPS                          = 60    
-    JUKEBOX_CONTAINER_APP_DIR    = "/opt/yag"
-    JUKEBOX_CONTAINER_ENV_GST_DEBUG = "3,ximagesrc:3,webrtcsink:3,pulsesrc:4,webrtcbin:4,webrtcsrc-signaller:3,vadisplay:3,webrtcsrc-signaller:7"
+    APPSTOR_NODES                                   = jsonencode(var.appstor_nodes)
+    APPSTOR_USER                                    = var.appstor_user
+    AWS_ECR_HOST                                    = var.aws_ecr_host
+    AWS_ECR_REGION                                  = var.aws_ecr_region
+    FLASK_DEBUG                                     = true
+    FLASK_ENV                                       = var.flask_env
+    FLASK_PROPAGATE_EXCEPTIONS                      = true
+    FPS                                             = 60
+    JUKEBOX_CONTAINER_APP_DIR                       = "/opt/yag"
+    JUKEBOX_CONTAINER_ENV_GST_DEBUG                 = "3,ximagesrc:3,webrtcsink:3,pulsesrc:4,webrtcbin:4,webrtcsrc-signaller:3,vadisplay:3,webrtcsrc-signaller:7"
     JUKEBOX_CONTAINER_STREAMD_MAX_INACTIVITY_PERIOD = 1800
-    JUKEBOX_CONTAINER_USER       = "gamer"
-    JUKEBOX_NODE_CLONES_ROOT_DIR = "/mnt/appstor"
-    JUKEBOX_NODES                = jsonencode(var.jukebox_nodes)
-    SIGNALER_HOST                = var.signaler_host
-    SIGNALER_URI                 = var.signaler_uri
-    STUN_URI                     = var.stun_uri
+    JUKEBOX_CONTAINER_USER                          = "gamer"
+    JUKEBOX_NODE_CLONES_ROOT_DIR                    = "/mnt/appstor"
+    JUKEBOX_NODES                                   = jsonencode(var.jukebox_nodes)
+    SIGNALER_HOST                                   = var.signaler_host
+    SIGNALER_URI                                    = var.signaler_uri
+    STUN_URI                                        = var.stun_uri
     # secrets
-    AWS_ECR_ACCESS_KEY           = var.aws_ecr_access_key
-    AWS_ECR_SECRET_KEY           = var.aws_ecr_secret_key
-    SIGNALER_AUTH_TOKEN          = var.signaler_auth_token
+    AWS_ECR_ACCESS_KEY  = var.aws_ecr_access_key
+    AWS_ECR_SECRET_KEY  = var.aws_ecr_secret_key
+    SIGNALER_AUTH_TOKEN = var.signaler_auth_token
   }
 }
 
 resource "kubernetes_secret" "jukeboxsvc" {
   metadata {
-    name     = "jukeboxsvc-ssh-keys"
+    name = "jukeboxsvc-ssh-keys"
   }
   data = {
-    "id_ed25519" = "${file("${path.module}/files/secrets/${var.env}/id_ed25519")}"
+    "id_ed25519"     = "${file("${path.module}/files/secrets/${var.env}/id_ed25519")}"
     "id_ed25519.pub" = "${file("${path.module}/files/secrets/${var.env}/id_ed25519.pub")}"
   }
   type = "Opaque"

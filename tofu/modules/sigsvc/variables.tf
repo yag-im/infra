@@ -8,7 +8,7 @@ variable "docker_image_name" {
 }
 
 variable "docker_image_pull_secrets" {
-  type    = list
+  type    = list(any)
   default = []
 }
 
@@ -23,7 +23,7 @@ variable "replicas" {
 # app config
 
 variable "debug_no_auth" {
-  type = bool
+  type    = bool
   default = false
 }
 

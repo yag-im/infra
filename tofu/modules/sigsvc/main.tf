@@ -77,11 +77,11 @@ resource "kubernetes_config_map" "sigsvc" {
     namespace = var.k8s_namespace
   }
   data = {
-    DEBUG_NO_AUTH                = var.debug_no_auth
-    SESSIONSVC_URL               = "http://sessionsvc"
+    DEBUG_NO_AUTH  = var.debug_no_auth
+    SESSIONSVC_URL = "http://sessionsvc"
 
     AUTH_TOKEN                   = var.auth_token
     FLASK_SECRET_KEY             = var.flask_secret_key
-    FLASK_SECURITY_PASSWORD_SALT = var.flask_security_password_salt  
+    FLASK_SECURITY_PASSWORD_SALT = var.flask_security_password_salt
   }
 }

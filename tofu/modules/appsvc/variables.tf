@@ -8,7 +8,7 @@ variable "docker_image_name" {
 }
 
 variable "docker_image_pull_secrets" {
-  type    = list
+  type    = list(any)
   default = []
 }
 
@@ -35,10 +35,10 @@ variable "jukebox_container_image_rev" {
 
 variable "runners" {
   type = map(object({
-    ver = string
+    ver           = string
     window_system = string,
-    igpu = bool,
-    dgpu = bool
+    igpu          = bool,
+    dgpu          = bool
   }))
 }
 

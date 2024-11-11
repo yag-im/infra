@@ -1,9 +1,9 @@
 # disable httpsRedirect in istio when running first time, letsencrypt requires an unsecure HTTP connection to validate cert
 
 locals {
-  email = "k8s-cert-manager@acme.im"
+  email                  = "k8s-cert-manager@acme.im"
   namespace_cert_manager = "cert-manager"
-  issuer_name = "letsencrypt"
+  issuer_name            = "letsencrypt"
 }
 
 resource "helm_release" "cert_manager" {
@@ -28,7 +28,7 @@ resource "kubernetes_manifest" "letsencrypt_cluster_issuer" {
     apiVersion = "cert-manager.io/v1"
     kind       = "ClusterIssuer"
     metadata = {
-      name      = local.issuer_name
+      name = local.issuer_name
     }
     spec = {
       acme = {
@@ -62,7 +62,7 @@ resource "kubernetes_manifest" "certificate" {
       namespace = "istio-gw-public" # TODO: this has to be in the istio gws' namespace
     }
     spec = {
-      secretName   = "yag-im-tls"
+      secretName = "yag-im-tls"
       privateKey = {
         algorithm = "RSA"
         size      = 2048
@@ -71,8 +71,8 @@ resource "kubernetes_manifest" "certificate" {
         "server auth",
       ]
       issuerRef = {
-        name  = local.issuer_name
-        kind  = "ClusterIssuer"
+        name = local.issuer_name
+        kind = "ClusterIssuer"
       }
       dnsNames = [
         var.hostnames["webapp"],

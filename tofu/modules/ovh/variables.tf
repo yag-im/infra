@@ -9,27 +9,27 @@ variable "appstor" {
       ssh_port   = optional(number, 22)
     }))
     public_key_path = string
-    volume_size = number
+    volume_size     = number
   })
 }
 
 variable "k8s" {
   type = object({
     desired_nodes = number
-    flavor = string
-    max_nodes = number
-    min_nodes = number
-    ovh_region = string
+    flavor        = string
+    max_nodes     = number
+    min_nodes     = number
+    ovh_region    = string
   })
 }
 
 variable "networks" {
   type = list(object({
-    gateway = string
+    gateway    = string
     ovh_region = string
-    network = string
-    start = string
-    end = string    
+    network    = string
+    start      = string
+    end        = string
   }))
 }
 

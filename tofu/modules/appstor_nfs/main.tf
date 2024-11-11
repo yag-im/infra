@@ -13,7 +13,7 @@ resource "kubernetes_persistent_volume" "appstor_pv_nfs" {
       "pv.kubernetes.io/provisioned-by" = "nfs.csi.k8s.io"
     }
     labels = {
-      app = "appstor"
+      app    = "appstor"
       region = var.servers[count.index].region
     }
     name = "appstor-pv-${count.index}"
@@ -21,20 +21,20 @@ resource "kubernetes_persistent_volume" "appstor_pv_nfs" {
   spec {
     access_modes = ["ReadWriteMany"]
     capacity = {
-        storage = "1Mi"
+      storage = "1Mi"
     }
-    mount_options = ["nfsvers=4.2", "rw", "relatime", "hard", "async", "fsc", "nocto", "proto=tcp", "rsize=1048576", "wsize=1048576", "port=${var.servers[count.index].port}"]
+    mount_options                    = ["nfsvers=4.2", "rw", "relatime", "hard", "async", "fsc", "nocto", "proto=tcp", "rsize=1048576", "wsize=1048576", "port=${var.servers[count.index].port}"]
     persistent_volume_reclaim_policy = "Retain"
     persistent_volume_source {
       csi {
-        driver = "nfs.csi.k8s.io"
+        driver        = "nfs.csi.k8s.io"
         volume_handle = "${var.servers[count.index].host}/${var.servers[count.index].region}"
         volume_attributes = {
           server = var.servers[count.index].host
-          share = "/"
+          share  = "/"
         }
-      }      
-    }    
+      }
+    }
     storage_class_name = "nfs-csi"
   }
 }
@@ -55,6 +55,6 @@ resource "kubernetes_persistent_volume_claim" "appstor_pvc_nfs" {
       }
     }
     storage_class_name = "nfs-csi"
-    volume_name = "appstor-pv-${count.index}"
+    volume_name        = "appstor-pv-${count.index}"
   }
 }

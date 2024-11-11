@@ -14,7 +14,7 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"hashicorp.terraform",
+				"gamunu.opentofu",
 				"humao.rest-client"
 			]
 		}

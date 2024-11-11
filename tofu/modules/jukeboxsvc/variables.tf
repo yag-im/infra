@@ -8,7 +8,7 @@ variable "docker_image_name" {
 }
 
 variable "docker_image_pull_secrets" {
-  type    = list
+  type    = list(any)
   default = []
 }
 
@@ -26,7 +26,7 @@ variable "appstor_nodes" {
   type = list(object({
     host       = string
     nfs_port   = optional(number, 2049)
-    ovh_region = optional(string, "N/A")    
+    ovh_region = optional(string, "N/A")
     region     = string
     ssh_port   = optional(number, 22)
   }))

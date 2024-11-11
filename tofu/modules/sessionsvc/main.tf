@@ -87,6 +87,6 @@ resource "kubernetes_config_map" "sessionsvc" {
     SQLDB_PORT                      = 5432
     SQLDB_USERNAME                  = "sessionsvc"
     #secrets
-    SQLDB_PASSWORD                  = var.sqldb_password
+    SQLDB_PASSWORD = var.sqldb_password
   }
 }

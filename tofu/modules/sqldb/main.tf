@@ -75,7 +75,7 @@ resource "kubernetes_stateful_set" "sqldb" {
   }
   spec {
     service_name = "sqldb"
-    replicas = 1
+    replicas     = 1
     selector {
       match_labels = {
         app = "sqldb"
@@ -97,7 +97,7 @@ resource "kubernetes_stateful_set" "sqldb" {
             config_map_ref {
               name = "sqldb-cm"
             }
-          }          
+          }
           port {
             container_port = 5432
             name           = "postgres"

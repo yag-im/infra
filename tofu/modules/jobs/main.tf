@@ -57,7 +57,7 @@ resource "kubernetes_config_map" "jobs" {
     namespace = var.k8s_namespace
   }
   data = {
-    JUKEBOXSVC_URL               = "http://jukeboxsvc"
-    SESSIONSVC_URL               = "http://sessionsvc"
+    JUKEBOXSVC_URL = "http://jukeboxsvc"
+    SESSIONSVC_URL = "http://sessionsvc"
   }
 }

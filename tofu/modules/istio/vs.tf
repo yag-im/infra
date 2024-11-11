@@ -77,9 +77,9 @@ resource "kubernetes_manifest" "destination_rule_sigsvc" {
   count = var.create_istio_vs == "true" ? 1 : 0
   manifest = {
     apiVersion = "networking.istio.io/v1beta1"
-    kind = "DestinationRule"
-    metadata = {      
-      name = "sigsvc-dr",
+    kind       = "DestinationRule"
+    metadata = {
+      name      = "sigsvc-dr",
       namespace = local.gw_namespace_public
     }
     spec = {
@@ -89,7 +89,7 @@ resource "kubernetes_manifest" "destination_rule_sigsvc" {
           consistentHash = {
             httpCookie = {
               name = "sigsvc_wsconnid"
-              ttl = "0s"
+              ttl  = "0s"
             }
           }
         }

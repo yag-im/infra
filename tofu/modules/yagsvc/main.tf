@@ -80,7 +80,7 @@ resource "kubernetes_config_map" "yagsvc" {
     FLASK_DEBUG                     = true
     FLASK_ENV                       = var.flask_env
     FLASK_PROPAGATE_EXCEPTIONS      = true
-    FLASK_SQLALCHEMY_ENGINE_OPTIONS = jsonencode({"pool_pre_ping": true, "pool_size": 10, "pool_recycle": 120})
+    FLASK_SQLALCHEMY_ENGINE_OPTIONS = jsonencode({ "pool_pre_ping" : true, "pool_size" : 10, "pool_recycle" : 120 })
     APPSVC_URL                      = "http://appsvc.default.svc.cluster.local"
     BEHIND_PROXY                    = var.behind_proxy
     SQLDB_DBNAME                    = "yag"
@@ -90,16 +90,16 @@ resource "kubernetes_config_map" "yagsvc" {
     OAUTHLIB_INSECURE_TRANSPORT     = var.oauthlib_insecure_transport
     OAUTHLIB_RELAX_TOKEN_SCOPE      = var.oauthlib_relax_token_scope
     #secrets
-    FLASK_SECRET_KEY                = var.flask_secret_key
-    FLASK_SECURITY_PASSWORD_SALT    = var.flask_security_password_salt
-    SQLDB_PASSWORD                  = var.sqldb_password
-    DISCORD_OAUTH_CLIENT_ID         = var.discord_oauth_client_id
-    DISCORD_OAUTH_CLIENT_SECRET     = var.discord_oauth_client_secret
-    GOOGLE_OAUTH_CLIENT_ID          = var.google_oauth_client_id
-    GOOGLE_OAUTH_CLIENT_SECRET      = var.google_oauth_client_secret
-    REDDIT_OAUTH_CLIENT_ID          = var.reddit_oauth_client_id
-    REDDIT_OAUTH_CLIENT_SECRET      = var.reddit_oauth_client_secret
-    TWITCH_OAUTH_CLIENT_ID          = var.twitch_oauth_client_id
-    TWITCH_OAUTH_CLIENT_SECRET      = var.twitch_oauth_client_secret
+    FLASK_SECRET_KEY             = var.flask_secret_key
+    FLASK_SECURITY_PASSWORD_SALT = var.flask_security_password_salt
+    SQLDB_PASSWORD               = var.sqldb_password
+    DISCORD_OAUTH_CLIENT_ID      = var.discord_oauth_client_id
+    DISCORD_OAUTH_CLIENT_SECRET  = var.discord_oauth_client_secret
+    GOOGLE_OAUTH_CLIENT_ID       = var.google_oauth_client_id
+    GOOGLE_OAUTH_CLIENT_SECRET   = var.google_oauth_client_secret
+    REDDIT_OAUTH_CLIENT_ID       = var.reddit_oauth_client_id
+    REDDIT_OAUTH_CLIENT_SECRET   = var.reddit_oauth_client_secret
+    TWITCH_OAUTH_CLIENT_ID       = var.twitch_oauth_client_id
+    TWITCH_OAUTH_CLIENT_SECRET   = var.twitch_oauth_client_secret
   }
 }

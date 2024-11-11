@@ -77,7 +77,7 @@ resource "kubernetes_config_map" "mcc" {
     namespace = var.k8s_namespace
   }
   data = {
-    API_URL       = "http://yagsvc.default.svc.cluster.local/api"
-    PORT          = 80
+    API_URL = "http://yagsvc.default.svc.cluster.local/api"
+    PORT    = 80
   }
 }

@@ -8,7 +8,7 @@ variable "docker_image_name" {
 }
 
 variable "docker_image_pull_secrets" {
-  type    = list
+  type    = list(any)
   default = []
 }
 
@@ -27,6 +27,6 @@ variable "app_env" {
 }
 
 variable "ga_id" {
-  type = string
+  type    = string
   default = ""
 }

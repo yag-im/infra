@@ -1,12 +1,12 @@
-locals {  
-  url_charts_istio = "https://istio-release.storage.googleapis.com/charts"
-  ver_charts_istio = "1.21.0"
-  gw_selector_public = "istio-ingressgateway"
-  gw_selector_private = "sel-gw-private"
-  gw_namespace_public = "istio-gw-public"
+locals {
+  url_charts_istio     = "https://istio-release.storage.googleapis.com/charts"
+  ver_charts_istio     = "1.21.0"
+  gw_selector_public   = "istio-ingressgateway"
+  gw_selector_private  = "sel-gw-private"
+  gw_namespace_public  = "istio-gw-public"
   gw_namespace_private = "istio-gw-private"
-  gw_name_public = "istio-gw-public"
-  gw_name_private = "istio-gw-private"
+  gw_name_public       = "istio-gw-public"
+  gw_name_private      = "istio-gw-private"
 }
 
 resource "kubernetes_namespace" "istio_system" {
@@ -37,7 +37,7 @@ resource "helm_release" "istiod" {
   version         = local.ver_charts_istio
   timeout         = 120
   cleanup_on_fail = true
-  force_update    = false  
+  force_update    = false
   set {
     name  = "meshConfig.accessLogFile"
     value = "/dev/stdout"
@@ -79,7 +79,7 @@ resource "helm_release" "istio_gw_public" {
   depends_on      = [helm_release.istiod]
   values = [
     templatefile("${path.module}/manifests/gw-public.yaml", {
-        gw_selector = "${local.gw_selector_public}"
+      gw_selector = "${local.gw_selector_public}"
     })
   ]
 }
@@ -99,14 +99,14 @@ resource "kubernetes_manifest" "istio_gw_public" {
       }
       servers = [
         { # bastion
-         hosts = [
-           var.hostnames["bastion"]
-         ]
-         port = {
-           name     = "bastion"
-           number   = 22
-           protocol = "TCP"
-         }
+          hosts = [
+            var.hostnames["bastion"]
+          ]
+          port = {
+            name     = "bastion"
+            number   = 22
+            protocol = "TCP"
+          }
         },
         { # web apps
           hosts = [
@@ -115,12 +115,12 @@ resource "kubernetes_manifest" "istio_gw_public" {
             var.hostnames["webapp"]
           ]
           port = {
-            name = "https"
+            name     = "https"
             number   = 443
             protocol = "HTTPS"
           }
           tls = {
-            mode = "SIMPLE"
+            mode           = "SIMPLE"
             credentialName = "yag-im-tls"
           }
         },
@@ -131,7 +131,7 @@ resource "kubernetes_manifest" "istio_gw_public" {
             var.hostnames["webapp"]
           ]
           port = {
-            name = "http"
+            name     = "http"
             number   = 80
             protocol = "HTTP"
           }

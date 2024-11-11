@@ -3,12 +3,12 @@ variable "docker_image_name" {
 }
 
 variable "docker_image_pull_secrets" {
-  type    = list
+  type    = list(any)
   default = []
 }
 
 variable "k8s_namespace" {
-  type    = string
+  type = string
 }
 
 variable "appsvc_user" {
@@ -30,7 +30,7 @@ variable "pgdata" {
 
 # cloud providers create pv-s and define their own names
 variable "pv_name" {
-  type = string
+  type    = string
   default = ""
 }
 

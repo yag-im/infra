@@ -53,18 +53,18 @@ provider "ovh" {
 locals {
   appstor_nodes = [
     {
-      host: "192.168.12.200"
-      ovh_region: "US-EAST-VA-1"
-      region: "us-east-1"
+      host : "192.168.12.200"
+      ovh_region : "US-EAST-VA-1"
+      region : "us-east-1"
     },
     {
-      host: "192.168.13.200"
-      ovh_region: "US-WEST-OR-1"
-      region: "us-west-1"
+      host : "192.168.13.200"
+      ovh_region : "US-WEST-OR-1"
+      region : "us-west-1"
     }
   ]
-  aws_ecr_repo_host = "070143334704.dkr.ecr.us-east-1.amazonaws.com"
-  aws_ecr_repo_region = "us-east-1"
+  aws_ecr_repo_host         = "070143334704.dkr.ecr.us-east-1.amazonaws.com"
+  aws_ecr_repo_region       = "us-east-1"
   github_packages_repo_host = "ghcr.io"
   github_packages_repo_name = "yag-im"
   hostnames = {
@@ -73,18 +73,18 @@ locals {
     webapp     = local.public_tld
     otelcol_gw = "otelcol-gw.${local.private_tld}"
   }
-  public_tld = "yag.im"
-  private_tld = "yag.internal"
-  ver_appsvc = "0.1.2"
-  ver_bastion = "0.0.5"
-  ver_jobs = "0.1.0"
+  public_tld     = "yag.im"
+  private_tld    = "yag.internal"
+  ver_appsvc     = "0.1.2"
+  ver_bastion    = "0.0.5"
+  ver_jobs       = "0.1.0"
   ver_jukeboxsvc = "0.1.0"
-  ver_portsvc = "0.0.11"
+  ver_portsvc    = "0.0.11"
   ver_sessionsvc = "0.0.17"
-  ver_sigsvc = "0.1.0"
-  ver_sqldb = "0.0.2"
-  ver_webapp = "0.2.0"
-  ver_yagsvc = "0.1.3"
+  ver_sigsvc     = "0.1.0"
+  ver_sqldb      = "0.0.2"
+  ver_webapp     = "0.2.0"
+  ver_yagsvc     = "0.1.3"
 }
 
 # Only jukeboxsvc was consuming this resource, but due to server-side copy restrictions, it's now deprecated
@@ -94,59 +94,59 @@ locals {
 # }
 
 module "appsvc" {
-  source                    = "../../modules/appsvc"
-  create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/appsvc:${local.ver_appsvc}"
+  source            = "../../modules/appsvc"
+  create_istio_vs   = var.create_istio_vs
+  docker_image_name = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/appsvc:${local.ver_appsvc}"
   #docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
-  replicas                  = 2
+  k8s_namespace = "default"
+  replicas      = 2
   # app config
   # should be defined from West to East direction for smart RTT configuration
-  data_centers              = ["us-west-1", "us-east-1"]
-  flask_env                 = "production"
+  data_centers                = ["us-west-1", "us-east-1"]
+  flask_env                   = "production"
   jukebox_container_image_rev = "latest"
-  runners                   = {    
+  runners = {
     dosbox-x = {
-      ver = "2024.03.01", 
+      ver           = "2024.03.01",
       window_system = "x11",
-      igpu = false,
-      dgpu = false
+      igpu          = false,
+      dgpu          = false
     },
     dosbox-staging = {
-      ver = "0.81.1", 
+      ver           = "0.81.1",
       window_system = "x11",
-      igpu = false,
-      dgpu = false
+      igpu          = false,
+      dgpu          = false
     },
     dosbox = {
-      ver = "0.74-3-4", 
+      ver           = "0.74-3-4",
       window_system = "x11",
-      igpu = false,
-      dgpu = false
+      igpu          = false,
+      dgpu          = false
     },
     scummvm = {
-      ver = "2.8.1", 
+      ver           = "2.8.1",
       window_system = "x11",
-      igpu = false,
-      dgpu = false
+      igpu          = false,
+      dgpu          = false
     },
     wine = {
-      ver = "9.0.0.0",
-      window_system = "x11", 
-      igpu = false,
-      dgpu = false
+      ver           = "9.0.0.0",
+      window_system = "x11",
+      igpu          = false,
+      dgpu          = false
     }
   }
-  streamd_reqs              = {
-    igpu: true,
-    dgpu: false
+  streamd_reqs = {
+    igpu : true,
+    dgpu : false
   }
   # secrets
-  sqldb_password            = data.aws_ssm_parameter.sqldb_appsvc_password.value
+  sqldb_password = data.aws_ssm_parameter.sqldb_appsvc_password.value
 }
 
-module aws_ecr {
-  source                  = "../../modules/aws_ecr"
+module "aws_ecr" {
+  source = "../../modules/aws_ecr"
 
   aws_ecr_region             = local.aws_ecr_repo_region
   aws_ecr_access_key_id      = data.aws_ssm_parameter.jukeboxsvc_aws_ecr_access_key.value
@@ -156,77 +156,77 @@ module aws_ecr {
 }
 
 module "bastion" {
-  source                    = "../../modules/bastion"
-  create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/bastion:${local.ver_bastion}"
+  source            = "../../modules/bastion"
+  create_istio_vs   = var.create_istio_vs
+  docker_image_name = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/bastion:${local.ver_bastion}"
   # docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
-  env                       = "prod"
+  k8s_namespace = "default"
+  env           = "prod"
 }
 
 module "jobs" {
-  source                       = "../../modules/jobs"
-  create_istio_vs              = var.create_istio_vs
-  docker_image_name            = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/jobs:${local.ver_jobs}"
+  source            = "../../modules/jobs"
+  create_istio_vs   = var.create_istio_vs
+  docker_image_name = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/jobs:${local.ver_jobs}"
   # docker_image_pull_secrets    = var.docker_image_pull_secrets
-  k8s_namespace                = "default"
-  replicas                     = 1
+  k8s_namespace = "default"
+  replicas      = 1
 }
 
 module "jukeboxsvc" {
-  source                    = "../../modules/jukeboxsvc"
-  create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/jukeboxsvc:${local.ver_jukeboxsvc}"
+  source            = "../../modules/jukeboxsvc"
+  create_istio_vs   = var.create_istio_vs
+  docker_image_name = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/jukeboxsvc:${local.ver_jukeboxsvc}"
   # docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
-  replicas                  = 2
+  k8s_namespace = "default"
+  replicas      = 2
   # app config
   # appstor_pvcs              = module.appstor_nfs.pvcs
-  appstor_nodes             = local.appstor_nodes
-  appstor_user              = "debian"
-  aws_ecr_host              = local.aws_ecr_repo_host
-  aws_ecr_region            = local.aws_ecr_repo_region
-  env                       = "prod"
-  jukebox_nodes             = [
+  appstor_nodes  = local.appstor_nodes
+  appstor_user   = "debian"
+  aws_ecr_host   = local.aws_ecr_repo_host
+  aws_ecr_region = local.aws_ecr_repo_region
+  env            = "prod"
+  jukebox_nodes = [
     {
-      api_uri: "http://192.168.12.2:2375",
-      region: "us-east-1"
+      api_uri : "http://192.168.12.2:2375",
+      region : "us-east-1"
     },
     {
-      api_uri: "http://192.168.13.2:2375",
-      region: "us-west-1"
+      api_uri : "http://192.168.13.2:2375",
+      region : "us-west-1"
     }
   ]
-  flask_env                 = "production"
-  signaler_host             = local.public_tld # this should go in headers (host) from jukebox to sigsvc for a proper routing
-  signaler_uri              = "wss://${local.public_tld}/webrtc" # this should be a public gw ip (check kubectl get svc -n istio-gw-public istio-gw-public output)
-  stun_uri                  = "stun://stun.l.google.com:19302"  
+  flask_env     = "production"
+  signaler_host = local.public_tld                   # this should go in headers (host) from jukebox to sigsvc for a proper routing
+  signaler_uri  = "wss://${local.public_tld}/webrtc" # this should be a public gw ip (check kubectl get svc -n istio-gw-public istio-gw-public output)
+  stun_uri      = "stun://stun.l.google.com:19302"
   # secrets
-  aws_ecr_access_key        = data.aws_ssm_parameter.jukeboxsvc_aws_ecr_access_key.value
-  aws_ecr_secret_key        = data.aws_ssm_parameter.jukeboxsvc_aws_ecr_secret_key.value
-  signaler_auth_token       = data.aws_ssm_parameter.sigsvc_auth_token.value
+  aws_ecr_access_key  = data.aws_ssm_parameter.jukeboxsvc_aws_ecr_access_key.value
+  aws_ecr_secret_key  = data.aws_ssm_parameter.jukeboxsvc_aws_ecr_secret_key.value
+  signaler_auth_token = data.aws_ssm_parameter.sigsvc_auth_token.value
 }
 
 module "webapp" {
-  source                    = "../../modules/webapp"
-  create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/webapp:${local.ver_webapp}"
+  source            = "../../modules/webapp"
+  create_istio_vs   = var.create_istio_vs
+  docker_image_name = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/webapp:${local.ver_webapp}"
   # docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
-  replicas                  = 2
-  app_env                   = "prod"
-  ga_id                     = var.ga_id
+  k8s_namespace = "default"
+  replicas      = 2
+  app_env       = "prod"
+  ga_id         = var.ga_id
 }
 
 # https://help.ovhcloud.com/csm/en-public-cloud-compute-terraform?id=kb_article_view&sysparm_article=KB0050797
 module "ovh" {
-  source       = "../../modules/ovh"
+  source = "../../modules/ovh"
 
   appstor = {
     flavor          = "b3-8"
     nodes           = local.appstor_nodes
     public_key_path = "${path.root}/../../modules/bastion/files/secrets/prod/id_ed25519.pub"
-    volume_size     = 100  # in GBs
+    volume_size     = 100 # in GBs
   }
   k8s = {
     desired_nodes = 2
@@ -237,59 +237,59 @@ module "ovh" {
   }
   networks = [
     {
-      gateway: "192.168.0.1"
-      ovh_region: "US-EAST-VA-1"
-      network: "192.168.0.0/16"
-      start: "192.168.1.2"  # k8s nodes will obtain IPs from this range
-      end: "192.168.1.254"
+      gateway : "192.168.0.1"
+      ovh_region : "US-EAST-VA-1"
+      network : "192.168.0.0/16"
+      start : "192.168.1.2" # k8s nodes will obtain IPs from this range
+      end : "192.168.1.254"
     },
     {
-      gateway: "192.168.0.1"
-      ovh_region: "US-WEST-OR-1"
-      network: "192.168.0.0/16"
-      start: "192.168.2.2"  # k8s nodes will obtain IPs from this range
-      end: "192.168.2.254"
+      gateway : "192.168.0.1"
+      ovh_region : "US-WEST-OR-1"
+      network : "192.168.0.0/16"
+      start : "192.168.2.2" # k8s nodes will obtain IPs from this range
+      end : "192.168.2.254"
     }
   ]
-  project_id   = var.ovh_project_id # OS_TENANT_ID from secrets/openrc
-  vrack_id     = var.ovh_vrack_id # check https://us.ovhcloud.com/manager/#/dedicated/vrack
+  project_id = var.ovh_project_id # OS_TENANT_ID from secrets/openrc
+  vrack_id   = var.ovh_vrack_id   # check https://us.ovhcloud.com/manager/#/dedicated/vrack
 }
 
 module "portsvc" {
-  source                    = "../../modules/portsvc"
-  create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/portsvc:${local.ver_portsvc}"
+  source            = "../../modules/portsvc"
+  create_istio_vs   = var.create_istio_vs
+  docker_image_name = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/portsvc:${local.ver_portsvc}"
   #docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
-  replicas                  = 2
+  k8s_namespace = "default"
+  replicas      = 2
   # app config
-  flask_env                 = "production"
+  flask_env = "production"
   # secrets
-  sqldb_password            = data.aws_ssm_parameter.sqldb_portsvc_password.value
+  sqldb_password = data.aws_ssm_parameter.sqldb_portsvc_password.value
 }
 
 module "sessionsvc" {
-  source                    = "../../modules/sessionsvc"
-  create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/sessionsvc:${local.ver_sessionsvc}"
+  source            = "../../modules/sessionsvc"
+  create_istio_vs   = var.create_istio_vs
+  docker_image_name = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/sessionsvc:${local.ver_sessionsvc}"
   # docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
-  replicas                  = 2
+  k8s_namespace = "default"
+  replicas      = 2
   # app config
-  flask_env                 = "production"
+  flask_env = "production"
   # secrets
-  sqldb_password            = data.aws_ssm_parameter.sqldb_sessionsvc_password.value
+  sqldb_password = data.aws_ssm_parameter.sqldb_sessionsvc_password.value
 }
 
 module "sigsvc" {
-  source                       = "../../modules/sigsvc"
-  create_istio_vs              = var.create_istio_vs
-  docker_image_name            = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/sigsvc:${local.ver_sigsvc}"
+  source            = "../../modules/sigsvc"
+  create_istio_vs   = var.create_istio_vs
+  docker_image_name = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/sigsvc:${local.ver_sigsvc}"
   # docker_image_pull_secrets    = var.docker_image_pull_secrets
-  k8s_namespace                = "default"
-  replicas                     = 2
+  k8s_namespace = "default"
+  replicas      = 2
   # app config
-  debug_no_auth                = "false"
+  debug_no_auth = "false"
   # secrets
   auth_token                   = data.aws_ssm_parameter.sigsvc_auth_token.value
   flask_secret_key             = data.aws_ssm_parameter.yagsvc_flask_secret_key.value
@@ -297,44 +297,44 @@ module "sigsvc" {
 }
 
 module "sqldb" {
-  source                    = "../../modules/sqldb"
-  docker_image_name         = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/sqldb:${local.ver_sqldb}"
+  source            = "../../modules/sqldb"
+  docker_image_name = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/sqldb:${local.ver_sqldb}"
   # docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
+  k8s_namespace = "default"
   # app config  
-  pgdata                    = "/var/lib/postgresql/data"
-  pv_name                   = ""
-  storage_class_name        = "csi-cinder-high-speed"
-  storage_size              = "10Gi"
-  timezone                  = var.timezone
-  yag_db                    = "yag"
+  pgdata             = "/var/lib/postgresql/data"
+  pv_name            = ""
+  storage_class_name = "csi-cinder-high-speed"
+  storage_size       = "10Gi"
+  timezone           = var.timezone
+  yag_db             = "yag"
   # users
-  appsvc_user               = "appsvc"
-  mccsvc_user               = "mccsvc"
-  portsvc_user              = "portsvc"
-  sessionsvc_user           = "sessionsvc"
-  yagsvc_user               = "yagsvc"
+  appsvc_user     = "appsvc"
+  mccsvc_user     = "mccsvc"
+  portsvc_user    = "portsvc"
+  sessionsvc_user = "sessionsvc"
+  yagsvc_user     = "yagsvc"
   # secrets
-  appsvc_password           = data.aws_ssm_parameter.sqldb_appsvc_password.value
-  mccsvc_password           = data.aws_ssm_parameter.sqldb_mccsvc_password.value
-  portsvc_password          = data.aws_ssm_parameter.sqldb_portsvc_password.value
-  sessionsvc_password       = data.aws_ssm_parameter.sqldb_sessionsvc_password.value
-  postgres_password         = data.aws_ssm_parameter.sqldb_postgres_password.value
-  yagsvc_password           = data.aws_ssm_parameter.sqldb_yagsvc_password.value
+  appsvc_password     = data.aws_ssm_parameter.sqldb_appsvc_password.value
+  mccsvc_password     = data.aws_ssm_parameter.sqldb_mccsvc_password.value
+  portsvc_password    = data.aws_ssm_parameter.sqldb_portsvc_password.value
+  sessionsvc_password = data.aws_ssm_parameter.sqldb_sessionsvc_password.value
+  postgres_password   = data.aws_ssm_parameter.sqldb_postgres_password.value
+  yagsvc_password     = data.aws_ssm_parameter.sqldb_yagsvc_password.value
 }
 
 module "yagsvc" {
-  source                    = "../../modules/yagsvc"
-  create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/yagsvc:${local.ver_yagsvc}"
+  source            = "../../modules/yagsvc"
+  create_istio_vs   = var.create_istio_vs
+  docker_image_name = "${local.github_packages_repo_host}/${local.github_packages_repo_name}/yagsvc:${local.ver_yagsvc}"
   # docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
-  replicas                  = 2
+  k8s_namespace = "default"
+  replicas      = 2
   # app config
-  behind_proxy                 = true
-  flask_env                    = "production"
-  oauthlib_insecure_transport  = 1
-  oauthlib_relax_token_scope   = 1
+  behind_proxy                = true
+  flask_env                   = "production"
+  oauthlib_insecure_transport = 1
+  oauthlib_relax_token_scope  = 1
   # secrets
   flask_secret_key             = data.aws_ssm_parameter.yagsvc_flask_secret_key.value
   flask_security_password_salt = data.aws_ssm_parameter.yagsvc_flask_security_password_salt.value
@@ -354,25 +354,25 @@ module "yagsvc" {
 module "istio" {
   source          = "../../modules/istio"
   create_istio_vs = var.create_istio_vs
-  k8s_namespace   = "default"  
-  
+  k8s_namespace   = "default"
+
   # endpoints exposed through the istio gateways (both public and private)
-  hostnames       = local.hostnames
+  hostnames = local.hostnames
 }
 
 module "misc" {
   source          = "../../modules/misc"
   create_istio_vs = var.create_istio_vs
-  
+
   # certman
   cert_manager_issuer_url = "https://acme-v02.api.letsencrypt.org/directory"
   hostnames               = local.hostnames
 }
 
 module "otel" {
-  source                 = "../../modules/otel"
-  create_istio_vs        = var.create_istio_vs
-  k8s_namespace          = "otel"
+  source          = "../../modules/otel"
+  create_istio_vs = var.create_istio_vs
+  k8s_namespace   = "otel"
   # secrets
   grafana_admin_password = data.aws_ssm_parameter.otel_grafana_admin_password.value
 }
