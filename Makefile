@@ -8,3 +8,8 @@ help: ## This help
 .PHONY: lint
 lint: ## Run linters
 	tofu fmt -recursive tofu
+
+.PHONY: upd-prod
+upd-prod: ## Update prod environment
+	cd tofu/envs/prod \
+	&& ./update.sh
