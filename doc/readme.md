@@ -9,11 +9,11 @@ http://loki-gateway.otel
         --url http://localhost:80/cluster/pull_image \
         --header 'content-type: application/json' \
         --header 'user-agent: vscode-restclient' \
-        --data '{"repository": "070143334704.dkr.ecr.us-east-1.amazonaws.com/im.acme.yag.jukebox","tag": "x11_gpu-intel_scummvm_2.8.1_latest"}'
+        --data '{"repository": "ghcr.io/yag-im/jukebox/x11_gpu-intel_scummvm_2.8.1","tag": "latest"}'
 
 Or directly on the node:
 
-    AWS_PROFILE=ecr-ro docker pull 070143334704.dkr.ecr.us-east-1.amazonaws.com/im.acme.yag.jukebox:x11_gpu-intel_scummvm_2.8.1_latest
+    docker pull ghcr.io/yag-im/jukebox/x11_gpu-intel_scummvm_2.8.1:latest
 
 FAQ
 

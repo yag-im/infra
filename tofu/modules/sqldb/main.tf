@@ -90,7 +90,7 @@ resource "kubernetes_stateful_set" "sqldb" {
       spec {
         container {
           # command = [ "sh", "-c", "echo Starting container... && sleep 6000" ]
-          image             = var.docker_image_name
+          image             = var.docker_image
           image_pull_policy = "IfNotPresent"
           name              = "sqldb"
           env_from {
@@ -122,12 +122,6 @@ resource "kubernetes_stateful_set" "sqldb" {
                 command = ["sh", "-c", "pg_ctl -D ${var.pgdata}/pgdata -w -t 60 -m fast stop"]
               }
             }
-          }
-        }
-        dynamic "image_pull_secrets" {
-          for_each = var.docker_image_pull_secrets
-          content {
-            name = image_pull_secrets.value
           }
         }
         volume {

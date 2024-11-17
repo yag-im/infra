@@ -3,13 +3,8 @@ variable "create_istio_vs" {
   default = "false"
 }
 
-variable "docker_image_name" {
+variable "docker_image" {
   type = string
-}
-
-variable "docker_image_pull_secrets" {
-  type    = list(any)
-  default = []
 }
 
 variable "k8s_namespace" {
@@ -36,11 +31,7 @@ variable "appstor_user" {
   type = string
 }
 
-variable "aws_ecr_host" {
-  type = string
-}
-
-variable "aws_ecr_region" {
+variable "jukebox_docker_repo_prefix" {
   type = string
 }
 
@@ -72,14 +63,6 @@ variable "env" {
 }
 
 # app secrets
-
-variable "aws_ecr_access_key" {
-  type = string
-}
-
-variable "aws_ecr_secret_key" {
-  type = string
-}
 
 variable "signaler_auth_token" {
   type = string

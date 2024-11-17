@@ -21,7 +21,7 @@ resource "kubernetes_deployment" "yagsvc" {
       }
       spec {
         container {
-          image             = var.docker_image_name
+          image             = var.docker_image
           image_pull_policy = "IfNotPresent"
           name              = "yagsvc"
           port {
@@ -41,12 +41,6 @@ resource "kubernetes_deployment" "yagsvc" {
             config_map_ref {
               name = "yagsvc-cm"
             }
-          }
-        }
-        dynamic "image_pull_secrets" {
-          for_each = var.docker_image_pull_secrets
-          content {
-            name = image_pull_secrets.value
           }
         }
       }

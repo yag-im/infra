@@ -3,13 +3,8 @@ variable "create_istio_vs" {
   default = "false"
 }
 
-variable "docker_image_name" {
+variable "docker_image" {
   type = string
-}
-
-variable "docker_image_pull_secrets" {
-  type    = list(any)
-  default = []
 }
 
 variable "k8s_namespace" {

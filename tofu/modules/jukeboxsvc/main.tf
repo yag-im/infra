@@ -21,7 +21,7 @@ resource "kubernetes_deployment" "jukeboxsvc" {
       }
       spec {
         container {
-          image             = var.docker_image_name
+          image             = var.docker_image
           image_pull_policy = "IfNotPresent"
           name              = "jukeboxsvc"
           port {
@@ -70,12 +70,6 @@ resource "kubernetes_deployment" "jukeboxsvc" {
         #     }
         #   }
         # }
-        dynamic "image_pull_secrets" {
-          for_each = var.docker_image_pull_secrets
-          content {
-            name = image_pull_secrets.value
-          }
-        }
       }
     }
   }
@@ -106,8 +100,6 @@ resource "kubernetes_config_map" "jukeboxsvc" {
   data = {
     APPSTOR_NODES                                   = jsonencode(var.appstor_nodes)
     APPSTOR_USER                                    = var.appstor_user
-    AWS_ECR_HOST                                    = var.aws_ecr_host
-    AWS_ECR_REGION                                  = var.aws_ecr_region
     FLASK_DEBUG                                     = true
     FLASK_ENV                                       = var.flask_env
     FLASK_PROPAGATE_EXCEPTIONS                      = true
@@ -116,14 +108,13 @@ resource "kubernetes_config_map" "jukeboxsvc" {
     JUKEBOX_CONTAINER_ENV_GST_DEBUG                 = "3,ximagesrc:3,webrtcsink:3,pulsesrc:4,webrtcbin:4,webrtcsrc-signaller:3,vadisplay:3,webrtcsrc-signaller:7"
     JUKEBOX_CONTAINER_STREAMD_MAX_INACTIVITY_PERIOD = 1800
     JUKEBOX_CONTAINER_USER                          = "gamer"
+    JUKEBOX_DOCKER_REPO_PREFIX                      = var.jukebox_docker_repo_prefix
     JUKEBOX_NODE_CLONES_ROOT_DIR                    = "/mnt/appstor"
     JUKEBOX_NODES                                   = jsonencode(var.jukebox_nodes)
     SIGNALER_HOST                                   = var.signaler_host
     SIGNALER_URI                                    = var.signaler_uri
     STUN_URI                                        = var.stun_uri
     # secrets
-    AWS_ECR_ACCESS_KEY  = var.aws_ecr_access_key
-    AWS_ECR_SECRET_KEY  = var.aws_ecr_secret_key
     SIGNALER_AUTH_TOKEN = var.signaler_auth_token
   }
 }

@@ -21,7 +21,7 @@ resource "kubernetes_deployment" "bastion" {
       }
       spec {
         container {
-          image             = var.docker_image_name
+          image             = var.docker_image
           image_pull_policy = "IfNotPresent"
           name              = "bastion"
           port {
@@ -62,12 +62,6 @@ resource "kubernetes_deployment" "bastion" {
         }
         security_context {
           fs_group = 1000
-        }
-        dynamic "image_pull_secrets" {
-          for_each = var.docker_image_pull_secrets
-          content {
-            name = image_pull_secrets.value
-          }
         }
       }
     }

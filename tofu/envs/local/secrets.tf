@@ -1,13 +1,5 @@
 # https://us-east-1.console.aws.amazon.com/systems-manager/parameters/?region=us-east-1&tab=Table
 
-data "aws_ssm_parameter" "jukeboxsvc_aws_ecr_access_key" {
-  name = "/jukeboxsvc/aws_ecr_access_key"
-}
-
-data "aws_ssm_parameter" "jukeboxsvc_aws_ecr_secret_key" {
-  name = "/jukeboxsvc/aws_ecr_secret_key"
-}
-
 data "aws_ssm_parameter" "otel_grafana_admin_password" {
   name = "/otel/grafana_admin_password"
 }

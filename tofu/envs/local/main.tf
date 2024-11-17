@@ -47,14 +47,10 @@ locals {
       ssh_port : 2200
     }
   ]
-  aws_ecr_repo_host         = "070143334704.dkr.ecr.us-east-1.amazonaws.com"
-  aws_ecr_repo_region       = "us-east-1"
-  docker_images_repo_host   = "docker.io" # set equal to aws_ecr_repo_host for dev and prod envs
-  docker_images_repo_prefix = "library/"
+  docker_repo_prefix = "docker.io/library"
   hostnames = {
     bastion    = "bastion.${local.public_tld}"
     grafana    = "grafana.${local.public_tld}"
-    mcc        = "mcc.${local.public_tld}"
     webapp     = local.public_tld
     otelcol_gw = "otelcol-gw.${local.private_tld}"
   }
@@ -64,8 +60,6 @@ locals {
   ver_bastion    = "dev"
   ver_jobs       = "dev"
   ver_jukeboxsvc = "dev"
-  ver_mcc        = "dev"
-  ver_mccsvc     = "dev"
   ver_portsvc    = "dev"
   ver_sessionsvc = "dev"
   ver_sigsvc     = "dev"
@@ -81,12 +75,11 @@ locals {
 # }
 
 module "appsvc" {
-  source                    = "../../modules/appsvc"
-  create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}appsvc:${local.ver_appsvc}"
-  docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
-  replicas                  = 3
+  source          = "../../modules/appsvc"
+  create_istio_vs = var.create_istio_vs
+  docker_image    = "${local.docker_repo_prefix}/appsvc:${local.ver_appsvc}"
+  k8s_namespace   = "default"
+  replicas        = 3
   # app config
   # should be defined from West to East direction for smart RTT configuration
   data_centers                = ["us-west-1", "eu-central-1"]
@@ -133,36 +126,33 @@ module "appsvc" {
 }
 
 module "bastion" {
-  source                    = "../../modules/bastion"
-  create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}infra.bastion:${local.ver_bastion}"
-  docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
-  env                       = "local"
+  source          = "../../modules/bastion"
+  create_istio_vs = var.create_istio_vs
+  docker_image    = "${local.docker_repo_prefix}/bastion:${local.ver_bastion}"
+  k8s_namespace   = "default"
+  env             = "local"
 }
 
 module "jobs" {
-  source                    = "../../modules/jobs"
-  create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}jobs:${local.ver_jobs}"
-  docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
-  replicas                  = 1
+  source          = "../../modules/jobs"
+  create_istio_vs = var.create_istio_vs
+  docker_image    = "${local.docker_repo_prefix}/jobs:${local.ver_jobs}"
+  k8s_namespace   = "default"
+  replicas        = 1
 }
 
 module "jukeboxsvc" {
-  source                    = "../../modules/jukeboxsvc"
-  create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}jukeboxsvc:${local.ver_jukeboxsvc}"
-  docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
-  replicas                  = 3
+  source          = "../../modules/jukeboxsvc"
+  create_istio_vs = var.create_istio_vs
+  docker_image    = "${local.docker_repo_prefix}/jukeboxsvc:${local.ver_jukeboxsvc}"
+  k8s_namespace   = "default"
+  replicas        = 3
   # app config
   # appstor_pvcs              = module.appstor_nfs.pvcs
-  appstor_nodes  = local.appstor_nodes
-  appstor_user   = "vagrant"
-  aws_ecr_host   = local.aws_ecr_repo_host
-  aws_ecr_region = local.aws_ecr_repo_region
+  appstor_nodes              = local.appstor_nodes
+  appstor_user               = "vagrant"
+  jukebox_docker_repo_prefix = "${local.docker_repo_prefix}/jukebox"
+  env                        = "local"
   jukebox_nodes = [
     {
       api_uri : "http://host.minikube.internal:12375",
@@ -186,38 +176,36 @@ module "jukeboxsvc" {
   signaler_uri  = "ws://10.108.160.177/webrtc" # this should be a public gw ip (check kubectl get svc -n istio-gw-public istio-gw-public output)
   stun_uri      = "stun://10.0.2.2:3478"
   # secrets
-  aws_ecr_access_key  = data.aws_ssm_parameter.jukeboxsvc_aws_ecr_access_key.value
-  aws_ecr_secret_key  = data.aws_ssm_parameter.jukeboxsvc_aws_ecr_secret_key.value
   signaler_auth_token = data.aws_ssm_parameter.sigsvc_auth_token.value
 }
 
-/*
-module "mcc" {
-  source                    = "../../modules/mcc"
-  create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}mcc:${local.ver_mcc}"
-  docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
-  replicas                  = 3
-}*/
-
 module "webapp" {
-  source                    = "../../modules/webapp"
-  create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}webapp:${local.ver_webapp}"
-  docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
-  replicas                  = 3
-  app_env                   = "dev"
+  source          = "../../modules/webapp"
+  create_istio_vs = var.create_istio_vs
+  docker_image    = "${local.docker_repo_prefix}/webapp:${local.ver_webapp}"
+  k8s_namespace   = "default"
+  replicas        = 3
+  app_env         = "dev"
+}
+
+module "portsvc" {
+  source          = "../../modules/portsvc"
+  create_istio_vs = var.create_istio_vs
+  docker_image    = "${local.docker_repo_prefix}/portsvc:${local.ver_portsvc}"
+  k8s_namespace   = "default"
+  replicas        = 3
+  # app config
+  flask_env = "development"
+  # secrets
+  sqldb_password = data.aws_ssm_parameter.sqldb_portsvc_password.value
 }
 
 module "sessionsvc" {
-  source                    = "../../modules/sessionsvc"
-  create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}sessionsvc:${local.ver_sessionsvc}"
-  docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
-  replicas                  = 3
+  source          = "../../modules/sessionsvc"
+  create_istio_vs = var.create_istio_vs
+  docker_image    = "${local.docker_repo_prefix}/sessionsvc:${local.ver_sessionsvc}"
+  k8s_namespace   = "default"
+  replicas        = 3
   # app config
   flask_env = "development"
   # secrets
@@ -225,12 +213,11 @@ module "sessionsvc" {
 }
 
 module "sigsvc" {
-  source                    = "../../modules/sigsvc"
-  create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}webrtc.sigsvc:${local.ver_sigsvc}"
-  docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
-  replicas                  = 3
+  source          = "../../modules/sigsvc"
+  create_istio_vs = var.create_istio_vs
+  docker_image    = "${local.docker_repo_prefix}/sigsvc:${local.ver_sigsvc}"
+  k8s_namespace   = "default"
+  replicas        = 3
   # app config
   debug_no_auth = "false"
   # secrets
@@ -240,10 +227,9 @@ module "sigsvc" {
 }
 
 module "sqldb" {
-  source                    = "../../modules/sqldb"
-  docker_image_name         = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}sqldb:${local.ver_sqldb}"
-  docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
+  source        = "../../modules/sqldb"
+  docker_image  = "${local.docker_repo_prefix}/sqldb:${local.ver_sqldb}"
+  k8s_namespace = "default"
   # app config
   host_data_path     = "/data/postgres" # created under: /var/lib/docker/volumes/minikube-mXX/_data/data/postgres in minikube (maps into /var/lib/postgresql/data inside container)
   pgdata             = "/var/lib/postgresql/data"
@@ -268,13 +254,13 @@ module "sqldb" {
 }
 
 module "yagsvc" {
-  source                    = "../../modules/yagsvc"
-  create_istio_vs           = var.create_istio_vs
-  docker_image_name         = "${local.docker_images_repo_host}/${local.docker_images_repo_prefix}yagsvc:${local.ver_yagsvc}"
-  docker_image_pull_secrets = var.docker_image_pull_secrets
-  k8s_namespace             = "default"
-  replicas                  = 3
+  source          = "../../modules/yagsvc"
+  create_istio_vs = var.create_istio_vs
+  docker_image    = "${local.docker_repo_prefix}/yagsvc:${local.ver_yagsvc}"
+  k8s_namespace   = "default"
+  replicas        = 3
   # app config
+  behind_proxy                = false
   flask_env                   = "development"
   oauthlib_insecure_transport = 1
   oauthlib_relax_token_scope  = 1

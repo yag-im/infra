@@ -21,7 +21,7 @@ resource "kubernetes_deployment" "jobs" {
       }
       spec {
         container {
-          image             = var.docker_image_name
+          image             = var.docker_image
           image_pull_policy = "IfNotPresent"
           name              = "jobs"
           resources {
@@ -38,12 +38,6 @@ resource "kubernetes_deployment" "jobs" {
             config_map_ref {
               name = "jobs-cm"
             }
-          }
-        }
-        dynamic "image_pull_secrets" {
-          for_each = var.docker_image_pull_secrets
-          content {
-            name = image_pull_secrets.value
           }
         }
       }

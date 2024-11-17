@@ -34,7 +34,7 @@ Init AWS secrets storage: execute commands from tofu/secrets.txt, e.g.
 
     export AWS_PROFILE=yag-dev
     export AWS_REGION=us-east-1
-    aws ssm put-parameter --profile "$AWS_PROFILE" --region "$AWS_REGION" --name "/jukeboxsvc/aws_ecr_access_key" --value "xxx" --type SecureString
+    aws ssm put-parameter --profile "$AWS_PROFILE" --region "$AWS_REGION" --name "/otel/grafana_admin_password" --value "********" --type SecureString
     ...
 
 ## Cloud init
