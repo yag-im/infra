@@ -80,7 +80,7 @@ locals {
   ver_sessionsvc = "0.0.17"
   ver_sigsvc     = "0.1.0"
   ver_sqldb      = "0.0.2"
-  ver_webapp     = "0.2.0"
+  ver_webapp     = "0.2.2"
   ver_yagsvc     = "0.1.3"
 }
 
