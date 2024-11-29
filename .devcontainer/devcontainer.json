@@ -15,7 +15,8 @@
 		"vscode": {
 			"extensions": [
 				"gamunu.opentofu",
-				"humao.rest-client"
+				"humao.rest-client",
+				"systemticks.c4-dsl-extension"
 			]
 		}
 	},

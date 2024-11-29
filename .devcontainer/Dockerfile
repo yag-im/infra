@@ -2,8 +2,10 @@ FROM mcr.microsoft.com/devcontainers/python:0-3.11
 
 ARG DEBIAN_FRONTEND=noninteractive
 
+# openjdk-17-jre is required for systemticks.c4-dsl-extension
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
+        openjdk-17-jre \
         jq \
         vim \
         wget \  
@@ -29,9 +31,9 @@ ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 # aws-cdk
 RUN npm install -g aws-cdk
 
-# ovh
-# deps below are only applicable for OVH dev/prod deployments
+# Cloud deployments deps
 
+## OVH
 RUN python3 -m pip install python-openstackclient
 
 ## opentofu

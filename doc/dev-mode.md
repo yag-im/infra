@@ -1,7 +1,12 @@
 # Developer Mode
 
-This mode is intended for experienced Python developers with basic DevOps skills. In this mode, all service instances 
-run on the local host within Docker containers (indirectly through devcontainers in the IDE (VS Code is recommended)).
+This mode is intended for experienced software engineers with basic DevOps skills. Backend of `yag.im` is written in 
+Python, except of a few components. In this mode, all service instances run on the local host within Docker containers 
+(as devcontainers in the IDE (VS Code is recommended)).
+Basically the deployment diagram will look as below:
+
+![screenshot](images/structurizr-Deployment-001.png)
+![screenshot](images/structurizr-Deployment-001-key.png)
 
 ## Prerequisite
 
@@ -62,7 +67,7 @@ If you don't own an extra SSD drive, local folders should also work:
     mkdir -p ~/yag/data/scrapers
     mkdir -p ~/yag/data/sqldb
 
-#### Init data
+#### Init storage data
 
 Now we need to init local storage with some data. At least scrapers data folder should be initialized in order to 
 start the local SQL DB instance (next step). For this, clone [scrapers](https://github.com/yag-im/scrapers) project and 
@@ -75,3 +80,15 @@ After [SQL DB](https://github.com/yag-im/sqldb) repo is cloned, SQL DB docker co
 manually. Follow instructions from the `development` section of the 
 [README](https://github.com/yag-im/sqldb?tab=readme-ov-file#development) document.
 This step will also require [ports](https://github.com/yag-im/ports) repo to be cloned to init `games.releases` table.
+
+### Web Proxy
+
+In order to route queries from application running in a web browser to respective endpoints, an instance of web proxy
+is required. The main purpose of this instance is routing following types of queries:
+
+    /api - to the yagsvc (API gateway)
+    /webrtc - to the sigsvc (WebRTC Signaling Service)
+    / - to the webapp (NextJS server-side functionality)
+
+### Devconatiners
+
