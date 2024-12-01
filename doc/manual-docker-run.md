@@ -1,6 +1,6 @@
 # manual docker run
 
-## dev
+## dev cloud
 
 ### gpu-intel
 
@@ -52,7 +52,7 @@
         --mount type=volume,source=appstor-vol,target=/opt/yag,volume-subpath=0/the-black-mirror/1596ac0f-47e5-4a97-98bc-528e204fc694 \
         ghcr.io/yag-im/jukebox/x11_cpu_wine_9.0:latest
 
-## local host run
+## local host
 
 ### gpu-intel
 

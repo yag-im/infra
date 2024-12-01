@@ -1,9 +1,11 @@
-# 1. appstor
+Instructions below are applicable for cloud-based deployments with dedicated application storage instances (appstor).
 
-Depending on order of execution, main storage could be attached as /dev/sdb or dev/sda. This can go out of sync when
-e.g. openstack appstor instance resource is being rebuilt from tofu.
+# Appstor instance
 
-Make sure main storage is /dev/sdb before running ansible init script:
+Depending on order of execution in the openshift init script (OVH), main storage could be attached as `/dev/sdb` or 
+`dev/sda`. This can go out of sync when e.g. openstack appstor instance resource is being rebuilt from tofu.
+
+Make sure main storage is `/dev/sdb` before running the ansible init script:
 
     debian@appstor-instance:~$ ls -la /dev | grep sd
     brw-rw----  1 root disk      8,   0 Jul 17 18:40 sda
@@ -13,7 +15,7 @@ Make sure main storage is /dev/sdb before running ansible init script:
     brw-rw----  1 root disk      8,  16 Jul 17 18:40 sdb
 
 For this you may need to recreate "appstor_instance" and "appstor_volume_attach" resources:
-comment them in /workspaces/infra/tofu/modules/ovh/appstor.tf, update, then uncomment and update again.
+comment them in /workspaces/infra/tofu/modules/ovh/appstor.tf, update tofu, then uncomment and update again.
 
 ## devices
 
@@ -34,7 +36,7 @@ Binds `/opt/yag/data/appstor` into `/mnt` and:
     exporting *:/mnt/apps_src
     exporting *:/mnt
 
-# 2. jukebox node (app runner)
+# jukebox node (apps runner)
 
 ## docker volume
 
@@ -46,7 +48,7 @@ Local dev:
         --opt device=~/yag/data/ports/clones \
         appstor-vol
 
-or
+or cloud (NFS) mode:
 
     docker volume create --driver local \
         -o type=nfs \
@@ -54,7 +56,7 @@ or
         -o device=:/clones \
         appstor-vol
 
-## fstab (deprecated, use docker volume instead))
+## fstab (deprecated, use docker volume instead)
 
     {appstor_dc_ip}:/clones /mnt/appstor/ nfs nfsvers=4,minorversion=2,proto=tcp,fsc,nocto 0 0
 
@@ -62,26 +64,23 @@ or
 
 Binds `{appstor-vol}/{user_id}/{app_release_slug}/{app_release_uuid}` into `/opt/yag`
 
-# 3. jukeboxsvc
+# jukeboxsvc
 
-Performs apps' clone (apps -> clones) functionality.
+Performs apps cloning (apps -> clones) operation by SSH-ing into appstor instance and CoW-ing app bundle
+(check implementation in the [clone_app.sh](../ansible/roles/appstor/files/clone_app.sh)) script.
 
-## fstab (deprecated, use ssh to jukebox node)
+# Expanding appstor space
 
-    {appstor_dc1_ip}:/ /mnt/appstor/{dc1} nfs nfsvers=4,minorversion=2,proto=tcp,fsc,nocto 0 0
-    {appstor_dc2_ip}:/ /mnt/appstor/{dc2} nfs nfsvers=4,minorversion=2,proto=tcp,fsc,nocto 0 0
+1. In OVH panel, open `Storage -> Block Storage`. Extend size of instances. They'll be reattached to instances afterwards;
+2. Reboot appstor instance (this may lead to inaccessible node by ssh; try stop/start instance (not reboot), and it 
+somehow gets to normal state); See "Storage order attach problem" at the top of this document if reboot fails.
+3. Run: 
+    
+        sudo btrfs filesystem resize max /opt/yag/data/appstor;
 
-Note: when using in a local dev env (from devcontainer), you must rebuild jukeboxsvc devcontainer every time machine is 
-rebooted to mount `/mnt/appstor_nfs` from host properly.
+on each node after reboot.
 
-# Extend appstor space
-
-1. In OVH panel, open Storage -> Block Storage. Extend size of instances. They'll be reattached to instances afterwards;
-2. Reboot appstor instance (this may lead to inaccessible node by ssh; try stop/start instance (not reboot), and it somehow gets to normal state);
-3. sudo btrfs filesystem resize max /opt/yag/data/appstor;
 4. update volume_size in ovh module in tofu.
-
-See #1 at the top of this document if reboot fails.
 
 # Useful commands
 
@@ -91,10 +90,10 @@ Get BTRFS UUID:
 
 Check beesd logs\status:
 
-    sudo journalctl -f -u beesd@abea410a-048c-48a1-ae21-0efffe006347
-    sudo systemctl status beesd@abea410a-048c-48a1-ae21-0efffe006347
+    sudo journalctl -f -u beesd@$(sudo blkid -s UUID -o value /dev/sdb)
+    sudo systemctl status beesd@(sudo blkid -s UUID -o value /dev/sdb)
     
-    sudo btrfs filesystem du -s --human-readable 
+    sudo btrfs filesystem du -s --human-readable .
     
     sudo apt install btrfs-compsize
     sudo compsize /opt/yag/data/appstor

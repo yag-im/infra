@@ -5,7 +5,7 @@ Configs locations:
     tofu/envs/${ENV}/.env                          - used to bootstrap a k8s cluster
     tofu/envs/${ENV}/variables.tf                  - k8s modules config parameters
 
-Secrets locations (make sure they're not part of any source trees):
+Secrets locations (make sure they're not part of any sources trees):
 
     ansible/envs/${ENV}/group_vars/all/vault
     ansible/envs/${ENV}/.vault_pwd                 - used from ansible playbooks
