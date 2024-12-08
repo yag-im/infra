@@ -71,16 +71,19 @@ Performs apps cloning (apps -> clones) operation by SSH-ing into appstor instanc
 
 # Expanding appstor space
 
-1. In OVH panel, open `Storage -> Block Storage`. Extend size of instances. They'll be reattached to instances afterwards;
-2. Reboot appstor instance (this may lead to inaccessible node by ssh; try stop/start instance (not reboot), and it 
-somehow gets to normal state); See "Storage order attach problem" at the top of this document if reboot fails.
-3. Run: 
-    
-        sudo btrfs filesystem resize max /opt/yag/data/appstor;
+1. In OVH panel, open `Storage -> Block Storage`. Extend size of instances.
+2. Detach storage from instance.
+3. Shut down instance.
+4. Attach storage to instance.
+5. Boot instance.
+If boot fails, try to recreate instances from tofu (see above).
+6. Run:
+
+        sudo btrfs filesystem resize max /opt/yag/data/appstor
 
 on each node after reboot.
 
-4. update volume_size in ovh module in tofu.
+7. update volume_size in ovh module in tofu.
 
 # Useful commands
 
@@ -99,7 +102,7 @@ Check beesd logs\status:
     sudo compsize /opt/yag/data/appstor
     sudo compsize /opt/yag/data/appstor/clones/0/red-comrades-save-the-galaxy/eaa1474d-6945-4991-8132-cef009b0fd58/D
 
-lsyncd is not running (status shows active/exited):
+lsyncd is not running on main instance (`sudo systemctl status lsyncd` shows active/exited):
 
     sudo systemctl stop lsyncd
     sudo systemctl start lsyncd

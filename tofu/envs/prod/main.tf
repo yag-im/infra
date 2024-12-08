@@ -205,7 +205,7 @@ module "ovh" {
     flavor          = "b3-8"
     nodes           = local.appstor_nodes
     public_key_path = "${path.root}/../../modules/bastion/files/secrets/prod/id_ed25519.pub"
-    volume_size     = 100 # in GBs
+    volume_size     = 200 # in GBs
   }
   k8s = {
     desired_nodes = 2

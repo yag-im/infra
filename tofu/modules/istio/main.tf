@@ -111,7 +111,6 @@ resource "kubernetes_manifest" "istio_gw_public" {
         { # web apps
           hosts = [
             var.hostnames["grafana"],
-            #var.hostnames["mcc"],
             var.hostnames["webapp"]
           ]
           port = {
@@ -127,7 +126,6 @@ resource "kubernetes_manifest" "istio_gw_public" {
         { # web apps (unsecure, for local tests only)
           hosts = [
             var.hostnames["grafana"],
-            #var.hostnames["mcc"],
             var.hostnames["webapp"]
           ]
           port = {
