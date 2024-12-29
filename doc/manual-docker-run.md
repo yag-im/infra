@@ -26,7 +26,7 @@
         --device=/dev/snd/seq \
         --shm-size="2g" \
         --mount type=volume,source=appstor-vol,target=/opt/yag,volume-subpath=0/bad-mojo/018a9877-1ae1-45b4-a04f-0098a4ceb73f \
-        ghcr.io/yag-im/jukebox/x11_gpu-intel_dosbox-x_2024.03.01:latest
+        ghcr.io/yag-im/jukebox/x11_gpu-intel_dosbox-x:2024.12.04
 
 ### cpu
 
@@ -50,7 +50,7 @@
         --device=/dev/snd/seq \
         --shm-size="2g" \
         --mount type=volume,source=appstor-vol,target=/opt/yag,volume-subpath=0/the-black-mirror/1596ac0f-47e5-4a97-98bc-528e204fc694 \
-        ghcr.io/yag-im/jukebox/x11_cpu_wine_9.0:latest
+        ghcr.io/yag-im/jukebox/x11_cpu_wine:9.0
 
 ## local host
 
@@ -78,7 +78,7 @@
         --device=/dev/snd/seq \
         --shm-size="2g" \
         --mount type=volume,source=appstor-vol,target=/opt/yag,volume-subpath=0/the-prince-and-the-coward/02959ab5-aefb-44a1-b2ca-4fe5cd515f04 \
-        x11_gpu-intel_wine_9.0:latest
+        x11_gpu-intel_wine:9.0
 
 ### cpu
 
@@ -102,4 +102,4 @@
         --device=/dev/snd/seq \
         --shm-size="2g" \
         --mount type=volume,source=appstor-vol,target=/opt/yag,volume-subpath=0/versailles-1685/46ba41a8-6a36-45f9-a594-278c2e2d0af0 \
-        x11_cpu_scummvm_2.8.1:latest
+        x11_cpu_scummvm:2.9.0

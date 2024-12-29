@@ -9,11 +9,11 @@ http://loki-gateway.otel
         --url http://localhost:80/cluster/pull_image \
         --header 'content-type: application/json' \
         --header 'user-agent: vscode-restclient' \
-        --data '{"repository": "ghcr.io/yag-im/jukebox/x11_gpu-intel_scummvm_2.8.1","tag": "latest"}'
+        --data '{"repository": "ghcr.io/yag-im/jukebox/x11_gpu-intel_scummvm","tag": "2.9.0"}'
 
 Or directly on the node:
 
-    docker pull ghcr.io/yag-im/jukebox/x11_gpu-intel_scummvm_2.8.1:latest
+    docker pull ghcr.io/yag-im/jukebox/x11_gpu-intel_scummvm:2.9.0
 
 FAQ
 

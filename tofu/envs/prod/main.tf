@@ -72,16 +72,16 @@ locals {
   }
   public_tld     = "yag.im"
   private_tld    = "yag.internal"
-  ver_appsvc     = "0.1.3"
+  ver_appsvc     = "0.1.4"
   ver_bastion    = "0.0.5"
-  ver_jobs       = "0.1.0"
-  ver_jukeboxsvc = "0.1.5"
-  ver_portsvc    = "0.0.11"
-  ver_sessionsvc = "0.0.17"
-  ver_sigsvc     = "0.1.0"
+  ver_jobs       = "0.1.3"
+  ver_jukeboxsvc = "0.2.1"
+  ver_portsvc    = "0.0.18"
+  ver_sessionsvc = "0.0.18"
+  ver_sigsvc     = "0.1.1"
   ver_sqldb      = "0.0.2"
-  ver_webapp     = "0.2.3"
-  ver_yagsvc     = "0.1.3"
+  ver_webapp     = "0.2.4"
+  ver_yagsvc     = "0.1.4"
 }
 
 # Only jukeboxsvc was consuming this resource, but due to server-side copy restrictions, it's now deprecated
@@ -100,7 +100,6 @@ module "appsvc" {
   # should be defined from West to East direction for smart RTT configuration
   data_centers                = ["us-west-1", "us-east-1"]
   flask_env                   = "production"
-  jukebox_container_image_rev = "latest"
   runners = {
     dosbox-x = {
       ver           = "2024.03.01",

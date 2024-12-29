@@ -100,7 +100,6 @@ module "appsvc" {
   # should be defined from West to East direction for smart RTT configuration
   data_centers                = ["us-west-1"]
   flask_env                   = "development"
-  jukebox_container_image_rev = "latest"
   runners = {
     dosbox-x = {
       ver           = "2024.03.01",

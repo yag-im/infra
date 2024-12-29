@@ -24,10 +24,6 @@ variable "flask_env" {
   type = string
 }
 
-variable "jukebox_container_image_rev" {
-  type = string
-}
-
 variable "runners" {
   type = map(object({
     ver           = string
