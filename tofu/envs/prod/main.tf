@@ -82,7 +82,7 @@ locals {
   ver_sqldb      = "0.0.2"
   ver_webapi     = "0.1.7"
   ver_webapp     = "0.2.6"
-  ver_webproxy   = "0.0.7"
+  ver_webproxy   = "0.0.8"
 }
 
 module "appsvc" {
