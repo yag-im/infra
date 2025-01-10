@@ -10,19 +10,19 @@ participant sessionsvc
 participant appsvc
 participant jukeboxsvc
 participant jukebox node
-participant yagsvc
+participant webapi
 
 user->ua: open games catalog
 activate ua
-ua->yagsvc: get list of apps
-activate yagsvc
-ua<--yagsvc: list of apps
-deactivate yagsvc
+ua->webapi: get list of apps
+activate webapi
+ua<--webapi: list of apps
+deactivate webapi
 user->ua: click on game card
-ua->yagsvc: get app release details
-activate yagsvc
-ua<--yagsvc: app release details
-deactivate yagsvc
+ua->webapi: get app release details
+activate webapi
+ua<--webapi: app release details
+deactivate webapi
 user->ua: click "PLAY GAME" button
 ua->sigsvc: connect: ws_conn_id=...
 activate sigsvc

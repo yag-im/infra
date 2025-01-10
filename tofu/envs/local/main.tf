@@ -51,8 +51,8 @@ locals {
   hostnames = {
     bastion    = "bastion.${local.public_tld}"
     grafana    = "grafana.${local.public_tld}"
-    webapp     = local.public_tld
     otelcol_gw = "otelcol-gw.${local.private_tld}"
+    webproxy   = local.public_tld
   }
   public_tld     = "yag.mk"
   private_tld    = "yag.internal"
@@ -64,15 +64,10 @@ locals {
   ver_sessionsvc = "dev"
   ver_sigsvc     = "dev"
   ver_sqldb      = "dev"
+  ver_webapi     = "dev"
   ver_webapp     = "dev"
-  ver_yagsvc     = "dev"
+  ver_webproxy   = "dev"
 }
-
-# Only jukeboxsvc was consuming this resource, but due to server-side copy restrictions, it's now deprecated
-# module "appstor_nfs" {
-#   source  = "../../modules/appstor_nfs"
-#   servers = local.appstor_nodes
-# }
 
 module "appsvc" {
   source          = "../../modules/appsvc"
@@ -81,36 +76,36 @@ module "appsvc" {
   k8s_namespace   = "default"
   replicas        = 3
   # app config
-  # should be defined from West to East direction for smart RTT configuration
-  data_centers                = ["us-west-1", "eu-central-1"]
-  flask_env                   = "development"
+  # should be defined in "West to East" direction for smart RTT configuration
+  data_centers = ["us-west-1", "eu-central-1"]
+  flask_env    = "development"
   runners = {
     dosbox-x = {
-      ver           = "2024.03.01",
+      ver           = "2024.12.04",
       window_system = "x11",
       igpu          = false,
       dgpu          = false
     },
     dosbox-staging = {
-      ver           = "0.81.1",
+      ver           = "0.82.0",
       window_system = "x11",
       igpu          = false,
       dgpu          = false
     },
     dosbox = {
-      ver           = "0.74-3-4",
+      ver           = "0.74-3",
       window_system = "x11",
       igpu          = false,
       dgpu          = false
     },
     scummvm = {
-      ver           = "2.8.1",
+      ver           = "2.9.0",
       window_system = "x11",
       igpu          = false,
       dgpu          = false
     },
     wine = {
-      ver           = "9.0.0.0",
+      ver           = "9.0",
       window_system = "x11",
       igpu          = false,
       dgpu          = false
@@ -171,9 +166,9 @@ module "jukeboxsvc" {
     }
   ]
   flask_env     = "development"
-  signaler_host = local.public_tld             # this should go in headers (host) from jukebox to sigsvc for a proper routing
-  signaler_uri  = "ws://10.108.160.177/webrtc" # this should be a public gw ip (check kubectl get svc -n istio-gw-public istio-gw-public output)
-  stun_uri      = "stun://10.0.2.2:3478"
+  signaler_host = local.public_tld                     # this should go in headers (host) from jukebox to sigsvc for a proper routing
+  signaler_uri  = "ws://10.108.160.177/webrtc/streamd" # this should be a public gw ip (check kubectl get svc -n istio-gw-public istio-gw-public output)
+  stun_uri      = "stun://stun.l.google.com:19302"
   # secrets
   signaler_auth_token = data.aws_ssm_parameter.sigsvc_auth_token.value
 }
@@ -217,12 +212,6 @@ module "sigsvc" {
   docker_image    = "${local.docker_repo_prefix}/sigsvc:${local.ver_sigsvc}"
   k8s_namespace   = "default"
   replicas        = 3
-  # app config
-  debug_no_auth = "false"
-  # secrets
-  auth_token                   = data.aws_ssm_parameter.sigsvc_auth_token.value
-  flask_secret_key             = data.aws_ssm_parameter.yagsvc_flask_secret_key.value
-  flask_security_password_salt = data.aws_ssm_parameter.yagsvc_flask_security_password_salt.value
 }
 
 module "sqldb" {
@@ -239,42 +228,49 @@ module "sqldb" {
   yag_db             = "yag"
   # users
   appsvc_user     = "appsvc"
-  mccsvc_user     = "mccsvc"
+  authsvc_user    = "authsvc"
   portsvc_user    = "portsvc"
   sessionsvc_user = "sessionsvc"
-  yagsvc_user     = "yagsvc"
   # secrets
   appsvc_password     = data.aws_ssm_parameter.sqldb_appsvc_password.value
-  mccsvc_password     = data.aws_ssm_parameter.sqldb_mccsvc_password.value
+  authsvc_password    = data.aws_ssm_parameter.sqldb_authsvc_password.value
   portsvc_password    = data.aws_ssm_parameter.sqldb_portsvc_password.value
   sessionsvc_password = data.aws_ssm_parameter.sqldb_sessionsvc_password.value
   postgres_password   = data.aws_ssm_parameter.sqldb_postgres_password.value
-  yagsvc_password     = data.aws_ssm_parameter.sqldb_yagsvc_password.value
 }
 
-module "yagsvc" {
-  source          = "../../modules/yagsvc"
+module "webapi" {
+  source          = "../../modules/webapi"
   create_istio_vs = var.create_istio_vs
-  docker_image    = "${local.docker_repo_prefix}/yagsvc:${local.ver_yagsvc}"
+  docker_image    = "${local.docker_repo_prefix}/webapi:${local.ver_webapi}"
   k8s_namespace   = "default"
   replicas        = 3
   # app config
-  behind_proxy                = false
+  behind_proxy                = true
   flask_env                   = "development"
   oauthlib_insecure_transport = 1
   oauthlib_relax_token_scope  = 1
   # secrets
-  flask_secret_key             = data.aws_ssm_parameter.yagsvc_flask_secret_key.value
-  flask_security_password_salt = data.aws_ssm_parameter.yagsvc_flask_security_password_salt.value
-  sqldb_password               = data.aws_ssm_parameter.sqldb_yagsvc_password.value
+  flask_secret_key             = data.aws_ssm_parameter.authsvc_flask_secret_key.value
+  flask_security_password_salt = data.aws_ssm_parameter.authsvc_flask_security_password_salt.value
+  sigsvc_auth_token            = data.aws_ssm_parameter.sigsvc_auth_token.value
+  sqldb_password               = data.aws_ssm_parameter.sqldb_authsvc_password.value
   discord_oauth_client_id      = var.discord_oauth_client_id
-  discord_oauth_client_secret  = data.aws_ssm_parameter.yagsvc_discord_oauth_client_secret.value
+  discord_oauth_client_secret  = data.aws_ssm_parameter.authsvc_discord_oauth_client_secret.value
   google_oauth_client_id       = var.google_oauth_client_id
-  google_oauth_client_secret   = data.aws_ssm_parameter.yagsvc_google_oauth_client_secret.value
+  google_oauth_client_secret   = data.aws_ssm_parameter.authsvc_google_oauth_client_secret.value
   reddit_oauth_client_id       = var.reddit_oauth_client_id
   reddit_oauth_client_secret   = var.reddit_oauth_client_secret
   twitch_oauth_client_id       = var.twitch_oauth_client_id
-  twitch_oauth_client_secret   = data.aws_ssm_parameter.yagsvc_twitch_oauth_client_secret.value
+  twitch_oauth_client_secret   = data.aws_ssm_parameter.authsvc_twitch_oauth_client_secret.value
+}
+
+module "webproxy" {
+  source          = "../../modules/webproxy"
+  create_istio_vs = var.create_istio_vs
+  docker_image    = "${local.docker_repo_prefix}/webproxy:${local.ver_webproxy}"
+  k8s_namespace   = "default"
+  replicas        = 3
 }
 
 # TODO: istio, misc and otel modules should come at the end, otherwise tofu fails to init

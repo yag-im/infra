@@ -101,7 +101,7 @@ class DnsStack(Stack):
                 ),
             )
 
-        for hostname in {'', 'bastion', 'grafana', 'mcc'}:
+        for hostname in {'', 'bastion', 'grafana'}:
             aws_r53.RecordSet(
                 self, 
                 id=f"record-set-{hostname}",

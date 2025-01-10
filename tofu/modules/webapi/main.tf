@@ -1,8 +1,8 @@
-resource "kubernetes_deployment" "yagsvc" {
+resource "kubernetes_deployment" "webapi" {
   metadata {
-    name = "yagsvc-deployment"
+    name = "webapi-deployment"
     labels = {
-      app = "yagsvc"
+      app = "webapi"
     }
     namespace = var.k8s_namespace
   }
@@ -10,20 +10,20 @@ resource "kubernetes_deployment" "yagsvc" {
     replicas = var.replicas
     selector {
       match_labels = {
-        app = "yagsvc"
+        app = "webapi"
       }
     }
     template {
       metadata {
         labels = {
-          app = "yagsvc"
+          app = "webapi"
         }
       }
       spec {
         container {
           image             = var.docker_image
           image_pull_policy = "IfNotPresent"
-          name              = "yagsvc"
+          name              = "webapi"
           port {
             container_port = 80
           }
@@ -39,7 +39,7 @@ resource "kubernetes_deployment" "yagsvc" {
           }
           env_from {
             config_map_ref {
-              name = "yagsvc-cm"
+              name = "webapi-cm"
             }
           }
         }
@@ -48,14 +48,14 @@ resource "kubernetes_deployment" "yagsvc" {
   }
 }
 
-resource "kubernetes_service" "yagsvc" {
+resource "kubernetes_service" "webapi" {
   metadata {
-    name      = "yagsvc"
+    name      = "webapi"
     namespace = var.k8s_namespace
   }
   spec {
     selector = {
-      app = "yagsvc"
+      app = "webapi"
     }
     port {
       port = 80
@@ -65,9 +65,9 @@ resource "kubernetes_service" "yagsvc" {
   }
 }
 
-resource "kubernetes_config_map" "yagsvc" {
+resource "kubernetes_config_map" "webapi" {
   metadata {
-    name      = "yagsvc-cm"
+    name      = "webapi-cm"
     namespace = var.k8s_namespace
   }
   data = {
@@ -80,12 +80,13 @@ resource "kubernetes_config_map" "yagsvc" {
     SQLDB_DBNAME                    = "yag"
     SQLDB_HOST                      = "sqldb.default.svc.cluster.local"
     SQLDB_PORT                      = 5432
-    SQLDB_USERNAME                  = "yagsvc"
+    SQLDB_USERNAME                  = "authsvc"
     OAUTHLIB_INSECURE_TRANSPORT     = var.oauthlib_insecure_transport
     OAUTHLIB_RELAX_TOKEN_SCOPE      = var.oauthlib_relax_token_scope
     #secrets
     FLASK_SECRET_KEY             = var.flask_secret_key
     FLASK_SECURITY_PASSWORD_SALT = var.flask_security_password_salt
+    SIGSVC_AUTH_TOKEN            = var.sigsvc_auth_token
     SQLDB_PASSWORD               = var.sqldb_password
     DISCORD_OAUTH_CLIENT_ID      = var.discord_oauth_client_id
     DISCORD_OAUTH_CLIENT_SECRET  = var.discord_oauth_client_secret

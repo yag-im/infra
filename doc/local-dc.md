@@ -1,4 +1,4 @@
-# Developer Mode
+# Developer Mode (devcontainers)
 
 This mode is intended for experienced software engineers with basic DevOps skills. Backend of `yag.im` is written in 
 Python, except of a few components. In this mode, all service instances run on the local host within Docker containers 
@@ -86,9 +86,9 @@ This step will also require [ports](https://github.com/yag-im/ports) repo to be 
 In order to route queries from application running in a web browser to respective endpoints, an instance of web proxy
 is required. The main purpose of this instance is routing following types of queries:
 
-    /api - to the yagsvc (API gateway)
-    /webrtc - to the sigsvc (WebRTC Signaling Service)
-    / - to the webapp (NextJS server-side functionality)
+    /api - webapi (API gateway)
+    /auth - authentication service
+    /webrtc - sigsvc (WebRTC Signaling Service)
+    / - webapp (NextJS server-side functionality)
 
 ### Devconatiners
-

@@ -4,7 +4,7 @@ workspace "yag" {
         yag = softwareSystem "Cloud Gaming Platform" "Allows users to play games instantly in their browsers" {            
             appsvc = container "Apps Service" "Apps management: search, pause, resume, run, stop" "Flask" "REST API"
             datastor = container "Data Storage" "Ports sources and games bundles storage" "SSD/HDD" "Storage"
-            jobs = container "Jobs" "Asynchronous jobs: trimming orphaned sessions/containers" "schedule" "Jobs"
+            jobs = container "Async Jobs" "Asynchronous jobs: trimming orphaned sessions/containers" "schedule" "Jobs"
             jukebox = container "Jukebox" "Games runner and WebRTC streamer" "WebRTC" {
                 streamd = component "streamd" "WebRTC streaming daemon" "gstreamer" "WebRTC"
                 runner = component "Game Runner" "" "dosbox, scummvm, wine"
@@ -26,9 +26,9 @@ workspace "yag" {
             sigsvc = container "Signaling Service" "WebRTC Signaling Service" "aiohttp and WebSockets" "WebRTC"
             spa = container "Single-Page Application" "Provides cloud gaming platform functionality via the web browser." "NextJs" "Web Browser"
             sqldb = container "SQL Database" "Stores yag data: users and games info" "PostgreSQL" "Database"              
-            webapp = container "Web Application" "Delivers the static content and the single page application" "NextJs"
-            webproxy = container "Web Proxy Service" "Dev API Proxy Server" "nginx" "Proxy, Dev"
-            yagsvc = container "Yag Macroservices" "Authentication, API proxy" "Python" "REST API" {
+            webapp = container "Web Application" "Delivers the static content and the single page application" "Web,NextJs"
+            webproxy = container "Web Proxy Service" "Web Proxy Server" "nginx" "Web,Proxy"
+            webapi = container "Web API Service" "Authentication, public apps catalog" "Flask" "Web" {
                 authController = component "Authentication Controller" "Allows users to sign in to the system" "Flask"                
             }
         }
@@ -40,7 +40,9 @@ workspace "yag" {
         jobs -> sessionsvc "Queries" "JSON/HTTPS"
         jukebox -> datastor "Mounts"
         jukeboxsvc -> jukebox "Operates" "JSON/HTTPS"
-        ports -> portsvc "Uses" "JSON/HTTPS"
+        ports -> portsvc "Uses" "JSON/HTTPS" {
+            tags "Dev"
+        }
         ports -> datastor "Uses" {
             tags "Dev"
         }
@@ -49,36 +51,15 @@ workspace "yag" {
         sessionsvc -> appsvc "Queries" "JSON/HTTPS"
         sessionsvc -> sqldb "Queries" "SQL"
         sigsvc -> sessionsvc "Queries""JSON/HTTPS"
-        spa -> webproxy "Queries" "JSON/HTTPS"{
-            tags "Dev"
-        }
-        spa -> sigsvc "Communicates" "WebSockets" {
-            tags "Prod"
-        }
-        spa -> webapp "Queries" "HTTPS" {
-            tags "Prod"
-        }
-        spa -> yagsvc "Queries" "JSON/HTTPS" {
-            tags "Prod"
-        }
+        spa -> webproxy "Queries" "JSON/HTTPS"
+        streamd -> sigsvc "Communicates" "WebSockets"   
         streamd -> spa "Streams" "WebRTC"
-        webapp -> spa "Delivers" "HTTPS" {
-            tags "Prod"
-        }
-        webproxy -> webapp "Proxies / queries" "JSON/HTTPS" {
-            tags "Dev"
-        }
-        webproxy -> yagsvc "Proxies /api queries" "JSON/HTTPS" {
-            tags "Dev"
-        }
-        webproxy -> sigsvc "Proxies /webrtc queries" "WebSockets" {
-            tags "Dev"
-        }
-        yagsvc -> appsvc "Queries" "JSON/HTTPS"
-        yagsvc -> sqldb "Queries" "SQL"
-
-        streamd -> sigsvc "Communicates" "WebSockets"
-        spa -> authController "Queries" "JSON/HTTPS"
+        webproxy -> webapp "Proxies '/' queries" "JSON/HTTPS"
+        webproxy -> webapi "Proxies '/api' queries" "JSON/HTTPS"
+        webproxy -> sigsvc "Proxies '/webrtc' queries" "WebSockets"
+        webapi -> appsvc "Queries" "JSON/HTTPS"
+        webapi -> sqldb "Queries" "SQL"        
+        webapp -> webapi "Queries" "JSON/HTTP"
 
         deploymentEnvironment "DevelopmentFull" {            
             deploymentNode "Developer Laptop" "" "Linux, MS Windows or Apple macOS" {
@@ -148,9 +129,9 @@ workspace "yag" {
                         }
                     }
 
-                    deploymentNode "yagsvc" "" "devcontainer" {
+                    deploymentNode "webapi" "" "devcontainer" {
                         deploymentNode "gunicorn" "" "Flask" {
-                            devYagSvcInstance = containerInstance yagsvc
+                            devWebApiInstance = containerInstance webapi
                         }
                     }
                 }
@@ -162,7 +143,7 @@ workspace "yag" {
 
         container yag "ContainersView" {
             include *
-            autolayout
+            autolayout lr
         }
         
 
@@ -176,6 +157,14 @@ workspace "yag" {
         styles {
             element "REST API" {
                 background #E785F0
+                shape Hexagon
+            }
+            element "Web" {
+                background #E785F0
+                shape Hexagon
+            }
+            element "WebRTC" {
+                background #15B947
                 shape Hexagon
             }
             element "Component" {

@@ -26,16 +26,16 @@ minikube tunnel & disown
 # sleep 60
 
 minikube image load appsvc:dev --overwrite=true
-minikube image load infra.bastion:dev --overwrite=true
+minikube image load bastion:dev --overwrite=true
 minikube image load jobs:dev --overwrite=true
 minikube image load jukeboxsvc:dev --overwrite=true
-minikube image load mcc:dev --overwrite=true
 minikube image load portsvc:dev --overwrite=true
 minikube image load sessionsvc:dev --overwrite=true
 minikube image load sqldb:dev --overwrite=true
+minikube image load sigsvc:dev --overwrite=true
+minikube image load webapi:dev --overwrite=true
 minikube image load webapp:dev --overwrite=true
-minikube image load webrtc.sigsvc:dev --overwrite=true
-minikube image load yagsvc:dev --overwrite=true
+minikube image load webproxy:dev --overwrite=true
 
 ./update.sh --first-pass
 

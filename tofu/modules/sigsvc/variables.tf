@@ -14,24 +14,3 @@ variable "k8s_namespace" {
 variable "replicas" {
   type = number
 }
-
-# app config
-
-variable "debug_no_auth" {
-  type    = bool
-  default = false
-}
-
-# app secrets
-
-variable "auth_token" {
-  type = string
-}
-
-variable "flask_secret_key" {
-  type = string
-}
-
-variable "flask_security_password_salt" {
-  type = string
-}

@@ -37,23 +37,19 @@ variable "oauthlib_relax_token_scope" {
 
 # app secrets
 
-variable "flask_secret_key" {
-  type = string
-}
-
-variable "flask_security_password_salt" {
-  type = string
-}
-
-variable "sqldb_password" {
-  type = string
-}
-
 variable "discord_oauth_client_id" {
   type = string
 }
 
 variable "discord_oauth_client_secret" {
+  type = string
+}
+
+variable "flask_secret_key" {
+  type = string
+}
+
+variable "flask_security_password_salt" {
   type = string
 }
 
@@ -70,6 +66,14 @@ variable "reddit_oauth_client_id" {
 }
 
 variable "reddit_oauth_client_secret" {
+  type = string
+}
+
+variable "sigsvc_auth_token" {
+  type = string
+}
+
+variable "sqldb_password" {
   type = string
 }
 

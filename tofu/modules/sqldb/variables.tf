@@ -10,13 +10,13 @@ variable "appsvc_user" {
   type = string
 }
 
+variable "authsvc_user" {
+  type = string
+}
+
 variable "host_data_path" {
   type    = string
   default = ""
-}
-
-variable "mccsvc_user" {
-  type = string
 }
 
 variable "pgdata" {
@@ -53,17 +53,13 @@ variable "yag_db" {
   type = string
 }
 
-variable "yagsvc_user" {
-  type = string
-}
-
 # secrets
 
 variable "appsvc_password" {
   type = string
 }
 
-variable "mccsvc_password" {
+variable "authsvc_password" {
   type = string
 }
 
@@ -76,9 +72,5 @@ variable "postgres_password" {
 }
 
 variable "sessionsvc_password" {
-  type = string
-}
-
-variable "yagsvc_password" {
   type = string
 }

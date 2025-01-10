@@ -158,11 +158,11 @@ resource "kubernetes_config_map" "sqldb" {
     namespace = var.k8s_namespace
   }
   data = {
+    PGDATA              = "${var.pgdata}/pgdata"
     APPSVC_USER         = var.appsvc_user
     APPSVC_PASSWORD     = var.appsvc_password
-    MCCSVC_USER         = var.mccsvc_user
-    MCCSVC_PASSWORD     = var.mccsvc_password
-    PGDATA              = "${var.pgdata}/pgdata"
+    AUTHSVC_USER        = var.authsvc_user
+    AUTHSVC_PASSWORD    = var.authsvc_password
     PORTSVC_USER        = var.portsvc_user
     PORTSVC_PASSWORD    = var.portsvc_password
     POSTGRES_PASSWORD   = var.postgres_password
@@ -170,7 +170,5 @@ resource "kubernetes_config_map" "sqldb" {
     SESSIONSVC_PASSWORD = var.sessionsvc_password
     TZ                  = var.timezone
     YAG_DB              = var.yag_db
-    YAGSVC_PASSWORD     = var.yagsvc_password
-    YAGSVC_USER         = var.yagsvc_user
   }
 }

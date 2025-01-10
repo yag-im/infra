@@ -1,4 +1,4 @@
-# Managed K8S
+# Managed K8S cluster in OVH
 
 API console: https://api.us.ovhcloud.com/console/#/auth/time~GET
 
@@ -6,7 +6,7 @@ API console: https://api.us.ovhcloud.com/console/#/auth/time~GET
 
 Tutorial: https://help.ovhcloud.com/csm/en-public-cloud-kubernetes-vrack-custom-gateway?id=kb_article_view&sysparm_article=KB0050040
 
-Create a new public cloud project from:
+- Create a new public cloud project from:
 
     https://us.ovhcloud.com/manager/#/public-cloud/pci/projects/new
 
@@ -26,7 +26,7 @@ Wait for about 2 minutes while the new project is being provisioned.
 
 - Generate parameters for `secrets/.env` from https://api.us.ovhcloud.com/createToken/ (common for dev/prod, so do it once).
 
-Update `.env` and `openrc` in /workspaces/infra/tofu/envs/dev/secrets.
+- Update `.env` and `openrc` in /workspaces/infra/tofu/envs/dev/secrets.
 
 ## Secrets
 
@@ -37,13 +37,33 @@ Init AWS secrets storage: execute commands from tofu/secrets.txt, e.g.
     aws ssm put-parameter --profile "$AWS_PROFILE" --region "$AWS_REGION" --name "/otel/grafana_admin_password" --value "********" --type SecureString
     ...
 
+You need to initilize values for all secrets listed in: `/workspaces/infra/tofu/envs/dev/secrets.tf`
+
 ## Cloud init
 
-Checklist:
+### Checklist
 
-- Make sure no resources are used on the `Quotas and Regions` page.
-- Make sure `dev.yag.im` is NOT part of vRack (right tab on the vRack page), it will be attached later from the tofu init script.
+Make sure:
+- no resources are used on the `Quota and Regions` page. Note some of them (e.g. network) can be deleted only from the "Horizon" interface.
+- `dev.yag.im` is NOT part of vRack (right tab ("Your vRack") on the vRack page), it will be attached later from the tofu init script.
 - Disable `httpsRedirect` in `istio` module, letsencrypt requires an unsecure HTTP connection to validate certs.
+- there are no duplicate ssh keypairs:
+
+    pip install python-openstackclient
+
+Export env variables:
+
+    cd /workspaces/infra/tofu/envs/dev
+    . secrets/openrc
+
+Remove existing ssh keypairs:
+
+    openstack keypair list
+    openstack keypair delete xxx
+
+You might need to switch between regions; for this change `OS_REGION_NAME` in secrets/openrc, re-export env vars and repeat keypair deletion steps.
+
+### Begin deployment
 
     cd /workspaces/infra/tofu/envs/dev
     ./init.sh
@@ -51,27 +71,6 @@ Checklist:
 For further updates use:
 
     ./update.sh
-
-### Troubleshooting
-
-Problem: os_keypairs creation failing due to duplicate.
-
-This may happen if init failed in the middle, keypairs deletion is not handled properly by openstack in terraform.
-
-You need to delete keypairs manually:
-
-1. Install openstackclient: 
-
-    pip install python-openstackclient
-
-2. List and delete keypair:
-
-    openstack keypair list
-    openstack keypair delete xxx
-
-You need to switch between regions, for this change `OS_REGION_NAME` in secrets/openrc and re-export env vars:
-
-    . secrets/openrc
 
 ## Config updates
 
@@ -129,15 +128,6 @@ Open in browser:
 
     https://localhost:8443
 
-## Cleanup
-
-    tofu destroy
-
-    or
-
-    remove k8s cluster from OVH UI and all network inventory (routers, networks) from Horizon UI 
-    (Horizon link is available from the OVH Cloud Project menu).
-
 ## Connect to k8s node
 
     kubectl get nodes
@@ -151,11 +141,21 @@ Then connect to appstor from bastion:
 
     ssh debian@192.168.12.200
 
+## Cleanup
+
+    cd /workspaces/infra/tofu/envs/dev
+    ./destroy.sh
+
+    or
+
+    remove k8s cluster from OVH UI and all network inventory (routers, networks) from Horizon UI 
+    (Horizon link is available from the OVH Cloud Project menu).
+
 # Jukebox cluster (dedicated servers with custom iGPUs)
 
-Order dedicated servers in multiple regions qualifying minimal requirements below:
+Order dedicated servers in multiple regions that meet the minimum requirements listed below:
 
-    - iGPU
+    - iGPU (Xeon XXXXG CPUs)
     - 32GB of RAM
 
 WARNING: not every MB with Xeon XXXXG CPU supports iGPU.
@@ -164,6 +164,8 @@ WARNING: not every MB with Xeon XXXXG CPU supports iGPU.
         
         Asrock E3C246D4U2-2T: supports
         Asus P11C-M-10G-2T Series: doesn't support
+
+You should ask OVH support team to switch MBs if neccessary.
 
 ## BIOS settings
 

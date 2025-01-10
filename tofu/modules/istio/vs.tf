@@ -98,17 +98,16 @@ resource "kubernetes_manifest" "destination_rule_sigsvc" {
   }
 }
 
-/*
-resource "kubernetes_manifest" "virtual_service_mcc" {
+resource "kubernetes_manifest" "virtual_service_webproxy" {
   count = var.create_istio_vs == "true" ? 1 : 0
   manifest = {
     apiVersion = "networking.istio.io/v1beta1"
     kind       = "VirtualService"
     metadata = {
       labels = {
-        "app" = "mcc"
+        app = "webproxy"
       }
-      name      = "mcc-vs"
+      name      = "webproxy-vs"
       namespace = local.gw_namespace_public
     }
     spec = {
@@ -116,127 +115,14 @@ resource "kubernetes_manifest" "virtual_service_mcc" {
         local.gw_name_public,
       ]
       hosts = [
-        var.hostnames["mcc"]
+        var.hostnames["webproxy"]
       ]
       http = [
         {
-          match = [
-            {
-              uri = {
-                prefix = "/api"
-              }
-            }
-          ],
           route = [
             {
               destination = {
-                host = "yagsvc.default.svc.cluster.local",
-                port = {
-                  number = 80
-                }
-              }
-            }
-          ]
-        },
-        {
-          match = [
-            {
-              uri = {
-                prefix = "/webrtc"
-              }
-            }
-          ],
-          route = [
-            {
-              destination = {
-                host = "sigsvc.default.svc.cluster.local",
-                port = {
-                  number = 80
-                }
-              }
-            }
-          ]
-        },
-        {
-          route = [
-            {
-              destination = {
-                host = "mcc.default.svc.cluster.local",
-                port = {
-                  number = 80
-                }
-              }
-            }
-          ]
-        }
-      ]
-    }
-  }
-}*/
-
-resource "kubernetes_manifest" "virtual_service_webapp" {
-  count = var.create_istio_vs == "true" ? 1 : 0
-  manifest = {
-    apiVersion = "networking.istio.io/v1beta1"
-    kind       = "VirtualService"
-    metadata = {
-      labels = {
-        app = "webapp"
-      }
-      name      = "webapp-vs"
-      namespace = local.gw_namespace_public
-    }
-    spec = {
-      gateways = [
-        local.gw_name_public,
-      ]
-      hosts = [
-        var.hostnames["webapp"]
-      ]
-      http = [
-        {
-          match = [
-            {
-              uri = {
-                prefix = "/api"
-              }
-            }
-          ],
-          route = [
-            {
-              destination = {
-                host = "yagsvc.default.svc.cluster.local",
-                port = {
-                  number = 80
-                }
-              }
-            }
-          ]
-        },
-        {
-          match = [
-            {
-              uri = {
-                prefix = "/webrtc"
-              }
-            }
-          ],
-          route = [
-            {
-              destination = {
-                host = "sigsvc.default.svc.cluster.local",
-                port = {
-                  number = 80
-                }
-              }
-            }
-          ]
-        },
-        {
-          route = [
-            {
-              destination = {
-                host = "webapp.default.svc.cluster.local",
+                host = "webproxy.default.svc.cluster.local",
                 port = {
                   number = 80
                 }
@@ -248,42 +134,3 @@ resource "kubernetes_manifest" "virtual_service_webapp" {
     }
   }
 }
-
-/*
-resource "kubernetes_manifest" "virtual_service_otelcol_gw" {
-  count = var.create_istio_vs == "true" ? 1 : 0
-  manifest = {
-    apiVersion = "networking.istio.io/v1beta1"
-    kind       = "VirtualService"
-    metadata = {
-      labels = {
-        app = "otelcol-gw"
-      }
-      name      = "otelcol-gw-vs"
-      namespace = local.gw_namespace_private
-    }
-    spec = {
-      gateways = [
-        local.gw_namespace_private,
-      ]
-      hosts = [
-        var.hostnames["otelcol_gw"]
-      ]
-      tcp = [
-        {
-          route = [
-            {
-              destination = {
-                host = "otelcol-gw-opentelemetry-collector.otel.svc.cluster.local",
-                port = {
-                  number = 4317
-                }
-              }
-            },
-          ]
-        },
-      ]
-    }
-  }
-}
-*/

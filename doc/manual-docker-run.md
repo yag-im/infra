@@ -13,7 +13,7 @@
         -e MAX_INACTIVITY_PERIOD='1800' \
         -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
         -e SIGNALER_HOST='dev.yag.im' \
-        -e SIGNALER_URI='wss://dev.yag.im/webrtc' \
+        -e SIGNALER_URI='wss://dev.yag.im/webrtc/streamd' \
         -e SCREEN_HEIGHT='480' \
         -e SCREEN_WIDTH='640' \
         -e STUN_URI='stun://stun.l.google.com:19302' \
@@ -39,7 +39,7 @@
         -e MAX_INACTIVITY_PERIOD='1800' \
         -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
         -e SIGNALER_HOST='dev.yag.im' \
-        -e SIGNALER_URI='wss://dev.yag.im/webrtc' \
+        -e SIGNALER_URI='wss://dev.yag.im/webrtc/streamd' \
         -e SCREEN_HEIGHT='600' \
         -e SCREEN_WIDTH='800' \
         -e STUN_URI='stun://stun.l.google.com:19302' \

@@ -108,10 +108,10 @@ resource "kubernetes_manifest" "istio_gw_public" {
             protocol = "TCP"
           }
         },
-        { # web apps
+        { # web facing endpoints
           hosts = [
             var.hostnames["grafana"],
-            var.hostnames["webapp"]
+            var.hostnames["webproxy"]
           ]
           port = {
             name     = "https"
@@ -123,10 +123,10 @@ resource "kubernetes_manifest" "istio_gw_public" {
             credentialName = "yag-im-tls"
           }
         },
-        { # web apps (unsecure, for local tests only)
+        { # web facing endpoints (unsecure, for local tests only)
           hosts = [
             var.hostnames["grafana"],
-            var.hostnames["webapp"]
+            var.hostnames["webproxy"]
           ]
           port = {
             name     = "http"

@@ -72,7 +72,7 @@ resource "kubernetes_config_map" "webapp" {
   }
   data = {
     # for the server-side rendered pages
-    API_URL = "http://yagsvc.default.svc.cluster.local/api"
+    API_URL = "http://webapi.default.svc.cluster.local/api"
     APP_ENV = var.app_env
     GA_ID   = var.ga_id
     PORT    = 80

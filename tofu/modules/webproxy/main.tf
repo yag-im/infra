@@ -1,8 +1,8 @@
-resource "kubernetes_deployment" "mcc" {
+resource "kubernetes_deployment" "webproxy" {
   metadata {
-    name = "mcc-deployment"
+    name = "webproxy-deployment"
     labels = {
-      app = "mcc"
+      app = "webproxy"
     }
     namespace = var.k8s_namespace
   }
@@ -10,20 +10,20 @@ resource "kubernetes_deployment" "mcc" {
     replicas = var.replicas
     selector {
       match_labels = {
-        app = "mcc"
+        app = "webproxy"
       }
     }
     template {
       metadata {
         labels = {
-          app = "mcc"
+          app = "webproxy"
         }
       }
       spec {
         container {
           image             = var.docker_image
           image_pull_policy = "IfNotPresent"
-          name              = "mcc"
+          name              = "webproxy"
           port {
             container_port = 80
           }
@@ -39,7 +39,7 @@ resource "kubernetes_deployment" "mcc" {
           }
           env_from {
             config_map_ref {
-              name = "mcc-cm"
+              name = "webproxy-cm"
             }
           }
         }
@@ -48,14 +48,14 @@ resource "kubernetes_deployment" "mcc" {
   }
 }
 
-resource "kubernetes_service" "mcc" {
+resource "kubernetes_service" "webproxy" {
   metadata {
-    name      = "mcc"
+    name      = "webproxy"
     namespace = var.k8s_namespace
   }
   spec {
     selector = {
-      app = "mcc"
+      app = "webproxy"
     }
     port {
       port = 80
@@ -65,13 +65,16 @@ resource "kubernetes_service" "mcc" {
   }
 }
 
-resource "kubernetes_config_map" "mcc" {
+resource "kubernetes_config_map" "webproxy" {
   metadata {
-    name      = "mcc-cm"
+    name      = "webproxy-cm"
     namespace = var.k8s_namespace
   }
   data = {
-    API_URL = "http://yagsvc.default.svc.cluster.local/api"
-    PORT    = 80
+    SERVER_NAME = "localhost"
+    AUTHSVC_URL = "http://webapi.default.svc.cluster.local"
+    SIGSVC_URL  = "http://sigsvc.default.svc.cluster.local"
+    WEBAPP_URL  = "http://webapp.default.svc.cluster.local"
+    WEBAPI_URL  = "http://webapi.default.svc.cluster.local"
   }
 }

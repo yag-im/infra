@@ -75,8 +75,7 @@ resource "kubernetes_manifest" "certificate" {
         kind = "ClusterIssuer"
       }
       dnsNames = [
-        var.hostnames["webapp"],
-        #var.hostnames["mcc"],
+        var.hostnames["webproxy"],
         var.hostnames["grafana"]
       ]
     }

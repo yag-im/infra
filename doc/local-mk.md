@@ -1,4 +1,4 @@
-# Local development
+# Local k8s cluster setup
 
 The local configuration consists of a group of jukebox cluster nodes operating within VirtualBox VMs (vagrant), with the 
 remaining services running in a minikube cluster. Additionally, you have the option to access all services from VSCodes' 
@@ -28,7 +28,7 @@ Install deps:
 
 Execute all further commands from a directory containing the Vagrantfile:
 
-    cd /ara/devel/acme/yag/infra/ansible/envs/local/vagrant
+    cd infra/ansible/envs/local/vagrant
 
 Make sure appstor disk (/dev/sdb) is mounted to the physical host. Double check disk sizes in Vagrantfile and drive 
 device below.
@@ -56,7 +56,7 @@ Check provisioned VMs:
 ssh to the vagrant VMs works only through the 127.0.0.1 custom ports. 
 A generation of a custom ssh config is required so ansible can ssh into VM nodes (when running from a devcontainer):
 
-    cd /ara/devel/acme/yag/infra/ansible/envs/local/vagrant
+    cd infra/ansible/envs/local/vagrant
     vagrant ssh-config > ssh.config
     sed -i 's/robert/vscode/g' ssh.config
 
@@ -189,7 +189,7 @@ Make sure you've created all secrets beforehand (see tofu/secrets.txt).
 
 Run a bootstrap script:
 
-    cd /ara/devel/acme/yag/infra/tofu/envs/local
+    cd infra/tofu/envs/local
     ./init.sh
 
 If istio gateways fail to start, run:
@@ -239,9 +239,9 @@ Obtain public and private gateway addresses in the minikube cluster using:
     127.0.0.1 jukebox1.us-west-1.yag.vm jukebox2.us-west-1.yag.vm
     127.0.0.1 jukebox1.eu-central-1.yag.vm jukebox2.eu-central-1.yag.vm
     # devcontainers
-    127.0.0.1 appsvc.yag.dc jukeboxsvc.yag.dc mcc.yag.dc portsvc.yag.dc sessionsvc.yag.dc sigsvc.yag.dc sqldb.yag.dc yagsvc.yag.dc yag.dc
+    127.0.0.1 appsvc.yag.dc jukeboxsvc.yag.dc portsvc.yag.dc sessionsvc.yag.dc sigsvc.yag.dc sqldb.yag.dc webapi.yag.dc yag.dc
     # minikube: istio public
-    10.x.x.x bastion.yag.mk grafana.yag.mk mcc.yag.mk yag.mk
+    10.x.x.x bastion.yag.mk grafana.yag.mk yag.mk
     # minikube: istio private
     10.x.x.x otelcol-gw.yag.mk
 
