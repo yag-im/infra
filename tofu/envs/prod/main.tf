@@ -82,7 +82,7 @@ locals {
   ver_sqldb      = "0.0.2"
   ver_webapi     = "0.1.7"
   ver_webapp     = "0.2.6"
-  ver_webproxy   = "0.0.8"
+  ver_webproxy   = "0.0.9"
 }
 
 module "appsvc" {
@@ -319,7 +319,6 @@ module "webproxy" {
 }
 
 # TODO: istio, misc and otel modules should come at the end, otherwise tofu fails to init
-
 module "istio" {
   source          = "../../modules/istio"
   create_istio_vs = var.create_istio_vs

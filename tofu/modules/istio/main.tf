@@ -1,6 +1,6 @@
 locals {
   url_charts_istio     = "https://istio-release.storage.googleapis.com/charts"
-  ver_charts_istio     = "1.21.0"
+  ver_charts_istio     = "1.24.2"
   gw_selector_public   = "istio-ingressgateway"
   gw_selector_private  = "sel-gw-private"
   gw_namespace_public  = "istio-gw-public"
@@ -141,51 +141,6 @@ resource "kubernetes_manifest" "istio_gw_public" {
     }
   }
 }
-
-resource "kubernetes_manifest" "istio_envoy_filter" {
-  manifest = {
-    apiVersion = "networking.istio.io/v1beta1"
-    kind       = "EnvoyFilter"
-    metadata = {
-      name      = "ingressgateway-settings"
-      namespace = kubernetes_namespace.istio_gw_public.metadata.0.name
-    }
-    spec = {
-      configPatches = [
-        {
-          applyTo = "NETWORK_FILTER"
-          match = {
-            context = "GATEWAY"
-            listener = {
-              filterChain = {
-                filter = {
-                  name = "envoy.filters.network.http_connection_manager"
-                }
-              }
-            }
-          }
-          patch = {
-            operation = "MERGE"
-            value = {
-              typed_config = {
-                "@type" = "type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager"
-                use_remote_address = true
-                xff_num_trusted_hops = 0
-                skip_xff_append = false
-              }
-            }
-          }
-        }
-      ]
-      workloadSelector = {
-        labels = {
-          istio = "ingressgateway-ns"
-        }
-      }
-    }
-  }
-}
-
 
 # private gw setup
 /* TODO: OVHs' K8S doesn't support private IPs assignments
