@@ -135,7 +135,7 @@ Open in browser:
 
 ## Connect to bastion
 
-    ssh -o ServerAliveInterval=60 -p 2207 infra@bastion.dev.yag.im
+    ssh -o ServerAliveInterval=10 -p 2207 infra@bastion.dev.yag.im
 
 Then connect to appstor from bastion: 
 

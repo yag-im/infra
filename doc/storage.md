@@ -112,5 +112,5 @@ Mount appstor locally through NFS:
 Prod NFS (K8S based):
 
     # sudo mkdir -p /mnt/appstor_nfs/prod/us-east-1
-    ssh -L 2049:192.168.12.200:2049 -p 2207 -o ServerAliveInterval=60  infra@bastion.yag.im -N & disown
+    ssh -L 2049:192.168.12.200:2049 -p 2207 -o ServerAliveInterval=10  infra@bastion.yag.im -N & disown
     sudo mount -t nfs -o nfsvers=4,minorversion=2,proto=tcp,fsc,nocto,port=2049 localhost: /mnt/appstor_nfs/prod/us-east-1

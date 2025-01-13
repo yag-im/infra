@@ -1,14 +1,14 @@
 # bastion shell
 
-    ssh -o ServerAliveInterval=60 -p 2207 infra@bastion.yag.im
+    ssh -o ServerAliveInterval=10 -p 2207 infra@bastion.yag.im
 
 # appstor shell
 
-    ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/prod/id_ed25519 -o ServerAliveInterval=60 -o ProxyCommand="ssh -o ServerAliveInterval=60 -p 2207 -W %h:%p infra@bastion.yag.im" debian@192.168.12.200
+    ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/prod/id_ed25519 -o ServerAliveInterval=10 -o ProxyCommand="ssh -o ServerAliveInterval=10 -p 2207 -W %h:%p infra@bastion.yag.im" debian@192.168.12.200
 
 # jukebox shell
 
-    ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/prod/id_ed25519 -o ServerAliveInterval=60 -o ProxyCommand="ssh -o ServerAliveInterval=60 -p 2207 -W %h:%p infra@bastion.yag.im" debian@192.168.12.2
+    ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/prod/id_ed25519 -o ServerAliveInterval=10 -o ProxyCommand="ssh -o ServerAliveInterval=10 -p 2207 -W %h:%p infra@bastion.yag.im" debian@192.168.12.2
 
 # init appstor:
 

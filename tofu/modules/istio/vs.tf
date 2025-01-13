@@ -73,6 +73,7 @@ resource "kubernetes_manifest" "virtual_service_grafana" {
 }
 
 # sticky sessions are required so both jukebox node and user connecting to the same signalling node (sigsvc)
+# TODO: doesn't work with webproxy, revise design and make proxying queries fully istio-driven
 resource "kubernetes_manifest" "destination_rule_sigsvc" {
   count = var.create_istio_vs == "true" ? 1 : 0
   manifest = {
