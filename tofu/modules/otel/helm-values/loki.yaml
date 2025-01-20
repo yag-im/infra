@@ -4,11 +4,20 @@ loki:
   commonConfig:
     replication_factor: 1
   
+  compactor:
+    working_directory: /var/loki/compactor/retention
+    compaction_interval: 60m
+    delete_request_store: filesystem
+    retention_enabled: true
+    retention_delete_delay: 2h
+    retention_delete_worker_count: 50
+
   storage:
     type: 'filesystem'
   
   limits_config:
     split_queries_by_interval: 0
+    retention_period: 744h
 
   querier:
     max_concurrent: 20

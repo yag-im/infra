@@ -1,23 +1,18 @@
 meshConfig:
+  accessLogEncoding: JSON
   accessLogFile: /dev/stdout
   defaultConfig:
     gatewayTopology:
+      # proxyProtocol: {}
       numTrustedProxies: 1
   extensionProviders:
-    - name: ext-authz-http-user
+    - name: ext-authz-http
       envoyExtAuthzHttp:
         headersToUpstreamOnAllow:
           - x-auth-uid
         includeRequestHeadersInCheck:
           - cookie
-        pathPrefix: /auth/verify/user
-        port: 80
-        service: ${authsvc}
-    - name: ext-authz-http-app
-      envoyExtAuthzHttp:
-        includeRequestHeadersInCheck:
-          - cookie
-        pathPrefix: /auth/verify/app
+        pathPrefix: /auth/verify
         port: 80
         service: ${authsvc}
   ingressSelector: ${gw_selector}

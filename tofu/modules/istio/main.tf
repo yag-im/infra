@@ -38,23 +38,14 @@ resource "helm_release" "istiod" {
   timeout         = 120
   cleanup_on_fail = true
   force_update    = false
-  set {
-    name  = "meshConfig.accessLogFile"
-    value = "/dev/stdout"
-  }
-  set {
-    name  = "meshConfig.ingressService"
-    value = local.gw_name_public
-  }
-  set {
-    name  = "meshConfig.ingressSelector"
-    value = local.gw_selector_public
-  }
-  # need to play with value here to reflect an actual client IP in the x-forwarded-for header
-  set {
-    name  = "meshConfig.defaultConfig.gatewayTopology.numTrustedProxies"
-    value = 1
-  }
+  values = [
+    templatefile("${path.module}/manifests/istiod.yaml", {
+      gw_name = "${local.gw_name_public}"
+      gw_selector = "${local.gw_selector_public}"
+      authsvc = "webapi.default.svc.cluster.local"
+    })
+  ]
+  
   depends_on = [helm_release.istio_base]
 }
 
@@ -84,6 +75,42 @@ resource "helm_release" "istio_gw_public" {
   ]
 }
 
+resource "kubernetes_manifest" "istio_auth_policy_user" {
+  count = var.create_istio_vs == "true" ? 1 : 0
+  manifest = {
+    apiVersion = "security.istio.io/v1"
+    kind       = "AuthorizationPolicy"
+    metadata = {
+      name      = "user-auth-policy"
+      namespace = kubernetes_namespace.istio_gw_public.metadata.0.name
+    }
+    spec = {
+      action = "CUSTOM"
+      provider = {
+        name = "ext-authz-http"
+      }
+      rules = [
+        {
+          to = [
+            {
+              operation = {
+                hosts = [var.hostnames["webapp"]]
+                paths = ["/api/*", "/webrtc"]
+                notPaths = ["/api/docs", "/api/specs", "/api/apps"]
+              }
+            }
+          ]
+        }
+      ],
+      selector = {
+        matchLabels = {
+          app = local.gw_name_public
+        }
+      }
+    }
+  }
+}
+
 resource "kubernetes_manifest" "istio_gw_public" {
   count = var.create_istio_vs == "true" ? 1 : 0
   manifest = {
@@ -111,7 +138,7 @@ resource "kubernetes_manifest" "istio_gw_public" {
         { # web facing endpoints
           hosts = [
             var.hostnames["grafana"],
-            var.hostnames["webproxy"]
+            var.hostnames["webapp"]
           ]
           port = {
             name     = "https"
@@ -126,7 +153,7 @@ resource "kubernetes_manifest" "istio_gw_public" {
         { # web facing endpoints (unsecure, for local tests only)
           hosts = [
             var.hostnames["grafana"],
-            var.hostnames["webproxy"]
+            var.hostnames["webapp"]
           ]
           port = {
             name     = "http"

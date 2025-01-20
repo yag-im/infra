@@ -52,7 +52,7 @@ locals {
     bastion    = "bastion.${local.public_tld}"
     grafana    = "grafana.${local.public_tld}"
     otelcol_gw = "otelcol-gw.${local.private_tld}"
-    webproxy   = local.public_tld
+    webapp   = local.public_tld
   }
   public_tld     = "yag.mk"
   private_tld    = "yag.internal"
@@ -66,7 +66,6 @@ locals {
   ver_sqldb      = "dev"
   ver_webapi     = "dev"
   ver_webapp     = "dev"
-  ver_webproxy   = "dev"
 }
 
 module "appsvc" {
@@ -263,14 +262,6 @@ module "webapi" {
   reddit_oauth_client_secret   = var.reddit_oauth_client_secret
   twitch_oauth_client_id       = var.twitch_oauth_client_id
   twitch_oauth_client_secret   = data.aws_ssm_parameter.authsvc_twitch_oauth_client_secret.value
-}
-
-module "webproxy" {
-  source          = "../../modules/webproxy"
-  create_istio_vs = var.create_istio_vs
-  docker_image    = "${local.docker_repo_prefix}/webproxy:${local.ver_webproxy}"
-  k8s_namespace   = "default"
-  replicas        = 3
 }
 
 # TODO: istio, misc and otel modules should come at the end, otherwise tofu fails to init

@@ -72,8 +72,7 @@ resource "kubernetes_manifest" "virtual_service_grafana" {
   }
 }
 
-# sticky sessions are required so both jukebox node and user connecting to the same signalling node (sigsvc)
-# TODO: doesn't work with webproxy, revise design and make proxying queries fully istio-driven
+# sticky sessions are required so both jukebox node and player are connecting to the same sigsvc node instance
 resource "kubernetes_manifest" "destination_rule_sigsvc" {
   count = var.create_istio_vs == "true" ? 1 : 0
   manifest = {
@@ -99,16 +98,16 @@ resource "kubernetes_manifest" "destination_rule_sigsvc" {
   }
 }
 
-resource "kubernetes_manifest" "virtual_service_webproxy" {
+resource "kubernetes_manifest" "virtual_service_webapp" {
   count = var.create_istio_vs == "true" ? 1 : 0
   manifest = {
     apiVersion = "networking.istio.io/v1beta1"
     kind       = "VirtualService"
     metadata = {
       labels = {
-        app = "webproxy"
+        app = "webapp"
       }
-      name      = "webproxy-vs"
+      name      = "webapp-vs"
       namespace = local.gw_namespace_public
     }
     spec = {
@@ -116,14 +115,57 @@ resource "kubernetes_manifest" "virtual_service_webproxy" {
         local.gw_name_public,
       ]
       hosts = [
-        var.hostnames["webproxy"]
+        var.hostnames["webapp"]
       ]
       http = [
+        {
+          match = [
+            {
+              uri = {
+                prefix = "/api"
+              }
+            },
+            {
+              uri = {
+                prefix = "/auth"
+              }
+            }
+          ],
+          route = [
+            {
+              destination = {
+                host = "webapi.default.svc.cluster.local",
+                port = {
+                  number = 80
+                }
+              }
+            }
+          ]
+        },
+        {
+          match = [
+            {
+              uri = {
+                prefix = "/webrtc"
+              }
+            }
+          ],
+          route = [
+            {
+              destination = {
+                host = "sigsvc.default.svc.cluster.local",
+                port = {
+                  number = 80
+                }
+              }
+            }
+          ]
+        },
         {
           route = [
             {
               destination = {
-                host = "webproxy.default.svc.cluster.local",
+                host = "webapp.default.svc.cluster.local",
                 port = {
                   number = 80
                 }

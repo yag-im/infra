@@ -109,7 +109,13 @@ is required. The main purpose of this instance is proxying following types of qu
     /webrtc - sigsvc (WebRTC Signaling Service)
     /       - webapp (NextJS server-side functionality)
 
-Clone [webproxy](https://github.com/yag-im/webproxy) project
+This service is exclusively used during local development. In K8S, Istio acts as the web proxy.
+
+Clone [webproxy](https://github.com/yag-im/webproxy) project. 
+Run:
+
+    make build
+    make run
 
 ### Jukebox
 

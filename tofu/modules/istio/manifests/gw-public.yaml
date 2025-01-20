@@ -1,3 +1,5 @@
+#annotations:
+#  service.beta.kubernetes.io/ovh-loadbalancer-proxy-protocol: "v2"
 labels:
   istio: ${gw_selector}
 service:

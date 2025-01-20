@@ -68,7 +68,7 @@ locals {
     bastion    = "bastion.${local.public_tld}"
     grafana    = "grafana.${local.public_tld}"
     otelcol_gw = "otelcol-gw.${local.private_tld}"
-    webproxy   = local.public_tld
+    webapp   = local.public_tld
   }
   public_tld     = "yag.im"
   private_tld    = "yag.internal"
@@ -78,11 +78,10 @@ locals {
   ver_jukeboxsvc = "0.2.2"
   ver_portsvc    = "0.0.18"
   ver_sessionsvc = "0.0.18"
-  ver_sigsvc     = "0.1.2"
+  ver_sigsvc     = "0.1.3"
   ver_sqldb      = "0.0.2"
-  ver_webapi     = "0.1.7"
+  ver_webapi     = "0.1.14"
   ver_webapp     = "0.3.0"
-  ver_webproxy   = "0.0.9"
 }
 
 module "appsvc" {
@@ -257,11 +256,7 @@ module "sigsvc" {
   create_istio_vs = var.create_istio_vs
   docker_image    = "${local.docker_repo_prefix}/sigsvc:${local.ver_sigsvc}"
   k8s_namespace   = "default"
-  # do not increase number of replicas! This is a temp workaround for sticky sessions issue;
-  # webproxy approach doesn't work (destination_rule_sigsvc rule is not applied);
-  # so in order to fix the sticky sessions sigsvc issue, webproxy must be dropped and istio is used for routing and 
-  # authentication.
-  replicas        = 1
+  replicas        = 2
 }
 
 module "sqldb" {
@@ -312,14 +307,6 @@ module "webapi" {
   reddit_oauth_client_secret   = data.aws_ssm_parameter.authsvc_reddit_oauth_client_secret.value
   twitch_oauth_client_id       = var.twitch_oauth_client_id
   twitch_oauth_client_secret   = data.aws_ssm_parameter.authsvc_twitch_oauth_client_secret.value
-}
-
-module "webproxy" {
-  source          = "../../modules/webproxy"
-  create_istio_vs = var.create_istio_vs
-  docker_image    = "${local.docker_repo_prefix}/webproxy:${local.ver_webproxy}"
-  k8s_namespace   = "default"
-  replicas        = 2
 }
 
 # TODO: istio, misc and otel modules should come at the end, otherwise tofu fails to init
