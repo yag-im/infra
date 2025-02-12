@@ -84,34 +84,7 @@ For further updates use:
 
 ## Init appstors
 
-First try plain ssh connect from host:
-
-    ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/dev/id_ed25519 -o ProxyCommand="ssh -p 2207 -W %h:%p infra@bastion.dev.yag.im" debian@192.168.13.200
-
-Note that ProxyCommand is not using keys on the bastion host, instead they should be provided from the host machine.
-
-Run appstor init playbook; start with replica (us-west-1) nodes, so master (us-east-1) will not fail later with `lsyncd`.
-
-    cd /workspaces/infra/ansible
-
-    export INFRA_ENV=dev; \
-    export INFRA_USER=debian; \
-    export INFRA_DC=us-west-1; \
-    ansible-playbook \
-        --ssh-common-args '-o ProxyCommand="ssh -p 2207 -W %h:%p -q infra@bastion.dev.yag.im"' \
-        --user ${INFRA_USER} \
-        --key-file "/workspaces/infra/tofu/modules/bastion/files/secrets/${INFRA_ENV}/id_ed25519" \
-        --vault-password-file=envs/${INFRA_ENV}/.vault_pwd \
-        -i envs/${INFRA_ENV}/hosts_${INFRA_DC}.yml \
-        playbooks/appstor.yml
-
-Do the same for us-east-1 appstor node.
-
-Note: TODO: there is a bug in the ansible appstor init script, chmod 1000 is failing, so need to perform:
-
-    chown -R 1000:1000 /opt/yag/data/appstor
-
-manually on all nodes after init.
+Follow instructions from storage.md.
 
 ## k8s dashboard
 
@@ -222,7 +195,7 @@ Move instance to OVH -> vRack so it's assessible via private network for next st
     export INFRA_USER=debian; \
     export INFRA_DC=us-west-1; \
     ansible-playbook \
-        --ssh-common-args '-o ProxyCommand="ssh -p 2207 -W %h:%p -q infra@bastion.dev.yag.im"' \
+        --ssh-common-args '-o ServerAliveInterval=10 -o ProxyCommand="ssh -p 2207 -W %h:%p -q infra@bastion.dev.yag.im"' \
         --user ${INFRA_USER} \
         --key-file "/workspaces/infra/tofu/modules/bastion/files/secrets/${INFRA_ENV}/id_ed25519" \
         --vault-password-file=envs/${INFRA_ENV}/.vault_pwd \

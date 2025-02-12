@@ -2,6 +2,8 @@ Instructions below are applicable for cloud-based deployments with dedicated app
 
 # Appstor instance
 
+## init
+
 Depending on order of execution in the openshift init script (OVH), main storage could be attached as `/dev/sdb` or 
 `dev/sda`. This can go out of sync when e.g. openstack appstor instance resource is being rebuilt from tofu.
 
@@ -16,6 +18,35 @@ Make sure main storage is `/dev/sdb` before running the ansible init script:
 
 For this you may need to recreate "appstor_instance" and "appstor_volume_attach" resources:
 comment them in /workspaces/infra/tofu/modules/ovh/appstor.tf, update tofu, then uncomment and update again.
+
+The try plain ssh connect from host:
+
+    ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/dev/id_ed25519 -o ServerAliveInterval=10 -o ProxyCommand="ssh -p 2207 -W %h:%p infra@bastion.dev.yag.im" debian@192.168.13.200
+
+Note that ProxyCommand is not using keys on the bastion host, instead they should be provided from the host machine.
+
+Run appstor init playbook; start with replica (us-west-1) nodes, so master (us-east-1) will not fail later with `lsyncd`.
+
+    cd /workspaces/infra/ansible
+
+    export INFRA_ENV=dev; \
+    export INFRA_USER=debian; \
+    export INFRA_DC=us-west-1; \
+    ansible-playbook \
+        --ssh-common-args '-o ServerAliveInterval=10 -o ProxyCommand="ssh -p 2207 -W %h:%p -q infra@bastion.dev.yag.im"' \
+        --user ${INFRA_USER} \
+        --key-file "/workspaces/infra/tofu/modules/bastion/files/secrets/${INFRA_ENV}/id_ed25519" \
+        --vault-password-file=envs/${INFRA_ENV}/.vault_pwd \
+        -i envs/${INFRA_ENV}/hosts_${INFRA_DC}.yml \
+        playbooks/appstor.yml
+
+Do the same for us-east-1 appstor node.
+
+Note: TODO: there is a bug in the ansible appstor init script, chmod 1000 is failing, so need to perform:
+
+    chown -R 1000:1000 /opt/yag/data/appstor
+
+manually on all nodes after init.
 
 ## devices
 
