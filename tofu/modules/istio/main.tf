@@ -95,13 +95,13 @@ resource "kubernetes_manifest" "istio_auth_policy_user" {
             {
               operation = {
                 hosts = [var.hostnames["webapp"]]
-                paths = ["/api/*", "/webrtc"]
+                paths = ["/api/", "/webrtc"]
                 notPaths = ["/api/docs", "/api/specs", "/api/apps"]
               }
             }
           ]
         }
-      ],
+      ]
       selector = {
         matchLabels = {
           app = local.gw_name_public
