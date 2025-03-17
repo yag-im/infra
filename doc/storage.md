@@ -116,31 +116,41 @@ on each node after reboot.
 
 7. update volume_size in ovh module in tofu.
 
-# Useful commands
+# Q&A and useful commands
 
-Get BTRFS UUID:
+Q: How to get BTRFS UUID?
+
+A:
 
     sudo blkid -s UUID -o value /dev/sdb
 
-Check beesd logs\status:
+Q: How to check beesd logs\status?
+
+A:
 
     sudo journalctl -f -u beesd@$(sudo blkid -s UUID -o value /dev/sdb)
-    sudo systemctl status beesd@(sudo blkid -s UUID -o value /dev/sdb)
+    sudo systemctl status beesd@$(sudo blkid -s UUID -o value /dev/sdb)
     
-    sudo btrfs filesystem du -s --human-readable .
+    sudo btrfs filesystem du -s --human-readable /opt/yag/data/appstor
     
     sudo apt install btrfs-compsize
     sudo compsize /opt/yag/data/appstor
     sudo compsize /opt/yag/data/appstor/clones/0/red-comrades-save-the-galaxy/eaa1474d-6945-4991-8132-cef009b0fd58/D
 
-lsyncd is not running on main instance (`sudo systemctl status lsyncd` shows active/exited):
+Q: lsyncd is not running on the main instance (US-EAST).
+
+    sudo systemctl status lsyncd
+
+- shows active/exited.
+
+A Restart lsyncd service:
 
     sudo systemctl stop lsyncd
     sudo systemctl start lsyncd
 
-Mount appstor locally through NFS:
+Q: How to mount appstor locally through NFS?
 
-Prod NFS (K8S based):
+A: For prod NFS (K8S based):
 
     # sudo mkdir -p /mnt/appstor_nfs/prod/us-east-1
     ssh -L 2049:192.168.12.200:2049 -p 2207 -o ServerAliveInterval=10  infra@bastion.yag.im -N & disown
