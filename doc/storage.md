@@ -105,8 +105,8 @@ Performs apps cloning (apps -> clones) operation by SSH-ing into appstor instanc
 1. In OVH panel, open `Storage -> Block Storage`. Extend size of instances.
 2. Detach storage from instance.
 3. Shut down instance.
-4. Attach storage to instance.
-5. Boot instance.
+4. Boot instance.
+5. Attach storage to instance.
 If boot fails, try to recreate instances from tofu (see above).
 6. Run:
 
@@ -115,6 +115,7 @@ If boot fails, try to recreate instances from tofu (see above).
 on each node after reboot.
 
 7. update volume_size in ovh module in tofu.
+8. Check lsyncd is running on the master node (US-EAST) (see FAQ below).
 
 # Q&A and useful commands
 
@@ -127,7 +128,6 @@ A:
 Q: How to check beesd logs\status?
 
 A:
-
     sudo journalctl -f -u beesd@$(sudo blkid -s UUID -o value /dev/sdb)
     sudo systemctl status beesd@$(sudo blkid -s UUID -o value /dev/sdb)
     
@@ -139,11 +139,11 @@ A:
 
 Q: lsyncd is not running on the main instance (US-EAST).
 
+A: Check if lsycnd is running:
+
     sudo systemctl status lsyncd
 
-- shows active/exited.
-
-A Restart lsyncd service:
+Restart lsyncd service:
 
     sudo systemctl stop lsyncd
     sudo systemctl start lsyncd
