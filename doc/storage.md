@@ -16,8 +16,8 @@ Make sure main storage is `/dev/sdb` before running the ansible init script:
     brw-rw----  1 root disk      8,  15 Jul 17 18:40 sda15
     brw-rw----  1 root disk      8,  16 Jul 17 18:40 sdb
 
-For this you may need to recreate "appstor_instance" and "appstor_volume_attach" resources:
-comment them in /workspaces/infra/tofu/modules/ovh/appstor.tf, update tofu, then uncomment and update again.
+If order is messed up (e.g. storage is attached as sda, and system disk is sdb) then detach storage from instance in
+OVH admin panel, reboot instance and reattach storage drive. It should appear as sdb then.
 
 The try plain ssh connect from host:
 
@@ -114,7 +114,8 @@ If boot fails, try to recreate instances from tofu (see above).
 
 on each node after reboot.
 
-7. update volume_size in ovh module in tofu.
+7. WARNING! update volume_size in ovh module in tofu. WARNING! Next time tofu runs, appstor will be destroyed. 
+Need to re-init it using ansible init script. So skip this step, but remeber to update volume size later.
 8. Check lsyncd is running on the master node (US-EAST) (see FAQ below).
 
 # Q&A and useful commands
@@ -145,8 +146,7 @@ A: Check if lsycnd is running:
 
 Restart lsyncd service:
 
-    sudo systemctl stop lsyncd
-    sudo systemctl start lsyncd
+    sudo systemctl restart lsyncd
 
 Q: How to mount appstor locally through NFS?
 
