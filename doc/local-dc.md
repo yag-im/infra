@@ -21,7 +21,16 @@ on Linux OS (Debian).
 
 **GPU**: the presence of a GPU is highly recommended for video encoding offloading. Thorough testing has shown that 
 Intel HD and Nvidia GPUs perform well in this role. CPU video encoding is also supported, but it may impact gameplay
-experience significantly.
+experience significantly. 
+
+***NVIDIA GPU***:
+
+If you plan to use NVIDIA GPU for video encoding you should install NVIDIA Container and CUDA Toolkits using guides below:
+
+    https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
+    https://docs.nvidia.com/cuda/
+
+Note: use the `nvidia-drivers` from the NVIDIA CUDA repository instead of the ones bundled with the OS (non-free source). Also, install `cuda-drivers` to enable `nvidia-smi` functionality.
 
 **Storage**: a dedicated external SSD drive (250GB+) is recommended for storing game source images and installed games 
 bundles. At a minimum, a local folder should be sufficient.
@@ -146,7 +155,13 @@ For Mac users, `socat` hack might be required instead:
 
 #### Docker volume
 
+In order to map local folder into the container you need to create a docker volume as shown below:
 
+    docker volume create --driver local \
+        --opt type=none \
+        --opt o=bind \
+        --opt device=~/yag/data/ports/clones \
+        appstor-vol
 
 ### The rest of microservices
 

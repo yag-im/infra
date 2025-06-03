@@ -103,3 +103,31 @@
         --shm-size="2g" \
         --mount type=volume,source=appstor-vol,target=/opt/yag,volume-subpath=0/versailles-1685/46ba41a8-6a36-45f9-a594-278c2e2d0af0 \
         x11_cpu_scummvm:2.9.0
+
+### gpu-nvidia
+
+    docker run \
+        -it \
+        --rm \
+        --name=jukebox_0_test \
+        --network=host \
+        -e FPS='60' \
+        -e MAX_INACTIVITY_PERIOD='1800' \
+        -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
+        -e SIGNALER_HOST='yag.dc' \
+        -e SIGNALER_URI='ws://0.0.0.0:8081/webrtc' \
+        -e SCREEN_HEIGHT='480' \
+        -e SCREEN_WIDTH='640' \
+        -e STUN_URI='stun://stun.l.google.com:19302' \
+        -e WS_CONN_ID='ac01272c-8796-43b4-84f2-79fe7fe7179c' \
+        -e WS_CONSUMER_ID='062bfea5-4029-496d-a565-eb5f070bc1aa' \
+        -e DISPLAY=':23444' \
+        -e SHOW_POINTER=false \
+        -e NVIDIA_DRIVER_CAPABILITIES=all \
+        -e GST_DEBUG=3,ximagesrc:3,webrtcsink:3,pulsesrc:4,webrtcbin:4,vadisplay:3,webrtcsrc-signaller:7 \
+        --privileged \
+        --gpus 'all' \
+        --device=/dev/snd/seq \
+        --shm-size="2g" \
+        --mount type=volume,source=appstor-vol,target=/opt/yag,volume-subpath=1/leisure-suit-larry-5-passionate-patti-does-a-little-undercover-work/1471be71-01b4-4fd2-9c01-abb06d54fc58 \
+        x11_gpu-nvidia_scummvm:2.9.0
