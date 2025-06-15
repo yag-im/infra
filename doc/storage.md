@@ -155,3 +155,8 @@ A: For prod NFS (K8S based):
     # sudo mkdir -p /mnt/appstor_nfs/prod/us-east-1
     ssh -L 2049:192.168.12.200:2049 -p 2207 -o ServerAliveInterval=10  infra@bastion.yag.im -N & disown
     sudo mount -t nfs -o nfsvers=4,minorversion=2,proto=tcp,fsc,nocto,port=2049 localhost: /mnt/appstor_nfs/prod/us-east-1
+
+Q: CPU upgrade
+
+A: When upgrading a CPU, make sure to review all DOSBox configurations with "cycles: fixed XXX", as the values may 
+become inaccurate.
