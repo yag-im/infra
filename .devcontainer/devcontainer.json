@@ -14,7 +14,7 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"gamunu.opentofu",
+				"opentofu.vscode-opentofu",
 				"humao.rest-client",
 				"systemticks.c4-dsl-extension"
 			]
