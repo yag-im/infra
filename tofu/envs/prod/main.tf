@@ -81,7 +81,7 @@ locals {
   ver_sigsvc     = "0.1.3"
   ver_sqldb      = "0.0.2"
   ver_webapi     = "0.1.16"
-  ver_webapp     = "0.3.13"
+  ver_webapp     = "0.3.14"
 }
 
 module "appsvc" {
@@ -121,6 +121,12 @@ module "appsvc" {
     },
     wine = {
       ver           = "9.0",
+      window_system = "x11",
+      igpu          = false,
+      dgpu          = false
+    },
+    retroarch = {
+      ver           = "1.21.0",
       window_system = "x11",
       igpu          = false,
       dgpu          = false

@@ -124,6 +124,12 @@ module "appsvc" {
       window_system = "x11",
       igpu          = false,
       dgpu          = false
+    },
+    retroarch = {
+      ver           = "1.21.0",
+      window_system = "x11",
+      igpu          = false,
+      dgpu          = false
     }
   }
   streamd_reqs = {
