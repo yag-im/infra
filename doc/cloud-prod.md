@@ -40,10 +40,10 @@ Init replicas (west, ...) first, then master (east):
         -i envs/${INFRA_ENV}/hosts_${INFRA_DC}.yml \
         playbooks/jukebox_cluster.yml
 
-# rsync file remotely
+# copy local file to remote machine
 
     rsync -avz -e "ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/prod/id_ed25519 -o ServerAliveInterval=10 -o ProxyCommand='ssh -p 2207 -W %h:%p infra@bastion.yag.im'" /tmp/aaa debian@192.168.12.200:/tmp
 
-# copy remote file
+# copy remote file to local machine
 
     rsync -avz -e "ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/prod/id_ed25519 -o ServerAliveInterval=10 -o ProxyCommand='ssh -p 2207 -W %h:%p infra@bastion.yag.im'" debian@192.168.12.200:/opt/yag/data/appstor/apps/teenagent/3a0921b0-545e-42bd-9479-4f4329d1e8b3/C/TEENAGNT/SOUND.SET /tmp

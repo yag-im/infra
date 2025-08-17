@@ -131,14 +131,14 @@ Order dedicated servers in multiple regions that meet the minimum requirements l
     - iGPU (Xeon XXXXG CPUs)
     - 32GB of RAM
 
-WARNING: not every MB with Xeon XXXXG CPU supports iGPU.
+WARNING: not every motherboard with Xeon XXXXG CPU supports iGPU.
 
     sudo dmidecode | grep -A4 'Base Board Information'
         
         Asrock E3C246D4U2-2T: supports
         Asus P11C-M-10G-2T Series: doesn't support
 
-You should ask OVH support team to switch MBs if neccessary.
+You should ask OVH support team to switch motherboards if neccessary.
 
 ## BIOS settings
 

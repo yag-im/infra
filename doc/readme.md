@@ -3,7 +3,7 @@
 http://prometheus-operated.otel:9090
 http://loki-gateway.otel
 
-# pull docker images (run on jukeboxsvc node)
+# pull docker images (run from jukeboxsvc node)
 
     curl -v --request POST \
         --url http://localhost:80/cluster/pull_image \
