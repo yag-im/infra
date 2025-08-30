@@ -7,7 +7,7 @@ workspace "yag" {
             jobs = container "Async Jobs" "Asynchronous jobs: trimming orphaned sessions/containers" "schedule" "Jobs"
             jukebox = container "Jukebox" "Games runner and WebRTC streamer" "WebRTC" {
                 streamd = component "streamd" "WebRTC streaming daemon" "gstreamer" "WebRTC"
-                runner = component "Game Runner" "" "dosbox, scummvm, wine, retroarch"
+                runner = component "Game Runner" "" "dosbox, scummvm, wine, retroarch, qemu"
             }
             jukeboxsvc = container "Jukebox Service" "Jukebox containers management: cluster state, container pause, run, stop, resume" "Flask" "REST API"
             ports = container "Ports" "Yag ports collection (games installers)" {
@@ -15,6 +15,7 @@ workspace "yag" {
                 scummvmRunner = component "ScummVM Runner"
                 wineRunner = component "Wine Runner"
                 retroarchRunner = component "RetroArch Runner"
+                qemuRunner = component "QEMU Runner"
             }
             portsvc = container "Ports Service" "Ports publisher" "Flask" "REST API"
             scrapers = container "Scrapers Service" "Online Game DBs scrapers" "Python" "Tool" {

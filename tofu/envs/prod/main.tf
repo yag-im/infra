@@ -72,16 +72,16 @@ locals {
   }
   public_tld     = "yag.im"
   private_tld    = "yag.internal"
-  ver_appsvc     = "0.1.16"
+  ver_appsvc     = "0.1.18"
   ver_bastion    = "0.0.5"
   ver_jobs       = "0.1.5"
-  ver_jukeboxsvc = "0.2.4"
+  ver_jukeboxsvc = "0.2.12"
   ver_portsvc    = "0.0.28"
   ver_sessionsvc = "0.0.18"
   ver_sigsvc     = "0.1.3"
   ver_sqldb      = "0.0.2"
   ver_webapi     = "0.1.16"
-  ver_webapp     = "0.3.15"
+  ver_webapp     = "0.3.16"
 }
 
 module "appsvc" {
@@ -130,6 +130,13 @@ module "appsvc" {
       window_system = "x11",
       igpu          = false,
       dgpu          = false
+    },
+    qemu = {
+      ver           = "1.21.0",
+      window_system = "x11",
+      igpu          = false,
+      dgpu          = false,
+      memory        = 2147483648 # TODO: winxp only requirement
     }
   }
   streamd_reqs = {

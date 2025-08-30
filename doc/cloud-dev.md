@@ -157,16 +157,19 @@ Disable all kind of CPU throttling options (this is mandatory and improves perfo
         CPU Termal Throttling: Disabled
 
 In order to see iGPU devices at /dev/dri you need to disable IOMMU:
-
-    Advanced -> CPU configuration -> Intel VMX Virtualization Technology: Disable
+    
     Chipset -> System agent -> VT-d: Disabled (sometimes this option reside in `Advanced -> CPU configuration`)
     Update /etc/default/grub: remove "nomodeset"
         sudo update-grub
         sudo reboot
 
+For /dev/kvm (required for QEMU):
+
+    Advanced -> CPU configuration -> Intel Virtualization Technology (VT-x): Enable
+
 ## OS install
 
-Request Debian (Bookworm) installation.
+Request Debian (Trixie) installation.
 
 Use `jukeboxXX` as hostname.
 

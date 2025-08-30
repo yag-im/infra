@@ -130,6 +130,13 @@ module "appsvc" {
       window_system = "x11",
       igpu          = false,
       dgpu          = false
+    },
+    qemu = {
+      ver           = "1.21.0",
+      window_system = "x11",
+      igpu          = false,
+      dgpu          = false,
+      memory        = 2147483648 # TODO: winxp only requirement
     }
   }
   streamd_reqs = {
