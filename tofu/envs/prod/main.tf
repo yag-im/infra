@@ -76,7 +76,7 @@ locals {
   ver_bastion    = "0.0.5"
   ver_jobs       = "0.1.5"
   ver_jukeboxsvc = "0.2.12"
-  ver_portsvc    = "0.0.28"
+  ver_portsvc    = "0.0.31"
   ver_sessionsvc = "0.0.18"
   ver_sigsvc     = "0.1.3"
   ver_sqldb      = "0.0.2"
@@ -249,7 +249,9 @@ module "portsvc" {
   # app config
   flask_env = "production"
   # secrets
-  sqldb_password = data.aws_ssm_parameter.sqldb_portsvc_password.value
+  sqldb_password               = data.aws_ssm_parameter.sqldb_portsvc_password.value
+  twitch_oauth_client_id       = var.twitch_oauth_client_id
+  twitch_oauth_client_secret   = data.aws_ssm_parameter.authsvc_twitch_oauth_client_secret.value
 }
 
 module "sessionsvc" {

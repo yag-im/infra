@@ -80,6 +80,8 @@ resource "kubernetes_config_map" "portsvc" {
     SQLDB_PORT                      = 5432
     SQLDB_USERNAME                  = "portsvc"
     #secrets
-    SQLDB_PASSWORD = var.sqldb_password
+    SQLDB_PASSWORD     = var.sqldb_password
+    IGDB_CLIENT_ID     = var.twitch_oauth_client_id
+    IGDB_CLIENT_SECRET = var.twitch_oauth_client_secret
   }
 }

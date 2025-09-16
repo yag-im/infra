@@ -249,7 +249,9 @@ module "portsvc" {
   # app config
   flask_env = "development"
   # secrets
-  sqldb_password = data.aws_ssm_parameter.sqldb_portsvc_password.value
+  sqldb_password             = data.aws_ssm_parameter.sqldb_portsvc_password.value
+  twitch_oauth_client_id     = var.twitch_oauth_client_id
+  twitch_oauth_client_secret = data.aws_ssm_parameter.authsvc_twitch_oauth_client_secret.value
 }
 
 module "sessionsvc" {

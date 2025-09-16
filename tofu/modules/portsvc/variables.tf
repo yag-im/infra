@@ -26,3 +26,11 @@ variable "flask_env" {
 variable "sqldb_password" {
   type = string
 }
+
+variable "twitch_oauth_client_id" {
+  type = string
+}
+
+variable "twitch_oauth_client_secret" {
+  type = string
+}
