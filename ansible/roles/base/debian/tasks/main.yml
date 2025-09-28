@@ -1,10 +1,11 @@
 # time sync should come first, otherwise apt commands may fail
-- command: timedatectl set-timezone "{{ timezone }}"
-- command: timedatectl set-ntp on
-- ansible.builtin.service:
-    name: "systemd-timesyncd"
-    enabled: true
-    state: restarted
+- ansible.builtin.timezone:
+    name: "{{ timezone }}"
+
+- ansible.builtin.systemd:
+    name: systemd-timesyncd
+    state: started
+    enabled: yes
 
 - name: parent roles
   include_role:
@@ -13,41 +14,45 @@
   loop_control:
     loop_var: debian_parent_roles_item
 
-# dns task should come first, otherwise domains resolution will not work in any task below
 - name: tasks
-  include_tasks: "{{ debian_tasks_item }}"
+  include_tasks: "{{ var_task_debian }}"
   with_items:
     - dns.yml
     - mail.yml
   loop_control:
-    loop_var: debian_tasks_item
+    loop_var: var_task_debian
   when:
     infra_env != 'local'
 
-- name: update and upgrade packages
-  package:
+- name: update and upgrade apt packages
+  apt:
     upgrade: yes
     update_cache: yes
 
 - package:
     name: "{{ debian_packages }}"
     state: latest
-    update_cache: yes
-  with_items: "{{ debian_packages }}"
+    update_cache: true
 
 - ansible.builtin.copy:
     src: .inputrc
     dest: /home/{{ ansible_user }}
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'
 
 - ansible.builtin.lineinfile:
     path: /etc/security/limits.conf
     line: "* soft core unlimited"
+    state: present
 
 - ansible.builtin.lineinfile:
-    path: /etc/sysctl.conf
+    path: /etc/sysctl.d/99-ping.conf
     line: "net.ipv4.ping_group_range = 0 2147483647"
+    create: yes
+    state: present
 
-# otherwise systemd will remove shm segments after ssh session expiration
+# otherwise systemd will remove /dev/shm/SharedMemorySegment after infra ssh session expiration
 - ansible.builtin.lineinfile:
     path: /etc/systemd/logind.conf
     line: "RemoveIPC=no"
@@ -58,3 +63,17 @@
   with_items: "{{ child_roles }}"
   loop_control:
     loop_var: debian_child_roles_item
+
+- name: Set fqdn hostname
+  ansible.builtin.hostname:
+    name: "jukeboxXX.{{ cluster_region }}.yag.im" # TODO: fix for both jukebox/appstor
+
+- name: show full hostname in prompt
+  ansible.builtin.replace:
+    path: "/home/{{ ansible_user }}/.bashrc"
+    regexp: '(PS1=.*)\\h(.*)$'
+    replace: '\1\\H\2'
+    backup: yes
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0644'

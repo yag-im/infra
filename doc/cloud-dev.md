@@ -156,13 +156,6 @@ Disable all kind of CPU throttling options (this is mandatory and improves perfo
         Intel SpeedStep: Disabled
         CPU Termal Throttling: Disabled
 
-In order to see iGPU devices at /dev/dri you need to disable IOMMU:
-    
-    Chipset -> System agent -> VT-d: Disabled (sometimes this option reside in `Advanced -> CPU configuration`)
-    Update /etc/default/grub: remove "nomodeset"
-        sudo update-grub
-        sudo reboot
-
 For /dev/kvm (required for QEMU):
 
     Advanced -> CPU configuration -> Intel Virtualization Technology (VT-x): Enable
@@ -171,7 +164,7 @@ For /dev/kvm (required for QEMU):
 
 Request Debian (Trixie) installation.
 
-Use `jukeboxXX` as hostname.
+Use `jukebox{N}.{us-east-1,us-west-1}.yag.im` as hostname.
 
 Provide infras' (/workspaces/infra/tofu/modules/bastion/files/secrets/dev/id_ed25519.pub) ssh key on installation.
 
@@ -189,6 +182,12 @@ Provide infras' (/workspaces/infra/tofu/modules/bastion/files/secrets/dev/id_ed2
     sudo netplan apply
 
 Move instance to OVH -> vRack so it's assessible via private network for next step (ansible init).
+
+In order to see iGPU devices at /dev/dri you need to disable IOMMU:
+    
+    Chipset -> System agent -> VT-d: Disabled (sometimes this option reside in `Advanced -> CPU configuration`)
+    Update /etc/default/grub: remove "nomodeset"
+        sudo update-grub
 
 ## Init
 

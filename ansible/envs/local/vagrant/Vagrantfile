@@ -16,7 +16,7 @@ Vagrant.configure(2) do |config|
 
     jukebox_cluster.each do |node|
         config.vm.define node[:hostname] do |h|
-            h.vm.box = "debian/bookworm64"
+            h.vm.box = "debian/trixie64"
             h.vm.hostname = node[:hostname]
             h.vm.network "private_network", ip: node[:ip], virtualbox__intnet: true
             h.vm.network "private_network", ip: node[:ip_pub]

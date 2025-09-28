@@ -81,7 +81,7 @@ locals {
   ver_sigsvc     = "0.1.3"
   ver_sqldb      = "0.0.2"
   ver_webapi     = "0.1.25"
-  ver_webapp     = "0.3.19"
+  ver_webapp     = "0.3.21"
 }
 
 module "appsvc" {

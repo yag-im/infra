@@ -29,6 +29,8 @@ Init replicas (west, ...) first, then master (east):
 
 # init jukebox nodes:
 
+- Run ansible init scripts:
+
     export INFRA_ENV=prod; \
     export INFRA_USER=debian; \
     export INFRA_DC=us-west-1; \
@@ -40,10 +42,20 @@ Init replicas (west, ...) first, then master (east):
         -i envs/${INFRA_ENV}/hosts_${INFRA_DC}.yml \
         playbooks/jukebox_cluster.yml
 
-# copy local file to remote machine
+- Reboot instance after completion.
+
+- Update local docker images cache from jukebox project: 
+
+    scripts/pull_images.sh cloud_prod_all
+
+Make sure legacy images which are still in use are part of the cloud_prod_all collection.
+
+# useful commands
+
+## copy local file to remote machine
 
     rsync -avz -e "ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/prod/id_ed25519 -o ServerAliveInterval=10 -o ProxyCommand='ssh -p 2207 -W %h:%p infra@bastion.yag.im'" /tmp/aaa debian@192.168.12.200:/tmp
 
-# copy remote file to local machine
+## copy remote file to local machine
 
     rsync -avz -e "ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/prod/id_ed25519 -o ServerAliveInterval=10 -o ProxyCommand='ssh -p 2207 -W %h:%p infra@bastion.yag.im'" debian@192.168.12.200:/opt/yag/data/appstor/apps/teenagent/3a0921b0-545e-42bd-9479-4f4329d1e8b3/C/TEENAGNT/SOUND.SET /tmp

@@ -1,44 +1,17 @@
-- name: install base deps
-  apt:
-    name: "{{ item }}"
-    state: latest
-    update_cache: yes
-  with_items:
-    - apt-transport-https
-    - ca-certificates
-    - curl
-    - gpg
-    - software-properties-common
+- include_tasks: "{{ ansible_distribution | lower }}.yml"
 
-- name: add gpg key
-  apt_key:
-    url: "{{ docker_repo_key }} "
-    state: present
+- name: ensure docker service is enabled and running
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: yes
 
-- name: add repository
-  apt_repository:
-    repo: "{{ docker_repo }}"
-
-- name: install docker and dependencies
-  package:
-    name: "{{ docker_packages }}"
-    state: latest
-    update_cache: yes
-  with_items: "{{ docker_packages }}"
-
-- name: add user to group docker
-  user:
+- name: add user to docker group
+  ansible.builtin.user:
     name: '{{ ansible_user }}'
     groups: docker
     append: yes
 
 # refresh groups
 - name: reset ssh connection
-  meta: reset_connection
-
-- name: make sure the service is started and enabled via systemd
-  ansible.builtin.systemd:
-    name: docker
-    state: restarted
-    enabled: yes
-    daemon_reload: yes
+  ansible.builtin.meta: reset_connection
