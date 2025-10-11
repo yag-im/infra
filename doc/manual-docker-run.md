@@ -10,7 +10,8 @@
         --name=jukebox_0_tester \
         --network=host \
         -e FPS='60' \
-        -e MAX_INACTIVITY_PERIOD='1800' \
+        -e LOADING_DURATION='5' \
+        -e MAX_INACTIVITY_DURATION='1800' \
         -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
         -e SIGNALER_HOST='dev.yag.im' \
         -e SIGNALER_URI='wss://dev.yag.im/webrtc/streamd' \
@@ -36,7 +37,8 @@
         --name=jukebox_0_the-black-mirror_5dc73b7f \
         --network=host \
         -e FPS='60' \
-        -e MAX_INACTIVITY_PERIOD='1800' \
+        -e LOADING_DURATION='5' \
+        -e MAX_INACTIVITY_DURATION='1800' \
         -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
         -e SIGNALER_HOST='dev.yag.im' \
         -e SIGNALER_URI='wss://dev.yag.im/webrtc/streamd' \
@@ -62,7 +64,8 @@
         --name=jukebox_0_test \
         --network=host \
         -e FPS='60' \
-        -e MAX_INACTIVITY_PERIOD='1800' \
+        -e LOADING_DURATION='5' \
+        -e MAX_INACTIVITY_DURATION='1800' \
         -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
         -e SIGNALER_HOST='yag.dc' \
         -e SIGNALER_URI='ws://0.0.0.0:8081/webrtc' \
@@ -88,7 +91,8 @@
         --name=jukebox_0_versailles-1685_fbe1b341 \
         --network=host \
         -e FPS='60' \
-        -e MAX_INACTIVITY_PERIOD='1800' \
+        -e LOADING_DURATION='5' \
+        -e MAX_INACTIVITY_DURATION='1800' \
         -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
         -e SIGNALER_HOST='yag.dc' \
         -e SIGNALER_URI='ws://0.0.0.0:8081/webrtc' \
@@ -112,7 +116,8 @@
         --name=jukebox_0_test \
         --network=host \
         -e FPS='60' \
-        -e MAX_INACTIVITY_PERIOD='1800' \
+        -e LOADING_DURATION='5' \
+        -e MAX_INACTIVITY_DURATION='1800' \
         -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
         -e SIGNALER_HOST='yag.dc' \
         -e SIGNALER_URI='ws://0.0.0.0:8081/webrtc' \
