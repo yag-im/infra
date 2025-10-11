@@ -5,8 +5,14 @@ all:
         192.168.13.2:
       vars:
         appstor_internal_ip: "192.168.13.200"
+        fqdn_host_prefix: "jukebox"
+        fqdn_host_group: "jukebox_cluster"
     appstor:
       hosts:
         192.168.13.200:
+      vars:
+        fqdn_host_prefix: "appstor"
+        fqdn_host_group: "appstor"
   vars:
     cluster_region: "us-west-1"
+    ansible_python_interpreter: /usr/bin/python3

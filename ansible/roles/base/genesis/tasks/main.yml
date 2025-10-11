@@ -5,7 +5,9 @@
   loop_control:
     loop_var: var_task_genesis
 
+- set_fact:
+    node_index: "{{ groups[fqdn_host_group].index(inventory_hostname) + 1 }}"
+
 - name: set a hostname
   ansible.builtin.hostname:
-    name: "{{ infra_hostname }}"
-  when: infra_hostname is defined
+    name: "{{ fqdn_host_prefix }}{{ node_index }}.{{ cluster_region }}.yag.im"

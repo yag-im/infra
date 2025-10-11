@@ -64,10 +64,6 @@
   loop_control:
     loop_var: debian_child_roles_item
 
-- name: Set fqdn hostname
-  ansible.builtin.hostname:
-    name: "jukeboxXX.{{ cluster_region }}.yag.im" # TODO: fix for both jukebox/appstor
-
 - name: show full hostname in prompt
   ansible.builtin.replace:
     path: "/home/{{ ansible_user }}/.bashrc"

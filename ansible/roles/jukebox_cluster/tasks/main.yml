@@ -50,7 +50,7 @@
     src: override.conf.j2
     dest: "/etc/systemd/system/docker.service.d/override.conf"
 
-- name: make sure the service is started and enabled via systemd
+- name: make sure docker service is started and enabled via systemd
   ansible.builtin.systemd:
     name: docker
     state: restarted

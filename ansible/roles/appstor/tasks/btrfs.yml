@@ -51,7 +51,7 @@
         repo: https://github.com/Zygo/bees.git
         dest: /tmp/bees
         single_branch: yes
-        version: master
+        version: v0.11
     - make:
         chdir: /tmp/bees
         target: install
@@ -67,7 +67,12 @@
     src: beesd.conf.j2
     dest: "/etc/bees/beesd.conf"
 
-- ansible.builtin.service:
+- ansible.builtin.copy:
+    src: "/tmp/bees/scripts/beesd@.service"
+    dest: "/etc/systemd/system/beesd@.service"
+    remote_src: true
+
+- ansible.builtin.systemd:
     name: beesd@{{ btrfs_uuid }}
     state: restarted
     enabled: yes

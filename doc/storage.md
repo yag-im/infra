@@ -159,4 +159,4 @@ A: For prod NFS (K8S based):
 Q: CPU upgrade
 
 A: When upgrading a CPU, make sure to review all DOSBox configurations with "cycles: fixed XXX", as the values may 
-become inaccurate. Also, for qemu - update -cpu model parameter.
+become inaccurate. Also, for qemu: update `-cpu model` parameter.

@@ -18,15 +18,15 @@ resource "openstack_compute_instance_v2" "appstor_instance" {
   count       = length(var.appstor.nodes)
   name        = "appstor-instance"
   flavor_name = var.appstor.flavor
-  image_name  = "Debian 12"
+  image_name  = "Debian 13"
   key_pair    = openstack_compute_keypair_v2.appstor_keypair[count.index].name
   network {
     name        = ovh_cloud_project_network_private.private_network.name
     fixed_ip_v4 = var.appstor.nodes[count.index].host # make sure dhcp is enabled in the priv network settings (sic!)
   }
-  #network {
-  #    name      = "Ext-Net"
-  #}
+  network {
+      name      = "Ext-Net"
+  }
   region     = var.appstor.nodes[count.index].ovh_region
   depends_on = [ovh_cloud_project_network_private_subnet.private_subnet]
 }

@@ -4,9 +4,10 @@ all:
       hosts:
         55.55.55.55:
       vars:
-        appstor_internal_ip: "192.168.12.200"        
+        appstor_internal_ip: "192.168.12.200"
     appstor:
       hosts:
         192.168.12.200:
   vars:
     cluster_region: "us-east-1"
+    ansible_python_interpreter: /usr/bin/python3

@@ -10,3 +10,4 @@ all:
         appstor1.us-west-1.yag.vm:
   vars:
     cluster_region: "us-west-1"
+    ansible_python_interpreter: /usr/bin/python3
