@@ -72,16 +72,16 @@ locals {
   }
   public_tld     = "yag.im"
   private_tld    = "yag.internal"
-  ver_appsvc     = "0.2.0"
+  ver_appsvc     = "0.3.0"
   ver_bastion    = "0.0.5"
   ver_jobs       = "0.1.8"
-  ver_jukeboxsvc = "0.2.13"
-  ver_portsvc    = "0.0.32"
-  ver_sessionsvc = "0.0.18"
+  ver_jukeboxsvc = "0.3.0"
+  ver_portsvc    = "0.1.0"
+  ver_sessionsvc = "0.1.0"
   ver_sigsvc     = "0.1.3"
   ver_sqldb      = "0.0.2"
-  ver_webapi     = "0.2.0"
-  ver_webapp     = "0.5.0"
+  ver_webapi     = "0.3.0"
+  ver_webapp     = "0.6.0"
 }
 
 module "appsvc" {
@@ -211,7 +211,7 @@ module "ovh" {
     flavor          = "b3-8"
     nodes           = local.appstor_nodes
     public_key_path = "${path.root}/../../modules/bastion/files/secrets/prod/id_ed25519.pub"
-    volume_size     = 300 # in GBs
+    volume_size     = 500 # in GBs
   }
   k8s = {
     desired_nodes = 2
