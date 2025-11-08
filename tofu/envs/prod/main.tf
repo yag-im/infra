@@ -332,6 +332,7 @@ module "istio" {
 
   # endpoints exposed through the istio gateways (both public and private)
   hostnames = local.hostnames
+  private_lb_subnet_id = module.ovh.private_lb_subnet_id
 }
 
 module "misc" {

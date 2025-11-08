@@ -40,12 +40,12 @@ resource "helm_release" "istiod" {
   force_update    = false
   values = [
     templatefile("${path.module}/manifests/istiod.yaml", {
-      gw_name = "${local.gw_name_public}"
+      gw_name     = "${local.gw_name_public}"
       gw_selector = "${local.gw_selector_public}"
-      authsvc = "webapi.default.svc.cluster.local"
+      authsvc     = "webapi.default.svc.cluster.local"
     })
   ]
-  
+
   depends_on = [helm_release.istio_base]
 }
 
@@ -94,8 +94,8 @@ resource "kubernetes_manifest" "istio_auth_policy_user" {
           to = [
             {
               operation = {
-                hosts = [var.hostnames["webapp"]]
-                paths = ["/api/*", "/webrtc"]
+                hosts    = [var.hostnames["webapp"]]
+                paths    = ["/api/*", "/webrtc"]
                 notPaths = ["/api/docs", "/api/specs", "/api/apps/*"]
               }
             }
@@ -169,15 +169,7 @@ resource "kubernetes_manifest" "istio_gw_public" {
   }
 }
 
-# private gw setup
-/* TODO: OVHs' K8S doesn't support private IPs assignments
-
-The new technology is an OpenStack-based load balancer. 
-It's highly configurable, compatible with private IPs, and can be managed via OpenStack or the OVHcloud API. 
-Unfortunately, it's in the end stages of testing for use as a Kubernetes object and not yet available in this context. 
-It can still be used as an OpenStack resource in parallel with a Kubernetes cluster, just not managed with K8s APIs.
-Openstack loadbalancer doc: https://support.us.ovhcloud.com/hc/en-us/articles/18610207964051-Getting-Started-with-Load-Balancer-on-Public-Cloud
-
+#private gw setup
 resource "kubernetes_namespace" "istio_gw_private" {
   metadata {
     name = local.gw_namespace_private
@@ -188,20 +180,24 @@ resource "kubernetes_namespace" "istio_gw_private" {
 }
 
 resource "helm_release" "istio_gw_private" {
-  repository      = local.url_charts_istio
-  chart           = "gateway"
-  name            = local.gw_name_private
-  namespace       = kubernetes_namespace.istio_gw_private.metadata.0.name
-  version         = local.ver_charts_istio
+  name       = local.gw_name_private
+  namespace  = local.gw_namespace_private
+  repository = local.url_charts_istio
+  chart      = "gateway"
+  version    = local.ver_charts_istio
+
   timeout         = 500
   cleanup_on_fail = true
   force_update    = false
-  depends_on      = [helm_release.istiod]
+
   values = [
     templatefile("${path.module}/manifests/gw-private.yaml", {
-        gw_selector = "${local.gw_selector_private}"
+      gw_selector          = "${local.gw_selector_private}"
+      private_lb_subnet_id = var.private_lb_subnet_id
     })
   ]
+
+  depends_on = [kubernetes_namespace.istio_gw_private, helm_release.istiod]
 }
 
 resource "kubernetes_manifest" "istio_gw_private" {
@@ -223,13 +219,13 @@ resource "kubernetes_manifest" "istio_gw_private" {
             var.hostnames["otelcol_gw"]
           ]
           port = {
-            name = "otelcol-gw"
+            name     = "otelcol-gw"
             number   = 4317
-            protocol = "TCP"            
+            protocol = "TCP"
           }
         }
       ]
     }
   }
+  depends_on = [helm_release.istio_gw_private]
 }
-*/

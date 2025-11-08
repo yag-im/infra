@@ -1,3 +1,8 @@
+annotations:
+  loadbalancer.ovhcloud.com/class: "octavia"
+  loadbalancer.ovhcloud.com/flavor: "small"
+  service.beta.kubernetes.io/openstack-internal-load-balancer: "true"
+  loadbalancer.openstack.org/subnet-id: ${private_lb_subnet_id}
 labels:
   istio: ${gw_selector}
 service:

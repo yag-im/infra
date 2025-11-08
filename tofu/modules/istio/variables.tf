@@ -11,3 +11,7 @@ variable "k8s_namespace" {
 variable "hostnames" {
   type = map(string)
 }
+
+variable "private_lb_subnet_id" {
+  type = string
+}
