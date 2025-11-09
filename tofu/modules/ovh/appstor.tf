@@ -14,11 +14,15 @@ resource "openstack_blockstorage_volume_v3" "appstor_volume" {
   volume_type = "high-speed"
 }
 
+data "openstack_images_image_v2" "os_image" {
+  name = "Debian 13"
+}
+
 resource "openstack_compute_instance_v2" "appstor_instance" {
   count       = length(var.appstor.nodes)
   name        = "appstor-instance"
   flavor_name = var.appstor.flavor
-  image_name  = "Debian 13"
+  image_id    = data.openstack_images_image_v2.os_image.id
   key_pair    = openstack_compute_keypair_v2.appstor_keypair[count.index].name
   network {
     name        = ovh_cloud_project_network_private.private_network.name
@@ -28,6 +32,11 @@ resource "openstack_compute_instance_v2" "appstor_instance" {
       name      = "Ext-Net"
   }
   region     = var.appstor.nodes[count.index].ovh_region
+  lifecycle {
+    ignore_changes = [
+      image_id,
+    ]
+  }
   depends_on = [ovh_cloud_project_network_private_subnet.private_subnet]
 }
 

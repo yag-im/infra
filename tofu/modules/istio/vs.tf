@@ -177,3 +177,41 @@ resource "kubernetes_manifest" "virtual_service_webapp" {
     }
   }
 }
+
+resource "kubernetes_manifest" "virtual_service_otelcol_gw" {
+  manifest = {
+    apiVersion = "networking.istio.io/v1beta1"
+    kind       = "VirtualService"
+    metadata = {
+      name      = "otelcol-gw-vs"
+      namespace = local.gw_namespace_private
+    }
+    spec = {
+      hosts = [
+        var.hostnames["otelcol_gw"]
+      ]
+      gateways = [
+        local.gw_name_private
+      ]
+      tcp = [
+        {
+          match = [
+            {
+              port = 4317
+            }
+          ]
+          route = [
+            {
+              destination = {
+                host = "otelcol-gw-opentelemetry-collector.otel.svc.cluster.local"
+                port = {
+                  number = 4317
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

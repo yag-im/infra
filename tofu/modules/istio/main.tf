@@ -207,14 +207,14 @@ resource "kubernetes_manifest" "istio_gw_private" {
     kind       = "Gateway"
     metadata = {
       name      = local.gw_name_private
-      namespace = kubernetes_namespace.istio_gw_private.metadata.0.name
+      namespace = local.gw_namespace_private
     }
     spec = {
       selector = {
         istio = local.gw_selector_private
       }
       servers = [
-        { # otelcol-gw
+        {
           hosts = [
             var.hostnames["otelcol_gw"]
           ]

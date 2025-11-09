@@ -55,24 +55,19 @@
     - make:
         chdir: /tmp/bees
         target: install
-  when: not beesd.stat.exists  
-
-- ansible.builtin.command: /usr/sbin/blkid -s UUID -o value "{{ appstor_btrfs_devices[0] }}"
-  register: blkid_output
-
-- set_fact:
-    btrfs_uuid: "{{ blkid_output.stdout }}"
-
-- ansible.builtin.template:
-    src: beesd.conf.j2
-    dest: "/etc/bees/beesd.conf"
-
-- ansible.builtin.copy:
-    src: "/tmp/bees/scripts/beesd@.service"
-    dest: "/etc/systemd/system/beesd@.service"
-    remote_src: true
-
-- ansible.builtin.systemd:
-    name: beesd@{{ btrfs_uuid }}
-    state: restarted
-    enabled: yes
+    - ansible.builtin.command: /usr/sbin/blkid -s UUID -o value "{{ appstor_btrfs_devices[0] }}"
+      register: blkid_output
+    - set_fact:
+        btrfs_uuid: "{{ blkid_output.stdout }}"
+    - ansible.builtin.template:
+        src: beesd.conf.j2
+        dest: "/etc/bees/beesd.conf"
+    - ansible.builtin.copy:
+        src: "/tmp/bees/scripts/beesd@.service"
+        dest: "/etc/systemd/system/beesd@.service"
+        remote_src: true
+    - ansible.builtin.systemd:
+        name: beesd@{{ btrfs_uuid }}
+        state: restarted
+        enabled: yes
+  when: not beesd.stat.exists

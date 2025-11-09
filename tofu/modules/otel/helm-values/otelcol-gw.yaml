@@ -16,7 +16,7 @@ config:
           value: k8s.node.name, k8s.deployment.name, k8s.pod.name
   exporters:
     prometheus:
-      endpoint: "$${env:MY_POD_IP}:${port_otelcol_gw_prometheus}" # listens on a local interface ("pull" mode)
+      endpoint: "$${env:MY_POD_IP}:${port_otelcol_gw_prometheus}" # listens on a local interface (prometheus works in a "pull" mode)
       resource_to_telemetry_conversion:
         enabled: true
     loki:
