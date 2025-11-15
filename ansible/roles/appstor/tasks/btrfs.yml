@@ -31,6 +31,7 @@
       with_items:
         - "{{ app_data_path }}/apps"
         - "{{ app_data_path }}/clones"
+        - "{{ app_data_path }}/tmp"
     
     # TODO: this should be run only once on init. Also somehow it changes ownership on /usr/sbin making sudo unusable
     #- ansible.builtin.file:
