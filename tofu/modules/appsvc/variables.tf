@@ -30,6 +30,7 @@ variable "runners" {
     window_system = string,
     igpu          = bool,
     dgpu          = bool
+    memory        = optional(number)
   }))
 }
 
