@@ -2,23 +2,23 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "= 5.64.0"
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 2.12.1"
+      version = "= 2.12.1"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = ">= 2.0.0"
+      version = "= 2.32.0"
     }
     openstack = {
       source  = "terraform-provider-openstack/openstack"
-      version = "~> 1.54.1"
+      version = "= 1.54.1"
     }
     ovh = {
       source  = "ovh/ovh"
-      version = ">= 0.13.0"
+      version = "= 0.48.0"
     }
   }
 }
@@ -72,7 +72,7 @@ locals {
   }
   public_tld     = "yag.im"
   private_tld    = "yag.internal"
-  ver_appsvc     = "0.3.3"
+  ver_appsvc     = "0.3.4"
   ver_bastion    = "0.0.5"
   ver_jobs       = "0.1.8"
   ver_jukeboxsvc = "0.3.3"

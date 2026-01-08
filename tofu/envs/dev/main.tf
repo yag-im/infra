@@ -2,23 +2,23 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "= 5.82.2"
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 2.12.1"
+      version = "= 2.12.1"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = ">= 2.0.0"
+      version = "= 2.35.1"
     }
     openstack = {
       source  = "terraform-provider-openstack/openstack"
-      version = "~> 1.54.1"
+      version = "= 1.54.1"
     }
     ovh = {
       source  = "ovh/ovh"
-      version = ">= 0.13.0"
+      version = "= 1.4.0"
     }
   }
 }
