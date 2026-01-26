@@ -68,7 +68,7 @@ locals {
     bastion    = "bastion.${local.public_tld}"
     grafana    = "grafana.${local.public_tld}"
     otelcol_gw = "otelcol-gw.${local.private_tld}"
-    webapp   = local.public_tld
+    webapp     = local.public_tld
   }
   public_tld     = "dev.yag.im"
   private_tld    = "yag.internal"

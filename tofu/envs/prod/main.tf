@@ -68,13 +68,13 @@ locals {
     bastion    = "bastion.${local.public_tld}"
     grafana    = "grafana.${local.public_tld}"
     otelcol_gw = "otelcol-gw.${local.private_tld}"
-    webapp   = local.public_tld
+    webapp     = local.public_tld
   }
   public_tld     = "yag.im"
   private_tld    = "yag.internal"
-  ver_appsvc     = "0.3.4"
+  ver_appsvc     = "0.3.5"
   ver_bastion    = "0.0.5"
-  ver_jobs       = "0.1.8"
+  ver_jobs       = "0.1.10"
   ver_jukeboxsvc = "0.3.3"
   ver_portsvc    = "0.1.2"
   ver_sessionsvc = "0.1.1"
@@ -249,9 +249,9 @@ module "portsvc" {
   # app config
   flask_env = "production"
   # secrets
-  sqldb_password               = data.aws_ssm_parameter.sqldb_portsvc_password.value
-  twitch_oauth_client_id       = var.twitch_oauth_client_id
-  twitch_oauth_client_secret   = data.aws_ssm_parameter.authsvc_twitch_oauth_client_secret.value
+  sqldb_password             = data.aws_ssm_parameter.sqldb_portsvc_password.value
+  twitch_oauth_client_id     = var.twitch_oauth_client_id
+  twitch_oauth_client_secret = data.aws_ssm_parameter.authsvc_twitch_oauth_client_secret.value
 }
 
 module "sessionsvc" {
@@ -331,7 +331,7 @@ module "istio" {
   k8s_namespace   = "default"
 
   # endpoints exposed through the istio gateways (both public and private)
-  hostnames = local.hostnames
+  hostnames            = local.hostnames
   private_lb_subnet_id = module.ovh.private_lb_subnet_id
 }
 
