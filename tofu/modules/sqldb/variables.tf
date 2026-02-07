@@ -74,3 +74,8 @@ variable "postgres_password" {
 variable "sessionsvc_password" {
   type = string
 }
+
+variable "postgres_work_mem" {
+  type    = string
+  default = "64MB"
+}

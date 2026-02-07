@@ -93,6 +93,7 @@ resource "kubernetes_stateful_set" "sqldb" {
           image             = var.docker_image
           image_pull_policy = "IfNotPresent"
           name              = "sqldb"
+          args              = ["postgres", "-c", "work_mem=${var.postgres_work_mem}"]
           env_from {
             config_map_ref {
               name = "sqldb-cm"
