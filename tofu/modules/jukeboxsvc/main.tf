@@ -112,6 +112,7 @@ resource "kubernetes_config_map" "jukeboxsvc" {
     JUKEBOX_DOCKER_REPO_PREFIX                        = var.jukebox_docker_repo_prefix
     JUKEBOX_NODE_CLONES_ROOT_DIR                      = "/mnt/appstor"
     JUKEBOX_NODES                                     = jsonencode(var.jukebox_nodes)
+    SESSIONSVC_URL                                    = "http://sessionsvc"
     SIGNALER_HOST                                     = var.signaler_host
     SIGNALER_URI                                      = var.signaler_uri
     STUN_URI                                          = var.stun_uri
