@@ -72,10 +72,10 @@ locals {
   }
   public_tld     = "yag.im"
   private_tld    = "yag.internal"
-  ver_appsvc     = "0.3.7"
+  ver_appsvc     = "0.3.8"
   ver_bastion    = "0.0.5"
   ver_jobs       = "0.1.13"
-  ver_jukeboxsvc = "0.4.0"
+  ver_jukeboxsvc = "0.4.1"
   ver_portsvc    = "0.1.3"
   ver_sessionsvc = "0.1.2"
   ver_sigsvc     = "0.1.8"
