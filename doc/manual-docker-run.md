@@ -11,7 +11,7 @@
         --network=host \
         -e FPS='60' \
         -e LOADING_DURATION='5' \
-        -e MAX_INACTIVITY_DURATION='1800' \
+        -e MAX_INACTIVITY_DURATION='600' \
         -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
         -e SIGNALER_HOST='dev.yag.im' \
         -e SIGNALER_URI='wss://dev.yag.im/webrtc/streamd' \
@@ -38,7 +38,7 @@
         --network=host \
         -e FPS='60' \
         -e LOADING_DURATION='5' \
-        -e MAX_INACTIVITY_DURATION='1800' \
+        -e MAX_INACTIVITY_DURATION='600' \
         -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
         -e SIGNALER_HOST='dev.yag.im' \
         -e SIGNALER_URI='wss://dev.yag.im/webrtc/streamd' \
@@ -65,7 +65,7 @@
         --network=host \
         -e FPS='60' \
         -e LOADING_DURATION='5' \
-        -e MAX_INACTIVITY_DURATION='1800' \
+        -e MAX_INACTIVITY_DURATION='600' \
         -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
         -e SIGNALER_HOST='yag.dc' \
         -e SIGNALER_URI='ws://0.0.0.0:8081/webrtc' \
@@ -92,7 +92,7 @@
         --network=host \
         -e FPS='60' \
         -e LOADING_DURATION='5' \
-        -e MAX_INACTIVITY_DURATION='1800' \
+        -e MAX_INACTIVITY_DURATION='600' \
         -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
         -e SIGNALER_HOST='yag.dc' \
         -e SIGNALER_URI='ws://0.0.0.0:8081/webrtc' \
@@ -117,7 +117,7 @@
         --network=host \
         -e FPS='60' \
         -e LOADING_DURATION='5' \
-        -e MAX_INACTIVITY_DURATION='1800' \
+        -e MAX_INACTIVITY_DURATION='600' \
         -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
         -e SIGNALER_HOST='yag.dc' \
         -e SIGNALER_URI='ws://0.0.0.0:8081/webrtc' \

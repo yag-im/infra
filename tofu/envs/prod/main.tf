@@ -74,8 +74,8 @@ locals {
   private_tld    = "yag.internal"
   ver_appsvc     = "0.3.8"
   ver_bastion    = "0.0.5"
-  ver_jobs       = "0.1.13"
-  ver_jukeboxsvc = "0.4.1"
+  ver_jobs       = "0.1.14"
+  ver_jukeboxsvc = "0.4.5"
   ver_portsvc    = "0.1.3"
   ver_sessionsvc = "0.1.2"
   ver_sigsvc     = "0.1.8"
@@ -211,7 +211,7 @@ module "ovh" {
     flavor          = "b3-8"
     nodes           = local.appstor_nodes
     public_key_path = "${path.root}/../../modules/bastion/files/secrets/prod/id_ed25519.pub"
-    volume_size     = 500 # in GBs
+    volume_size     = 750 # in GBs
   }
   k8s = {
     desired_nodes = 2

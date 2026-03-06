@@ -107,7 +107,7 @@ resource "kubernetes_config_map" "jukeboxsvc" {
     JUKEBOX_CONTAINER_APP_DIR                         = "/opt/yag"
     JUKEBOX_CONTAINER_ENV_GST_DEBUG                   = "3,ximagesrc:3,webrtcsink:3,pulsesrc:4,webrtcbin:4,webrtcsrc-signaller:3,vadisplay:3,webrtcsrc-signaller:7"
     JUKEBOX_CONTAINER_STREAMD_LOADING_DURATION        = 5
-    JUKEBOX_CONTAINER_STREAMD_MAX_INACTIVITY_DURATION = 1800
+    JUKEBOX_CONTAINER_STREAMD_MAX_INACTIVITY_DURATION = 600
     JUKEBOX_CONTAINER_USER                            = "gamer"
     JUKEBOX_DOCKER_REPO_PREFIX                        = var.jukebox_docker_repo_prefix
     JUKEBOX_NODE_CLONES_ROOT_DIR                      = "/mnt/appstor"
