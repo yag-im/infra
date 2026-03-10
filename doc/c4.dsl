@@ -41,6 +41,7 @@ workspace "yag" {
         jobs -> jukeboxsvc "Queries" "JSON/HTTPS"
         jobs -> sessionsvc "Queries" "JSON/HTTPS"
         jukebox -> datastor "Mounts"
+        jukeboxsvc -> sessionsvc "Queries" "JSON/HTTPS"
         jukeboxsvc -> jukebox "Operates" "JSON/HTTPS"
         ports -> portsvc "Uses" "JSON/HTTPS" {
             tags "Dev"
