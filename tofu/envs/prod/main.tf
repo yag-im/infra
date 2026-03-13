@@ -72,16 +72,16 @@ locals {
   }
   public_tld     = "yag.im"
   private_tld    = "yag.internal"
-  ver_appsvc     = "0.3.8"
+  ver_appsvc     = "0.3.9"
   ver_bastion    = "0.0.5"
   ver_jobs       = "0.1.14"
-  ver_jukeboxsvc = "0.4.6"
+  ver_jukeboxsvc = "0.4.9"
   ver_portsvc    = "0.1.3"
   ver_sessionsvc = "0.1.2"
   ver_sigsvc     = "0.1.8"
   ver_sqldb      = "0.0.2"
-  ver_webapi     = "0.3.1"
-  ver_webapp     = "0.6.6"
+  ver_webapi     = "0.3.2"
+  ver_webapp     = "0.6.8"
 }
 
 module "appsvc" {
