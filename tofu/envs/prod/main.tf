@@ -76,12 +76,12 @@ locals {
   ver_bastion    = "0.0.5"
   ver_jobs       = "0.1.14"
   ver_jukeboxsvc = "0.4.9"
-  ver_portsvc    = "0.1.3"
+  ver_portsvc    = "0.1.4"
   ver_sessionsvc = "0.1.2"
   ver_sigsvc     = "0.1.8"
   ver_sqldb      = "0.0.2"
   ver_webapi     = "0.3.5"
-  ver_webapp     = "0.6.10"
+  ver_webapp     = "0.6.12"
 }
 
 module "appsvc" {
