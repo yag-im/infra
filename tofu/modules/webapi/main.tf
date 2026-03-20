@@ -77,6 +77,7 @@ resource "kubernetes_config_map" "webapi" {
     FLASK_SQLALCHEMY_ENGINE_OPTIONS = jsonencode({ "pool_pre_ping" : true, "pool_size" : 10, "pool_recycle" : 120 })
     APPSVC_URL                      = "http://appsvc.default.svc.cluster.local"
     BEHIND_PROXY                    = var.behind_proxy
+    JUKEBOXSVC_URL                  = "http://jukeboxsvc.default.svc.cluster.local"
     SQLDB_DBNAME                    = "yag"
     SQLDB_HOST                      = "sqldb.default.svc.cluster.local"
     SQLDB_PORT                      = 5432

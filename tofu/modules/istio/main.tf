@@ -96,7 +96,7 @@ resource "kubernetes_manifest" "istio_auth_policy_user" {
               operation = {
                 hosts    = [var.hostnames["webapp"]]
                 paths    = ["/api/*", "/webrtc"]
-                notPaths = ["/api/docs", "/api/specs", "/api/apps/*"]
+                notPaths = ["/api/docs", "/api/specs", "/api/apps/*", "/api/status"]
               }
             }
           ]
