@@ -179,6 +179,7 @@ resource "kubernetes_manifest" "virtual_service_webapp" {
 }
 
 resource "kubernetes_manifest" "virtual_service_otelcol_gw" {
+  count = var.create_istio_vs == "true" ? 1 : 0
   manifest = {
     apiVersion = "networking.istio.io/v1beta1"
     kind       = "VirtualService"

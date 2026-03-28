@@ -96,7 +96,12 @@ resource "kubernetes_stateful_set" "sqldb" {
           args              = ["postgres", "-c", "work_mem=${var.postgres_work_mem}"]
           env_from {
             config_map_ref {
-              name = "sqldb-cm"
+              name = kubernetes_config_map.sqldb.metadata[0].name
+            }
+          }
+          env_from {
+            secret_ref {
+              name = kubernetes_secret.sqldb.metadata[0].name
             }
           }
           port {
@@ -128,7 +133,7 @@ resource "kubernetes_stateful_set" "sqldb" {
         volume {
           name = "sqldb-data-mount"
           persistent_volume_claim {
-            claim_name = "sqldb-data-pvc"
+            claim_name = kubernetes_persistent_volume_claim.sqldb_data.metadata[0].name
           }
         }
       }
@@ -159,17 +164,26 @@ resource "kubernetes_config_map" "sqldb" {
     namespace = var.k8s_namespace
   }
   data = {
-    PGDATA              = "${var.pgdata}/pgdata"
-    APPSVC_USER         = var.appsvc_user
+    PGDATA          = "${var.pgdata}/pgdata"
+    APPSVC_USER     = var.appsvc_user
+    AUTHSVC_USER    = var.authsvc_user
+    PORTSVC_USER    = var.portsvc_user
+    SESSIONSVC_USER = var.sessionsvc_user
+    TZ              = var.timezone
+    YAG_DB          = var.yag_db
+  }
+}
+
+resource "kubernetes_secret" "sqldb" {
+  metadata {
+    name      = "sqldb-secret"
+    namespace = var.k8s_namespace
+  }
+  data = {
     APPSVC_PASSWORD     = var.appsvc_password
-    AUTHSVC_USER        = var.authsvc_user
     AUTHSVC_PASSWORD    = var.authsvc_password
-    PORTSVC_USER        = var.portsvc_user
     PORTSVC_PASSWORD    = var.portsvc_password
     POSTGRES_PASSWORD   = var.postgres_password
-    SESSIONSVC_USER     = var.sessionsvc_user
     SESSIONSVC_PASSWORD = var.sessionsvc_password
-    TZ                  = var.timezone
-    YAG_DB              = var.yag_db
   }
 }
