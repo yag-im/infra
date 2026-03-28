@@ -44,7 +44,7 @@ resource "kubernetes_deployment" "jukeboxsvc" {
           }
           env_from {
             secret_ref {
-              name = kubernetes_secret.jukeboxsvc.metadata[0].name
+              name = kubernetes_secret.jukeboxsvc_env.metadata[0].name
             }
           }
           volume_mount {
