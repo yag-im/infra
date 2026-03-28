@@ -17,6 +17,9 @@ Or directly on the node:
 
 FAQ
 
+Q: Why using K8S for managing game runners is not an option?
+A: No CPU-affinity support in OVH kubelet (critical for performance)
+
 Q: Error:
 [jukeboxsvc] [ERROR] {"code": 1500, "message": "error while creating mount source path '/mnt/appstor/1/ripper/1ecc1775-d909-4c50-96db-d54062e17b00': chown /mnt/appstor/1/ripper/1ecc1775-d909-4c50-96db-d54062e17b00: operation not permitted"}
 on container run.
@@ -40,7 +43,8 @@ Q: Stream is too slow, lot of packets losses, errors like:
 
 appear in the jukebox docker logs
 
-A: restart browser. Yep, sometimes google chrome starts to throttle with no reason.
+A1: restart browser. Yep, sometimes google chrome starts to throttle with no reason.
+A2: could be a "last mile" problem. Just switching from 2.4GHz wifi to 5Ghz can eliminate lag completely.
 
 Q: What are some useful certs commands
 

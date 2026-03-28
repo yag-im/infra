@@ -86,20 +86,20 @@ For further updates use:
 
 Follow instructions from storage.md.
 
-## k8s dashboard
+## k8s dashboard (Headlamp)
 
 Retrieve access token:
 
     cd /workspaces/infra/tofu/envs/dev
-    kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep dashboard-user-token | awk '{print $1}')
+    kubectl -n headlamp get secret headlamp-token -o jsonpath='{.data.token}' | base64 -d
 
 Create proxy locally:
-    
-    kubectl -n kubernetes-dashboard port-forward svc/kubernetes-dashboard-kong-proxy 8443:443 & disown
+
+    kubectl -n headlamp port-forward svc/headlamp 8480:80 & disown
 
 Open in browser:
 
-    https://localhost:8443
+    http://localhost:8480
 
 ## Connect to k8s node
 

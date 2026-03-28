@@ -1,55 +1,27 @@
 locals {
-  namespace_dashboard = "kubernetes-dashboard"
+  namespace_headlamp = "headlamp"
 }
 
-resource "helm_release" "kubernetes_dashboard" {
-  repository       = "https://kubernetes.github.io/dashboard/"
-  chart            = "kubernetes-dashboard"
-  name             = "kubernetes-dashboard"
-  namespace        = local.namespace_dashboard
-  version          = "7.2.0"
-  timeout          = 120
+resource "helm_release" "headlamp" {
+  repository       = "https://kubernetes-sigs.github.io/headlamp/"
+  chart            = "headlamp"
+  name             = "headlamp"
+  namespace        = local.namespace_headlamp
+  version          = "0.40.0"
+  timeout          = 600
   cleanup_on_fail  = true
-  force_update     = false
+  force_update     = true
   create_namespace = true
-  set {
-    name  = "cert-manager.enabled"
-    value = false
-  }
 }
 
-resource "kubernetes_service_account" "dashboard_user" {
+resource "kubernetes_secret" "headlamp_token" {
   metadata {
-    name      = "dashboard-user"
-    namespace = local.namespace_dashboard
-  }
-}
-
-resource "kubernetes_cluster_role_binding" "dashboard_user" {
-  metadata {
-    name = "dashboard-user"
-  }
-
-  role_ref {
-    api_group = "rbac.authorization.k8s.io"
-    kind      = "ClusterRole"
-    name      = "cluster-admin"
-  }
-
-  subject {
-    kind      = "ServiceAccount"
-    name      = "dashboard-user"
-    namespace = local.namespace_dashboard
-  }
-}
-
-resource "kubernetes_secret" "dashboard_user_token" {
-  metadata {
-    name      = "dashboard-user-token"
-    namespace = local.namespace_dashboard
+    name      = "headlamp-token"
+    namespace = local.namespace_headlamp
     annotations = {
-      "kubernetes.io/service-account.name" = "dashboard-user"
+      "kubernetes.io/service-account.name" = "headlamp"
     }
   }
-  type = "kubernetes.io/service-account-token"
+  type       = "kubernetes.io/service-account-token"
+  depends_on = [helm_release.headlamp]
 }
