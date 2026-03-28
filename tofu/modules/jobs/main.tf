@@ -36,7 +36,7 @@ resource "kubernetes_deployment" "jobs" {
           }
           env_from {
             config_map_ref {
-              name = "jobs-cm"
+              name = kubernetes_config_map.jobs.metadata[0].name
             }
           }
         }

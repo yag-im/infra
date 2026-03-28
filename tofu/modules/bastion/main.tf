@@ -56,7 +56,7 @@ resource "kubernetes_deployment" "bastion" {
         volume {
           name = "bastion-ssh-keys-volume"
           secret {
-            secret_name  = "bastion-ssh-keys"
+            secret_name  = kubernetes_secret.bastion.metadata[0].name
             default_mode = "0600"
           }
         }

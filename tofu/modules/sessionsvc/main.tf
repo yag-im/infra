@@ -39,7 +39,12 @@ resource "kubernetes_deployment" "sessionsvc" {
           }
           env_from {
             config_map_ref {
-              name = "sessionsvc-cm"
+              name = kubernetes_config_map.sessionsvc.metadata[0].name
+            }
+          }
+          env_from {
+            secret_ref {
+              name = kubernetes_secret.sessionsvc.metadata[0].name
             }
           }
         }
@@ -80,7 +85,15 @@ resource "kubernetes_config_map" "sessionsvc" {
     SQLDB_HOST                      = "sqldb.default.svc.cluster.local"
     SQLDB_PORT                      = 5432
     SQLDB_USERNAME                  = "sessionsvc"
-    #secrets
+  }
+}
+
+resource "kubernetes_secret" "sessionsvc" {
+  metadata {
+    name      = "sessionsvc-secret"
+    namespace = var.k8s_namespace
+  }
+  data = {
     SQLDB_PASSWORD = var.sqldb_password
   }
 }

@@ -39,7 +39,7 @@ resource "kubernetes_deployment" "webapp" {
           }
           env_from {
             config_map_ref {
-              name = "webapp-cm"
+              name = kubernetes_config_map.webapp.metadata[0].name
             }
           }
         }

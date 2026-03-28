@@ -39,7 +39,7 @@ resource "kubernetes_deployment" "sigsvc" {
           }
           env_from {
             config_map_ref {
-              name = "sigsvc-cm"
+              name = kubernetes_config_map.sigsvc.metadata[0].name
             }
           }
         }

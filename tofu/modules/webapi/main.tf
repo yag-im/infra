@@ -39,7 +39,12 @@ resource "kubernetes_deployment" "webapi" {
           }
           env_from {
             config_map_ref {
-              name = "webapi-cm"
+              name = kubernetes_config_map.webapi.metadata[0].name
+            }
+          }
+          env_from {
+            secret_ref {
+              name = kubernetes_secret.webapi.metadata[0].name
             }
           }
         }
@@ -84,7 +89,15 @@ resource "kubernetes_config_map" "webapi" {
     SQLDB_USERNAME                  = "authsvc"
     OAUTHLIB_INSECURE_TRANSPORT     = var.oauthlib_insecure_transport
     OAUTHLIB_RELAX_TOKEN_SCOPE      = var.oauthlib_relax_token_scope
-    #secrets
+  }
+}
+
+resource "kubernetes_secret" "webapi" {
+  metadata {
+    name      = "webapi-secret"
+    namespace = var.k8s_namespace
+  }
+  data = {
     FLASK_SECRET_KEY             = var.flask_secret_key
     FLASK_SECURITY_PASSWORD_SALT = var.flask_security_password_salt
     SIGSVC_AUTH_TOKEN            = var.sigsvc_auth_token

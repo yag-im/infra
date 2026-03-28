@@ -39,7 +39,12 @@ resource "kubernetes_deployment" "appsvc" {
           }
           env_from {
             config_map_ref {
-              name = "appsvc-cm"
+              name = kubernetes_config_map.appsvc.metadata[0].name
+            }
+          }
+          env_from {
+            secret_ref {
+              name = kubernetes_secret.appsvc.metadata[0].name
             }
           }
         }
@@ -83,7 +88,15 @@ resource "kubernetes_config_map" "appsvc" {
     SQLDB_HOST                      = "sqldb.default.svc.cluster.local"
     SQLDB_PORT                      = 5432
     SQLDB_USERNAME                  = "appsvc"
-    #secrets
+  }
+}
+
+resource "kubernetes_secret" "appsvc" {
+  metadata {
+    name      = "appsvc-secret"
+    namespace = var.k8s_namespace
+  }
+  data = {
     SQLDB_PASSWORD = var.sqldb_password
   }
 }

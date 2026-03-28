@@ -8,6 +8,7 @@ terraform.tfstate.backup
 
 .env
 kubeconfig
+kubeconfig-*
 nohup.out
 secrets.env
 secrets.txt

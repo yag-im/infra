@@ -55,6 +55,6 @@ resource "kubernetes_persistent_volume_claim" "appstor_pvc_nfs" {
       }
     }
     storage_class_name = "nfs-csi"
-    volume_name        = "appstor-pv-${count.index}"
+    volume_name        = kubernetes_persistent_volume.appstor_pv_nfs[count.index].metadata[0].name
   }
 }

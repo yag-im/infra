@@ -39,7 +39,12 @@ resource "kubernetes_deployment" "jukeboxsvc" {
           }
           env_from {
             config_map_ref {
-              name = "jukeboxsvc-cm"
+              name = kubernetes_config_map.jukeboxsvc.metadata[0].name
+            }
+          }
+          env_from {
+            secret_ref {
+              name = kubernetes_secret.jukeboxsvc.metadata[0].name
             }
           }
           volume_mount {
@@ -57,7 +62,7 @@ resource "kubernetes_deployment" "jukeboxsvc" {
         volume {
           name = "jukeboxsvc-ssh-keys-volume"
           secret {
-            secret_name  = "jukeboxsvc-ssh-keys"
+            secret_name  = kubernetes_secret.jukeboxsvc.metadata[0].name
             default_mode = "0400"
           }
         }
@@ -117,7 +122,15 @@ resource "kubernetes_config_map" "jukeboxsvc" {
     SIGNALER_HOST                                     = var.signaler_host
     SIGNALER_URI                                      = var.signaler_uri
     STUN_URI                                          = var.stun_uri
-    # secrets
+  }
+}
+
+resource "kubernetes_secret" "jukeboxsvc_env" {
+  metadata {
+    name      = "jukeboxsvc-secret"
+    namespace = var.k8s_namespace
+  }
+  data = {
     SIGNALER_AUTH_TOKEN = var.signaler_auth_token
   }
 }
