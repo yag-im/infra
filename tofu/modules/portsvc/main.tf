@@ -39,7 +39,12 @@ resource "kubernetes_deployment" "portsvc" {
           }
           env_from {
             config_map_ref {
-              name = "portsvc-cm"
+              name = kubernetes_config_map.portsvc.metadata[0].name
+            }
+          }
+          env_from {
+            secret_ref {
+              name = kubernetes_secret.portsvc.metadata[0].name
             }
           }
         }
@@ -79,7 +84,15 @@ resource "kubernetes_config_map" "portsvc" {
     SQLDB_HOST                      = "sqldb.default.svc.cluster.local"
     SQLDB_PORT                      = 5432
     SQLDB_USERNAME                  = "portsvc"
-    #secrets
+  }
+}
+
+resource "kubernetes_secret" "portsvc" {
+  metadata {
+    name      = "portsvc-secret"
+    namespace = var.k8s_namespace
+  }
+  data = {
     SQLDB_PASSWORD     = var.sqldb_password
     IGDB_CLIENT_ID     = var.twitch_oauth_client_id
     IGDB_CLIENT_SECRET = var.twitch_oauth_client_secret
