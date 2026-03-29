@@ -58,12 +58,14 @@ locals {
 
   appstor_nodes = [
     {
-      host   = "192.168.12.200"
-      region = "us-east-1"
+      host       = "192.168.12.200"
+      region     = "us-east-1"
+      ovh_region = local.region_mapping["us-east-1"]
     },
     {
-      host   = "192.168.13.200"
-      region = "us-west-1"
+      host       = "192.168.13.200"
+      region     = "us-west-1"
+      ovh_region = local.region_mapping["us-west-1"]
     }
   ]
   docker_repo_prefix = "ghcr.io/yag-im"
