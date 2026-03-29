@@ -76,7 +76,7 @@ resource "kubernetes_config_map" "appsvc" {
     namespace = var.k8s_namespace
   }
   data = {
-    DATA_CENTERS                    = jsonencode(var.data_centers)
+    DATA_CENTERS                    = jsonencode(var.dc_regions)
     FLASK_DEBUG                     = true
     FLASK_ENV                       = var.flask_env
     FLASK_PROPAGATE_EXCEPTIONS      = true

@@ -16,7 +16,7 @@ variable "replicas" {
 }
 
 # app config
-variable "data_centers" {
+variable "dc_regions" {
   type = list(string)
 }
 

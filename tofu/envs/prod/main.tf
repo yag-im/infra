@@ -97,7 +97,7 @@ module "appsvc" {
   replicas        = 2
   # app config
   # should be defined in "West to East" direction for smart RTT configuration
-  data_centers = ["us-west-1", "us-east-1"]
+  dc_regions   = ["us-west-1", "us-east-1"]
   flask_env    = "production"
   runners = {
     dosbox-x = {
@@ -137,7 +137,7 @@ module "appsvc" {
       dgpu          = false
     },
     qemu = {
-      ver           = "1.21.0",
+      ver           = "latest",
       window_system = "x11",
       igpu          = false,
       dgpu          = false,

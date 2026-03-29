@@ -76,7 +76,7 @@ module "appsvc" {
   replicas        = 3
   # app config
   # should be defined in "West to East" direction for smart RTT configuration
-  data_centers = ["us-west-1", "eu-central-1"]
+  dc_regions = ["us-west-1", "eu-central-1"]
   flask_env    = "development"
   runners = {
     dosbox-x = {
