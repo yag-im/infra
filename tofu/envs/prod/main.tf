@@ -51,16 +51,19 @@ provider "ovh" {
 }
 
 locals {
+  region_mapping = {
+    us-east-1 = "US-EAST-VA-1"
+    us-west-1 = "US-WEST-OR-1"
+  }
+
   appstor_nodes = [
     {
-      host : "192.168.12.200"
-      ovh_region : "US-EAST-VA-1"
-      region : "us-east-1"
+      host   = "192.168.12.200"
+      region = "us-east-1"
     },
     {
-      host : "192.168.13.200"
-      ovh_region : "US-WEST-OR-1"
-      region : "us-west-1"
+      host   = "192.168.13.200"
+      region = "us-west-1"
     }
   ]
   docker_repo_prefix = "ghcr.io/yag-im"
@@ -170,7 +173,6 @@ module "jukeboxsvc" {
   k8s_namespace   = "default"
   replicas        = 2
   # app config
-  # appstor_pvcs              = module.appstor_nfs.pvcs
   appstor_nodes              = local.appstor_nodes
   appstor_user               = "debian"
   jukebox_docker_repo_prefix = "${local.docker_repo_prefix}/jukebox"
@@ -218,19 +220,19 @@ module "ovh" {
     flavor        = "d2-8"
     max_nodes     = 2
     min_nodes     = 1
-    ovh_region    = "US-EAST-VA-1"
+    ovh_region    = local.region_mapping["us-east-1"]
   }
   networks = [
     {
       gateway : "192.168.0.1"
-      ovh_region : "US-EAST-VA-1"
+      ovh_region : local.region_mapping["us-east-1"]
       network : "192.168.0.0/16"
       start : "192.168.1.2" # k8s nodes will obtain IPs from this range
       end : "192.168.1.254"
     },
     {
       gateway : "192.168.0.1"
-      ovh_region : "US-WEST-OR-1"
+      ovh_region : local.region_mapping["us-west-1"]
       network : "192.168.0.0/16"
       start : "192.168.2.2" # k8s nodes will obtain IPs from this range
       end : "192.168.2.254"
