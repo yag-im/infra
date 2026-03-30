@@ -14,7 +14,7 @@ appstor_master: "192.168.12.200" # us-east-1
 appstor_replicas:
   - "192.168.13.200" # us-west-1
 
-# based on cerf block storage: 3x replicated under the hood so one device is enough
+# based on ceph block storage: 3x replicated under the hood so one device is enough
 appstor_btrfs_devices:
   - "/dev/sdb"
 appstor_btrfs_profile: single
