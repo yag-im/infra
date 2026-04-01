@@ -183,6 +183,7 @@ module "jukeboxsvc" {
   stun_uri      = "stun://stun.l.google.com:19302"
   # secrets
   signaler_auth_token = data.aws_ssm_parameter.sigsvc_auth_token.value
+  sqldb_password = data.aws_ssm_parameter.sqldb_jukeboxsvc_password.value
 }
 
 module "webapp" {
@@ -204,6 +205,8 @@ module "portsvc" {
   flask_env = "development"
   # secrets
   sqldb_password = data.aws_ssm_parameter.sqldb_portsvc_password.value
+  twitch_oauth_client_id     = var.twitch_oauth_client_id
+  twitch_oauth_client_secret = data.aws_ssm_parameter.authsvc_twitch_oauth_client_secret.value
 }
 
 module "sessionsvc" {
@@ -241,11 +244,13 @@ module "sqldb" {
   # users
   appsvc_user     = "appsvc"
   authsvc_user    = "authsvc"
+  jukeboxsvc_user = "jukeboxsvc"
   portsvc_user    = "portsvc"
   sessionsvc_user = "sessionsvc"
   # secrets
   appsvc_password     = data.aws_ssm_parameter.sqldb_appsvc_password.value
   authsvc_password    = data.aws_ssm_parameter.sqldb_authsvc_password.value
+  jukeboxsvc_password = data.aws_ssm_parameter.sqldb_jukeboxsvc_password.value
   portsvc_password    = data.aws_ssm_parameter.sqldb_portsvc_password.value
   sessionsvc_password = data.aws_ssm_parameter.sqldb_sessionsvc_password.value
   postgres_password   = data.aws_ssm_parameter.sqldb_postgres_password.value
@@ -286,6 +291,7 @@ module "istio" {
 
   # endpoints exposed through the istio gateways (both public and private)
   hostnames = local.hostnames
+  private_lb_subnet_id = module.ovh.private_lb_subnet_id
 }
 
 module "otel" {

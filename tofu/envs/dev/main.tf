@@ -92,7 +92,7 @@ module "appsvc" {
   replicas        = 1
   # app config
   # should be defined in "West to East" direction for smart RTT configuration
-  data_centers = ["us-west-1"]
+  dc_regions = ["us-west-1"]
   flask_env    = "development"
   runners = {
     dosbox-x = {
@@ -288,11 +288,13 @@ module "sqldb" {
   # users
   appsvc_user     = "appsvc"
   authsvc_user    = "authsvc"
+  jukeboxsvc_user = "jukeboxsvc"
   portsvc_user    = "portsvc"
   sessionsvc_user = "sessionsvc"
   # secrets
   appsvc_password     = data.aws_ssm_parameter.sqldb_appsvc_password.value
   authsvc_password    = data.aws_ssm_parameter.sqldb_authsvc_password.value
+  jukeboxsvc_password = data.aws_ssm_parameter.sqldb_jukeboxsvc_password
   portsvc_password    = data.aws_ssm_parameter.sqldb_portsvc_password.value
   sessionsvc_password = data.aws_ssm_parameter.sqldb_sessionsvc_password.value
   postgres_password   = data.aws_ssm_parameter.sqldb_postgres_password.value

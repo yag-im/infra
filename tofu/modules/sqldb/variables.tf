@@ -14,6 +14,10 @@ variable "authsvc_user" {
   type = string
 }
 
+variable "jukeboxsvc_user" {
+  type = string
+}
+
 variable "host_data_path" {
   type    = string
   default = ""
@@ -60,6 +64,10 @@ variable "appsvc_password" {
 }
 
 variable "authsvc_password" {
+  type = string
+}
+
+variable "jukeboxsvc_password" {
   type = string
 }
 

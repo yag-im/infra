@@ -2,6 +2,9 @@ FROM mcr.microsoft.com/devcontainers/python:0-3.11
 
 ARG DEBIAN_FRONTEND=noninteractive
 
+RUN rm /etc/apt/sources.list.d/yarn.list
+RUN apt update
+
 # openjdk-17-jre is required for systemticks.c4-dsl-extension
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \

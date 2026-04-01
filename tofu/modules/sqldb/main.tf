@@ -167,6 +167,7 @@ resource "kubernetes_config_map" "sqldb" {
     PGDATA          = "${var.pgdata}/pgdata"
     APPSVC_USER     = var.appsvc_user
     AUTHSVC_USER    = var.authsvc_user
+    JUKEBOXSVC_USER = var.jukeboxsvc_user
     PORTSVC_USER    = var.portsvc_user
     SESSIONSVC_USER = var.sessionsvc_user
     TZ              = var.timezone
@@ -182,6 +183,7 @@ resource "kubernetes_secret" "sqldb" {
   data = {
     APPSVC_PASSWORD     = var.appsvc_password
     AUTHSVC_PASSWORD    = var.authsvc_password
+    JUKEBOXSVC_PASSWORD = var.jukeboxsvc_password
     PORTSVC_PASSWORD    = var.portsvc_password
     POSTGRES_PASSWORD   = var.postgres_password
     SESSIONSVC_PASSWORD = var.sessionsvc_password

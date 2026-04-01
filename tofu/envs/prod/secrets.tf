@@ -16,6 +16,10 @@ data "aws_ssm_parameter" "sqldb_authsvc_password" {
   name = "/sqldb/authsvc_password"
 }
 
+data "aws_ssm_parameter" "sqldb_jukeboxsvc_password" {
+  name = "/sqldb/jukeboxsvc_password"
+}
+
 data "aws_ssm_parameter" "sqldb_portsvc_password" {
   name = "/sqldb/portsvc_password"
 }

@@ -67,3 +67,7 @@ variable "env" {
 variable "signaler_auth_token" {
   type = string
 }
+
+variable "sqldb_password" {
+  type = string
+}

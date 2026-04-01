@@ -80,7 +80,7 @@ locals {
   ver_appsvc     = "0.3.18"
   ver_bastion    = "0.0.5"
   ver_jobs       = "0.1.15"
-  ver_jukeboxsvc = "0.4.12"
+  ver_jukeboxsvc = "0.4.13"
   ver_portsvc    = "0.1.5"
   ver_sessionsvc = "0.1.2"
   ver_sigsvc     = "0.1.8"
@@ -195,6 +195,7 @@ module "jukeboxsvc" {
   stun_uri      = "stun://stun.l.google.com:19302"
   # secrets
   signaler_auth_token = data.aws_ssm_parameter.sigsvc_auth_token.value
+  sqldb_password      = data.aws_ssm_parameter.sqldb_jukeboxsvc_password.value
 }
 
 module "webapp" {
@@ -292,11 +293,13 @@ module "sqldb" {
   # users
   appsvc_user     = "appsvc"
   authsvc_user    = "authsvc"
+  jukeboxsvc_user = "jukeboxsvc"
   portsvc_user    = "portsvc"
   sessionsvc_user = "sessionsvc"
   # secrets
   appsvc_password     = data.aws_ssm_parameter.sqldb_appsvc_password.value
   authsvc_password    = data.aws_ssm_parameter.sqldb_authsvc_password.value
+  jukeboxsvc_password = data.aws_ssm_parameter.sqldb_jukeboxsvc_password.value
   portsvc_password    = data.aws_ssm_parameter.sqldb_portsvc_password.value
   sessionsvc_password = data.aws_ssm_parameter.sqldb_sessionsvc_password.value
   postgres_password   = data.aws_ssm_parameter.sqldb_postgres_password.value
