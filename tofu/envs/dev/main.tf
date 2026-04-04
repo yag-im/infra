@@ -175,22 +175,13 @@ module "jukeboxsvc" {
   appstor_user               = "debian"
   jukebox_docker_repo_prefix = "${local.docker_repo_prefix}/jukebox"
   env                        = "dev"
-  jukebox_nodes = [
-    {
-      api_uri : "http://192.168.12.2:2375",
-      region : "us-east-1"
-    },
-    {
-      api_uri : "http://192.168.13.2:2375",
-      region : "us-west-1"
-    }
-  ]
   flask_env     = "development"
   signaler_host = local.public_tld                           # this should go in headers (host) from jukebox to sigsvc for a proper routing
   signaler_uri  = "wss://${local.public_tld}/webrtc/streamd" # this should be a public gw ip (check kubectl get svc -n istio-gw-public istio-gw-public output)
   stun_uri      = "stun://stun.l.google.com:19302"
   # secrets
   signaler_auth_token = data.aws_ssm_parameter.sigsvc_auth_token.value
+  sqldb_password = data.aws_ssm_parameter.jukeboxsvc_sqldb_password.value
 }
 
 module "webapp" {

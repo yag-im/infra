@@ -35,13 +35,6 @@ variable "jukebox_docker_repo_prefix" {
   type = string
 }
 
-variable "jukebox_nodes" {
-  type = list(object({
-    api_uri = string
-    region  = string
-  }))
-}
-
 variable "flask_env" {
   type = string
 }

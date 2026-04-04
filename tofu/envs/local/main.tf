@@ -159,24 +159,6 @@ module "jukeboxsvc" {
   appstor_user               = "vagrant"
   jukebox_docker_repo_prefix = "${local.docker_repo_prefix}/jukebox"
   env                        = "local"
-  jukebox_nodes = [
-    {
-      api_uri : "http://host.minikube.internal:12375",
-      region : "us-west-1"
-    },
-    {
-      api_uri : "http://host.minikube.internal:12376",
-      region : "us-west-1"
-    },
-    {
-      api_uri : "http://host.minikube.internal:12385",
-      region : "eu-central-1"
-    },
-    {
-      api_uri : "http://host.minikube.internal:12386",
-      region : "eu-central-1"
-    }
-  ]
   flask_env     = "development"
   signaler_host = local.public_tld                     # this should go in headers (host) from jukebox to sigsvc for a proper routing
   signaler_uri  = "ws://10.108.160.177/webrtc/streamd" # this should be a public gw ip (check kubectl get svc -n istio-gw-public istio-gw-public output)

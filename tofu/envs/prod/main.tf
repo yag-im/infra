@@ -80,7 +80,7 @@ locals {
   ver_appsvc     = "0.3.18"
   ver_bastion    = "0.0.5"
   ver_jobs       = "0.1.15"
-  ver_jukeboxsvc = "0.4.13"
+  ver_jukeboxsvc = "0.4.16"
   ver_portsvc    = "0.1.5"
   ver_sessionsvc = "0.1.2"
   ver_sigsvc     = "0.1.8"
@@ -179,16 +179,6 @@ module "jukeboxsvc" {
   appstor_user               = "debian"
   jukebox_docker_repo_prefix = "${local.docker_repo_prefix}/jukebox"
   env                        = "prod"
-  jukebox_nodes = [
-    {
-      api_uri : "http://192.168.12.2:2375",
-      region : "us-east-1"
-    },
-    {
-      api_uri : "http://192.168.13.2:2375",
-      region : "us-west-1"
-    }
-  ]
   flask_env     = "production"
   signaler_host = local.public_tld                           # this should go in headers (host) from jukebox to sigsvc for a proper routing
   signaler_uri  = "wss://${local.public_tld}/webrtc/streamd" # this should be a public gw ip (check kubectl get svc -n istio-gw-public istio-gw-public output)

@@ -108,6 +108,7 @@ resource "kubernetes_config_map" "jukeboxsvc" {
     FLASK_DEBUG                                       = true
     FLASK_ENV                                         = var.flask_env
     FLASK_PROPAGATE_EXCEPTIONS                        = true
+    FLASK_SQLALCHEMY_ENGINE_OPTIONS                   = "{\"pool_pre_ping\": true, \"pool_size\": 10, \"pool_recycle\": 120}"
     FPS                                               = 60
     JUKEBOX_CONTAINER_APP_DIR                         = "/opt/yag"
     JUKEBOX_CONTAINER_ENV_GST_DEBUG                   = "3,ximagesrc:3,webrtcsink:3,pulsesrc:4,webrtcbin:4,webrtcsrc-signaller:3,vadisplay:3,webrtcsrc-signaller:7"
@@ -116,12 +117,15 @@ resource "kubernetes_config_map" "jukeboxsvc" {
     JUKEBOX_CONTAINER_USER                            = "gamer"
     JUKEBOX_DOCKER_REPO_PREFIX                        = var.jukebox_docker_repo_prefix
     JUKEBOX_NODE_CLONES_ROOT_DIR                      = "/mnt/appstor"
-    JUKEBOX_NODES                                     = jsonencode(var.jukebox_nodes)
     RESERVE_ADMIN_CPU_CORE                            = 0
     SESSIONSVC_URL                                    = "http://sessionsvc"
     SIGNALER_HOST                                     = var.signaler_host
     SIGNALER_URI                                      = var.signaler_uri
     STUN_URI                                          = var.stun_uri
+    SQLDB_DBNAME                                      = "yag"
+    SQLDB_HOST                                        = "sqldb.default.svc.cluster.local"
+    SQLDB_PORT                                        = 5432
+    SQLDB_USERNAME                                    = "jukeboxsvc"
   }
 }
 
@@ -132,6 +136,7 @@ resource "kubernetes_secret" "jukeboxsvc_env" {
   }
   data = {
     SIGNALER_AUTH_TOKEN = var.signaler_auth_token
+    SQLDB_PASSWORD      = var.sqldb_password
   }
 }
 
