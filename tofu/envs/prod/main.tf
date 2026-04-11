@@ -80,7 +80,7 @@ locals {
   ver_appsvc     = "0.3.18"
   ver_bastion    = "0.0.5"
   ver_jobs       = "0.1.15"
-  ver_jukeboxsvc = "0.4.16"
+  ver_jukeboxsvc = "0.4.17"
   ver_portsvc    = "0.1.5"
   ver_sessionsvc = "0.1.2"
   ver_sigsvc     = "0.1.8"
