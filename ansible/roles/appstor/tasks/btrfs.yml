@@ -23,6 +23,7 @@
         path: "{{ app_data_path }}"
         src: "{{ appstor_btrfs_devices[0] }}"
         fstype: btrfs
+        opts: defaults,compress=zstd
         state: mounted
 
     - ansible.builtin.file:

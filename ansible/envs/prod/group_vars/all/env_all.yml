@@ -1,5 +1,5 @@
 admin_email: admin-yag@acme.im
-infra_env: dev
+infra_env: prod
 # otelcol gateway is hidden behind istio-gw-private ip
 # TODO: sync with `kubectl get svc -n istio-gw-private istio-gw-private` output
 otelcol_gw_ip: 192.168.1.103

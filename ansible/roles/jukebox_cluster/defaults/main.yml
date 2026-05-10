@@ -5,4 +5,3 @@ parent_roles:
 jukebox_cluster_deps:
   - criu
   - nfs-common
-
