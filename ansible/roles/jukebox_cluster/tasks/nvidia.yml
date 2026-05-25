@@ -1,0 +1,84 @@
+# Install NVIDIA driver (via NVIDIA CUDA repo) and NVIDIA Container Toolkit.
+#
+# `cuda-drivers` is a meta-package that installs the full driver stack (kernel
+# module, firmware, nvidia-smi, libcuda.so) without the CUDA SDK or toolkit.
+# Using the NVIDIA repo rather than Debian non-free gives a much newer driver.
+#
+# Refs:
+#   https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
+#   https://developer.download.nvidia.com/compute/cuda/repos/
+
+- name: nvidia | install prerequisites
+  ansible.builtin.apt:
+    name:
+      - ca-certificates
+      - curl
+      - dkms
+      - gnupg
+      - linux-headers-amd64
+    state: present
+    update_cache: yes
+
+- name: nvidia | download CUDA keyring package
+  ansible.builtin.get_url:
+    url: "https://developer.download.nvidia.com/compute/cuda/repos/{{ nvidia_cuda_repo_distro }}/x86_64/cuda-keyring_{{ nvidia_cuda_keyring_version }}_all.deb"
+    dest: "/tmp/cuda-keyring_{{ nvidia_cuda_keyring_version }}_all.deb"
+    mode: "0644"
+
+- name: nvidia | install CUDA keyring package
+  ansible.builtin.apt:
+    deb: "/tmp/cuda-keyring_{{ nvidia_cuda_keyring_version }}_all.deb"
+
+- name: nvidia | refresh apt cache after adding CUDA repo
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: nvidia | install cuda-drivers
+  ansible.builtin.apt:
+    name: cuda-drivers
+    state: present
+
+# ---------- NVIDIA Container Toolkit ----------
+
+- name: nvidia | add NVIDIA Container Toolkit gpg key
+  ansible.builtin.get_url:
+    url: https://nvidia.github.io/libnvidia-container/gpgkey
+    dest: /tmp/nvidia-container-toolkit.gpg.asc
+    mode: "0644"
+
+- name: nvidia | dearmor NVIDIA Container Toolkit gpg key
+  ansible.builtin.shell: |
+    set -euo pipefail
+    gpg --dearmor < /tmp/nvidia-container-toolkit.gpg.asc \
+      > /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+  args:
+    creates: /usr/share/keyrings/nvidia-container-toolkit-keyring.gpg
+
+- name: nvidia | add NVIDIA Container Toolkit apt repo
+  ansible.builtin.copy:
+    dest: /etc/apt/sources.list.d/nvidia-container-toolkit.list
+    mode: "0644"
+    content: |
+      deb [signed-by=/usr/share/keyrings/nvidia-container-toolkit-keyring.gpg] https://nvidia.github.io/libnvidia-container/stable/deb/$(ARCH) /
+
+- name: nvidia | refresh apt cache after adding NVIDIA Container Toolkit repo
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: nvidia | install NVIDIA Container Toolkit
+  ansible.builtin.apt:
+    name:
+      - nvidia-container-toolkit
+    state: present
+
+- name: nvidia | configure docker runtime via nvidia-ctk
+  ansible.builtin.command: nvidia-ctk runtime configure --runtime=docker
+  register: nvidia_ctk_configure
+  changed_when: true
+
+- name: nvidia | restart docker to pick up nvidia runtime
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
+    daemon_reload: yes
+  when: nvidia_ctk_configure is changed

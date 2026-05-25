@@ -11,9 +11,17 @@ RUN apt-get update \
         openjdk-17-jre \
         jq \
         vim \
-        wget \  
+        wget \
+        unzip \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+# packer is for OVH images building
+ARG PACKER_VERSION=1.15.3
+RUN curl -fsSLO https://releases.hashicorp.com/packer/${PACKER_VERSION}/packer_${PACKER_VERSION}_linux_amd64.zip \
+    && unzip packer_${PACKER_VERSION}_linux_amd64.zip \
+    && install -m 0755 packer /usr/local/bin/packer \
+    && rm -f packer packer_${PACKER_VERSION}_linux_amd64.zip
 
 RUN pip install --upgrade pip
 

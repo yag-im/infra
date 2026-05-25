@@ -1,0 +1,19 @@
+- name: create appstor volume
+  community.docker.docker_volume:
+    name: appstor-vol
+    driver_options:
+      type: nfs
+      device: ":/clones"
+      o: "addr={{ appstor_internal_ip }},rw,nfsvers=4,minorversion=2,proto=tcp,fsc,nocto"
+
+- name: expose docker rest api (internally)
+  ansible.builtin.template:
+    src: override.conf.j2
+    dest: "/etc/systemd/system/docker.service.d/override.conf"
+
+- name: make sure docker service is restarted with override
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
+    enabled: yes
+    daemon_reload: yes

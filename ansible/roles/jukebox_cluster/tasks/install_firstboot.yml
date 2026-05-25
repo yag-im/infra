@@ -1,0 +1,42 @@
+- name: install envsubst (gettext-base) for firstboot renderer
+  package:
+    name: gettext-base
+    state: present
+
+- name: create boot kit directory
+  file:
+    path: /opt/jukebox-boot/templates
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: install firstboot renderer
+  copy:
+    src: boot/firstboot.sh
+    dest: /opt/jukebox-boot/firstboot.sh
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: install firstboot override.conf template
+  copy:
+    src: boot/override.conf.tmpl
+    dest: /opt/jukebox-boot/templates/override.conf.tmpl
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: install firstboot systemd unit
+  copy:
+    src: boot/jukebox-firstboot.service
+    dest: /etc/systemd/system/jukebox-firstboot.service
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: enable firstboot unit
+  systemd:
+    name: jukebox-firstboot.service
+    enabled: yes
+    daemon_reload: yes

@@ -1,0 +1,14 @@
+[Unit]
+Description=Jukebox first-boot specialization
+After=network-online.target docker.service cloud-config.service
+Wants=network-online.target docker.service
+ConditionPathExists=!/var/lib/jukebox/.bootstrapped
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/jukebox/node.env
+ExecStart=/opt/jukebox-boot/firstboot.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

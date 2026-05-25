@@ -1,0 +1,58 @@
+- name: parent roles
+  include_role:
+    name: "{{ jukebox_cluster_parent_roles_item }}"
+  with_items: "{{ parent_roles }}"
+  loop_control:
+    loop_var: jukebox_cluster_parent_roles_item
+
+- ansible.builtin.file:
+    path: "{{ app_path }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+
+- ansible.builtin.file:
+    path: "{{ app_data_path }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+
+- name: install deps
+  package:
+    name: "{{ jukebox_cluster_deps }}"
+    state: latest
+    update_cache: yes
+  with_items: "{{ jukebox_cluster_deps }}"
+
+- ansible.builtin.copy:
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+
+- ansible.builtin.copy:
+    src: runc.conf
+    dest: /etc/criu/
+
+- name: create <service>.service.d directory
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+
+- name: make sure docker service is enabled via systemd
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    enabled: yes
+    daemon_reload: yes
+
+- name: configure cloud-init to preserve Debian-generated SSH host keys
+  copy:
+    src: cloud-init-jukebox.cfg
+    dest: /etc/cloud/cloud.cfg.d/99-jukebox.cfg
+    owner: root
+    group: root
+    mode: "0644"
+
+- import_tasks: install_firstboot.yml
+
+- import_tasks: nvidia.yml
+  when: jukebox_cluster_gpu_vendor == 'nvidia'

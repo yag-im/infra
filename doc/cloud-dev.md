@@ -44,10 +44,10 @@ You need to initilize values for all secrets listed in: `/workspaces/infra/tofu/
 ### Checklist
 
 Make sure:
-- no resources are used on the `Quota and Regions` page. Note some of them (e.g. network) can be deleted only from the "Horizon" interface.
-- `dev.yag.im` is NOT part of vRack (right tab ("Your vRack") on the vRack page), it will be attached later from the tofu init script.
+- No resources are used on the `Quota and Regions` page. Note some of them (e.g. network) can be deleted only from the "Horizon" interface.
+- On https://manager.us.ovhcloud.com/#/dedicated/vrack, check that `dev.yag.im` is NOT part of vRack (right tab ("Your vRack") on the vRack page), it will be attached later from the tofu init script.
 - Disable `httpsRedirect` in `istio` module, letsencrypt requires an unsecure HTTP connection to validate certs.
-- there are no duplicate ssh keypairs:
+- There are no duplicate ssh keypairs:
 
     pip install python-openstackclient
 

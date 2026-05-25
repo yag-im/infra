@@ -1,0 +1,47 @@
+- name: parent roles
+  include_role:
+    name: '{{ var_role_otel_collector }}'
+  loop:
+    - docker
+  loop_control:
+    loop_var: var_role_otel_collector
+
+- name: ensure app dir
+  ansible.builtin.file:
+    path: "{{ app_path }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+
+# During bake, render with a literal ${CLUSTER_REGION} placeholder so firstboot.sh
+# can substitute it from /etc/jukebox/node.env. On dedicated servers (stage=all),
+# the real cluster_region from inventory is used.
+- name: render otel-config.yml
+  ansible.builtin.template:
+    src: otel-config.yml.j2
+    dest: "{{ app_path }}/otel-config.yml"
+  vars:
+    cluster_region: "{{ '${CLUSTER_REGION}' if jukebox_cluster_stage | default('all') == 'bake' else cluster_region }}"
+
+- name: pre-pull otel-collector image
+  community.docker.docker_image:
+    name: otel/opentelemetry-collector-contrib:0.93.0
+    source: pull
+
+# Bake env-static values consumed by firstboot.sh when launching the container.
+- name: ensure /etc/jukebox exists
+  ansible.builtin.file:
+    path: /etc/jukebox
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: write baked env-static values for firstboot
+  ansible.builtin.copy:
+    dest: /etc/jukebox/baked.env
+    owner: root
+    group: root
+    mode: "0644"
+    content: |
+      OTEL_CONFIG_PATH={{ app_path }}/otel-config.yml

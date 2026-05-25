@@ -3,3 +3,4 @@ secrets/
 
 .vault_pwd
 vault
+*.log

@@ -7,7 +7,9 @@
 
 - set_fact:
     node_index: "{{ groups[fqdn_host_group].index(inventory_hostname) + 1 }}"
+  when: jukebox_cluster_stage | default('all') != 'bake'
 
 - name: set a hostname
   ansible.builtin.hostname:
     name: "{{ fqdn_host_prefix }}{{ node_index }}.{{ cluster_region }}.yag.im"
+  when: jukebox_cluster_stage | default('all') != 'bake'

@@ -5,3 +5,16 @@ parent_roles:
 jukebox_cluster_deps:
   - criu
   - nfs-common
+
+# bake    = build image (skips per-node tasks)
+# runtime = apply per-node config (skips one-time bake tasks)
+# all     = run both (dedicated servers)
+jukebox_cluster_stage: all
+
+# GPU vendor for drivers + container toolkit installation.
+# Set to 'nvidia' to install NVIDIA driver + NVIDIA Container Toolkit.
+# Leave empty (default) to skip GPU setup (dedicated servers without dedicated GPU).
+jukebox_cluster_gpu_vendor: ""
+
+nvidia_cuda_repo_distro: "debian{{ ansible_distribution_major_version }}"
+nvidia_cuda_keyring_version: "1.1-1"

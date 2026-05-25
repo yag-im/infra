@@ -1,49 +1,9 @@
-- name: parent roles
-  include_role:
-    name: '{{ var_role_otel_collector }}'
-  loop:
-    - docker
-  loop_control:
-    loop_var: var_role_otel_collector
+- import_tasks: bake.yml
+  when: jukebox_cluster_stage | default('all') in ['bake', 'all']
 
-- ansible.builtin.file:
-    path: "{{ app_path }}"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    state: directory
-
-- template:
-    src: otel-config.yml.j2
-    dest: "{{ app_path }}/otel-config.yml"
-
-- name: "create and run docker container"
-  community.docker.docker_container:
-    recreate: yes
-    name: otel-collector
-    user: 0
-    privileged: yes
-    network_mode: host
-    ipc_mode: host
-    pid_mode: host
-    image: otel/opentelemetry-collector-contrib:0.93.0
-    state: started
-    stop_timeout: 10
-    etc_hosts: >
-      {
-        "{{ otelcol_gw_host }}": "{{ otelcol_gw_ip }}"
-      }
-    volumes:
-      - "{{ app_path }}/otel-config.yml:/otel-config.yml:ro"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "/etc/passwd:/etc/passwd:ro"
-      - "/proc:/hostfs/proc:ro"
-    command: '--config otel-config.yml'
-    log_driver: json-file
-    log_options:
-      max-size: 50m
-      max-file: "10"
-    restart_policy: always
-    hostname: "{{ app_hostname }}"
-  notify:
-    - "prune docker"
-  register: output
+# Run the container task in both bake and runtime stages. During bake it creates
+# the container with state=present (does not start). On first boot the firstboot
+# unit substitutes ${CLUSTER_REGION} in the config and starts it; restart_policy
+# handles all subsequent reboots.
+- import_tasks: runtime.yml
+  when: jukebox_cluster_stage | default('all') in ['bake', 'runtime', 'all']
