@@ -34,13 +34,6 @@ variable "runners" {
   }))
 }
 
-variable "streamd_reqs" {
-  type = object({
-    igpu = bool
-    dgpu = bool
-  })
-}
-
 # app secrets
 
 variable "sqldb_password" {

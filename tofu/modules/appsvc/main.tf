@@ -83,7 +83,6 @@ resource "kubernetes_config_map" "appsvc" {
     FLASK_SQLALCHEMY_ENGINE_OPTIONS = "{\"pool_pre_ping\": true, \"pool_size\": 10, \"pool_recycle\": 120}"
     JUKEBOXSVC_URL                  = "http://jukeboxsvc.default.svc.cluster.local"
     RUNNERS_CONF                    = jsonencode(var.runners)
-    STREAMD_REQS                    = jsonencode(var.streamd_reqs)
     SQLDB_DBNAME                    = "yag"
     SQLDB_HOST                      = "sqldb.default.svc.cluster.local"
     SQLDB_PORT                      = 5432

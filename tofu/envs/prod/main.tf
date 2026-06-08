@@ -69,6 +69,10 @@ locals {
     }
   ]
   docker_repo_prefix = "ghcr.io/yag-im"
+  #ovh_project_id = "86a6b6677ce849e8a98a58f08a94a2ae" check .env for prod value
+  #ovh_endpoint = "ovh-us" check .env for prod value
+  ovh_image_id_us_west_1_nvidia_l4 = "todo"
+  ovh_image_id_us_east_1_nvidia_l4 = "todo"
   hostnames = {
     bastion    = "bastion.${local.public_tld}"
     grafana    = "grafana.${local.public_tld}"
@@ -77,15 +81,15 @@ locals {
   }
   public_tld     = "yag.im"
   private_tld    = "yag.internal"
-  ver_appsvc     = "0.3.20"
+  ver_appsvc     = "0.3.21"
   ver_bastion    = "0.0.5"
-  ver_jobs       = "0.1.15"
-  ver_jukeboxsvc = "0.4.17"
-  ver_portsvc    = "0.1.5"
-  ver_sessionsvc = "0.1.2"
+  ver_jobs       = "0.1.17"
+  ver_jukeboxsvc = "0.4.20"
+  ver_portsvc    = "0.1.6"
+  ver_sessionsvc = "0.1.3"
   ver_sigsvc     = "0.1.8"
   ver_sqldb      = "0.0.2"
-  ver_webapi     = "0.3.9"
+  ver_webapi     = "0.3.10"
   ver_webapp     = "0.6.21"
 }
 
@@ -144,10 +148,6 @@ module "appsvc" {
       memory        = 2147483648 # TODO: winxp only requirement
     }
   }
-  streamd_reqs = {
-    igpu : true,
-    dgpu : false
-  }
   # secrets
   sqldb_password = data.aws_ssm_parameter.sqldb_appsvc_password.value
 }
@@ -178,6 +178,10 @@ module "jukeboxsvc" {
   appstor_nodes              = local.appstor_nodes
   appstor_user               = "debian"
   jukebox_docker_repo_prefix = "${local.docker_repo_prefix}/jukebox"
+  ovh_project_id              = var.ovh_project_id
+  ovh_endpoint                = var.ovh_endpoint
+  ovh_image_id_us_west_1_nvidia_l4 = local.ovh_image_id_us_west_1_nvidia_l4
+  ovh_image_id_us_east_1_nvidia_l4 = local.ovh_image_id_us_east_1_nvidia_l4
   env                        = "prod"
   flask_env     = "production"
   signaler_host = local.public_tld                           # this should go in headers (host) from jukebox to sigsvc for a proper routing

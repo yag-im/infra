@@ -35,6 +35,22 @@ variable "jukebox_docker_repo_prefix" {
   type = string
 }
 
+variable "ovh_project_id" {
+  type = string
+}
+
+variable "ovh_endpoint" {
+  type = string
+}
+
+variable "ovh_image_id_us_west_1_nvidia_l4" {
+  type = string
+}
+
+variable "ovh_image_id_us_east_1_nvidia_l4" {
+  type = string
+}
+
 variable "flask_env" {
   type = string
 }

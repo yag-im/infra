@@ -35,3 +35,7 @@ variable "ovh_project_id" {
 variable "ovh_vrack_id" {
   type = string
 }
+
+variable "ovh_endpoint" {
+  type = string
+}

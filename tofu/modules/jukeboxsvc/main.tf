@@ -117,6 +117,10 @@ resource "kubernetes_config_map" "jukeboxsvc" {
     JUKEBOX_CONTAINER_USER                            = "gamer"
     JUKEBOX_DOCKER_REPO_PREFIX                        = var.jukebox_docker_repo_prefix
     JUKEBOX_NODE_CLONES_ROOT_DIR                      = "/mnt/appstor"
+    OVH_PROJECT_ID                                    = var.ovh_project_id
+    OVH_ENDPOINT                                      = var.ovh_endpoint
+    OVH_IMAGE_ID_US_WEST_1_NVIDIA_L4                  = var.ovh_image_id_us_west_1_nvidia_l4
+    OVH_IMAGE_ID_US_EAST_1_NVIDIA_L4                  = var.ovh_image_id_us_east_1_nvidia_l4
     RESERVE_ADMIN_CPU_CORE                            = 0
     SESSIONSVC_URL                                    = "http://sessionsvc"
     SIGNALER_HOST                                     = var.signaler_host
