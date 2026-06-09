@@ -52,6 +52,18 @@ data "aws_ssm_parameter" "authsvc_twitch_oauth_client_secret" {
   name = "/authsvc/twitch_oauth_client_secret"
 }
 
+data "aws_ssm_parameter" "ovh_application_key" {
+  name = "/ovh/application_key"
+}
+
+data "aws_ssm_parameter" "ovh_application_secret" {
+  name = "/ovh/application_secret"
+}
+
+data "aws_ssm_parameter" "ovh_consumer_key" {
+  name = "/ovh/consumer_key"
+}
+
 # ideally should be part of aws_ssm_parameter, but reddit doesn't allow to share same secret for multiple envs
 variable "reddit_oauth_client_secret" {
   type = string

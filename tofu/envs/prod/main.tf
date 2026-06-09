@@ -194,6 +194,9 @@ module "jukeboxsvc" {
   # secrets
   signaler_auth_token = data.aws_ssm_parameter.sigsvc_auth_token.value
   sqldb_password      = data.aws_ssm_parameter.sqldb_jukeboxsvc_password.value
+  ovh_application_key    = data.aws_ssm_parameter.ovh_application_key.value
+  ovh_application_secret = data.aws_ssm_parameter.ovh_application_secret.value
+  ovh_consumer_key       = data.aws_ssm_parameter.ovh_consumer_key.value
 }
 
 module "webapp" {

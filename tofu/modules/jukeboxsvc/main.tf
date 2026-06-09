@@ -141,6 +141,9 @@ resource "kubernetes_secret" "jukeboxsvc_env" {
   data = {
     SIGNALER_AUTH_TOKEN = var.signaler_auth_token
     SQLDB_PASSWORD      = var.sqldb_password
+    OVH_APPLICATION_KEY    = var.ovh_application_key
+    OVH_APPLICATION_SECRET = var.ovh_application_secret
+    OVH_CONSUMER_KEY       = var.ovh_consumer_key
   }
 }
 
