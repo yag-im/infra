@@ -53,5 +53,8 @@ resource "kubernetes_config_map" "jobs" {
   data = {
     JUKEBOXSVC_URL = "http://jukeboxsvc"
     SESSIONSVC_URL = "http://sessionsvc"
+    ENABLE_CLUSTER_SYNC_JOB  = var.enable_cluster_sync_job ? "true" : "false"
+    ENABLE_CLUSTER_SCALE_JOB = var.enable_cluster_scale_job ? "true" : "false"
+    ENABLE_SESSIONS_TRIM_JOB = var.enable_sessions_trim_job ? "true" : "false"
   }
 }

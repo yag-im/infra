@@ -83,14 +83,14 @@ locals {
   private_tld    = "yag.internal"
   ver_appsvc     = "0.3.21"
   ver_bastion    = "0.0.5"
-  ver_jobs       = "0.1.17"
-  ver_jukeboxsvc = "0.4.20"
+  ver_jobs       = "0.1.19"
+  ver_jukeboxsvc = "0.4.21"
   ver_portsvc    = "0.1.6"
   ver_sessionsvc = "0.1.3"
   ver_sigsvc     = "0.1.8"
   ver_sqldb      = "0.0.2"
   ver_webapi     = "0.3.10"
-  ver_webapp     = "0.6.21"
+  ver_webapp     = "0.6.22"
 }
 
 module "appsvc" {
@@ -166,6 +166,10 @@ module "jobs" {
   docker_image    = "${local.docker_repo_prefix}/jobs:${local.ver_jobs}"
   k8s_namespace   = "default"
   replicas        = 1
+
+  enable_cluster_sync_job  = true
+  enable_cluster_scale_job = false
+  enable_sessions_trim_job = true
 }
 
 module "jukeboxsvc" {

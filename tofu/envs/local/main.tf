@@ -48,6 +48,10 @@ locals {
     }
   ]
   docker_repo_prefix = "docker.io/library"
+  ovh_project_id = "d60289206102496ba63a80be4fa0e921"
+  ovh_endpoint = "ovh-us"
+  ovh_image_id_us_west_1_nvidia_l4 = "todo"
+  ovh_image_id_us_east_1_nvidia_l4 = "todo"
   hostnames = {
     bastion    = "bastion.${local.public_tld}"
     grafana    = "grafana.${local.public_tld}"
@@ -123,10 +127,6 @@ module "appsvc" {
       memory        = 2147483648 # TODO: winxp only requirement
     }
   }
-  streamd_reqs = {
-    igpu : false,
-    dgpu : false
-  }
   # secrets
   sqldb_password = data.aws_ssm_parameter.sqldb_appsvc_password.value
 }
@@ -145,6 +145,10 @@ module "jobs" {
   docker_image    = "${local.docker_repo_prefix}/jobs:${local.ver_jobs}"
   k8s_namespace   = "default"
   replicas        = 1
+
+  enable_cluster_sync_job  = true
+  enable_cluster_scale_job = false
+  enable_sessions_trim_job = true
 }
 
 module "jukeboxsvc" {
@@ -158,6 +162,10 @@ module "jukeboxsvc" {
   appstor_nodes              = local.appstor_nodes
   appstor_user               = "vagrant"
   jukebox_docker_repo_prefix = "${local.docker_repo_prefix}/jukebox"
+  ovh_project_id              = local.ovh_project_id
+  ovh_endpoint                = local.ovh_endpoint
+  ovh_image_id_us_west_1_nvidia_l4 = local.ovh_image_id_us_west_1_nvidia_l4
+  ovh_image_id_us_east_1_nvidia_l4 = local.ovh_image_id_us_east_1_nvidia_l4
   env                        = "local"
   flask_env     = "development"
   signaler_host = local.public_tld                     # this should go in headers (host) from jukebox to sigsvc for a proper routing
