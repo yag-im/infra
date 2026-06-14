@@ -103,7 +103,6 @@ resource "kubernetes_config_map" "jukeboxsvc" {
     namespace = var.k8s_namespace
   }
   data = {
-    APPSTOR_NODES                                     = jsonencode(var.appstor_nodes)
     APPSTOR_USER                                      = var.appstor_user
     FLASK_DEBUG                                       = true
     FLASK_ENV                                         = var.flask_env

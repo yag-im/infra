@@ -159,7 +159,6 @@ module "jukeboxsvc" {
   replicas        = 3
   # app config
   # appstor_pvcs              = module.appstor_nfs.pvcs
-  appstor_nodes              = local.appstor_nodes
   appstor_user               = "vagrant"
   jukebox_docker_repo_prefix = "${local.docker_repo_prefix}/jukebox"
   ovh_project_id              = local.ovh_project_id

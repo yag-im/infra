@@ -3,7 +3,7 @@ locals {
     for entry in flatten([
       for r in var.jukebox_nodes : [
         for i in range(r.count) : {
-          key         = "jukebox${i}.${r.region}"
+          key         = "jukebox${i}-${r.region}"
           name        = "jukebox${i}-${r.region}"
           ip          = "${r.base_ip_prefix}.${r.base_ip_octet + i}"
           docker_port = r.docker_port
@@ -17,7 +17,7 @@ locals {
     for entry in flatten([
       for r in var.appstor_nodes : [
         for i in range(r.count) : {
-          key      = "appstor${i}.${r.region}"
+          key      = "appstor${i}-${r.region}"
           name     = "appstor${i}-${r.region}"
           ip       = "${r.base_ip_prefix}.${r.base_ip_octet + i}"
           ssh_port = r.ssh_port
