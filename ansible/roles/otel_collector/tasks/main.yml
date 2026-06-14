@@ -1,9 +1,9 @@
 - import_tasks: bake.yml
-  when: jukebox_cluster_stage | default('all') in ['bake', 'all']
+  when: deploy_stage | default('all') in ['bake', 'all']
 
 # Run the container task in both bake and runtime stages. During bake it creates
 # the container with state=present (does not start). On first boot the firstboot
 # unit substitutes ${CLUSTER_REGION} in the config and starts it; restart_policy
 # handles all subsequent reboots.
 - import_tasks: runtime.yml
-  when: jukebox_cluster_stage | default('all') in ['bake', 'runtime', 'all']
+  when: deploy_stage | default('all') in ['bake', 'runtime', 'all']

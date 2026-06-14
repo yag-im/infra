@@ -14,7 +14,7 @@
 #   PRIVATE_NETWORK (default: yag-pn) — private network
 #   KEYPAIR (default: <none> — relies on baked authorized_keys)
 #   SERVER_NAME (default: test-jukebox-<random>)
-#   APPSTOR_INTERNAL_IPS, NODE_INDEX, FQDN_HOST_PREFIX
+#   APPSTOR_NUM, NODE_INDEX, FQDN_HOST_PREFIX
 #       (have sane dev defaults; private IP is derived from region+node index)
 set -euo pipefail
 trap 'rc=$?; echo "ERROR: $BASH_SOURCE:$LINENO: \`${BASH_COMMAND}\` exited with $rc" >&2' ERR
@@ -65,8 +65,8 @@ PUBLIC_NETWORK="${PUBLIC_NETWORK:-Ext-Net}"
 PRIVATE_NETWORK="${PRIVATE_NETWORK:-yag-pn}"
 SERVER_NAME="${SERVER_NAME:-test-jukebox-$(date +%s)}"
 
-JUKEBOX_CLUSTER_NODE_PRIVATE_IP=""
-APPSTOR_INTERNAL_IPS="${APPSTOR_INTERNAL_IPS:-192.168.12.200}"
+JUKEBOX_NODE_PRIVATE_IP=""
+APPSTOR_NUM="${APPSTOR_NUM:-1}"
 NODE_INDEX="${NODE_INDEX:-0}"
 FQDN_HOST_PREFIX="${FQDN_HOST_PREFIX:-jukebox}"
 
@@ -74,8 +74,8 @@ FQDN_HOST_PREFIX="${FQDN_HOST_PREFIX:-jukebox}"
 #   us-east-1 -> 192.168.12.(100+NODE_INDEX)
 #   us-west-1 -> 192.168.13.(100+NODE_INDEX)
 case "$CLUSTER_REGION" in
-    us-east-1) JUKEBOX_CLUSTER_NODE_PRIVATE_IP="192.168.12.$((100 + NODE_INDEX))" ;;
-    us-west-1) JUKEBOX_CLUSTER_NODE_PRIVATE_IP="192.168.13.$((100 + NODE_INDEX))" ;;
+    us-east-1) JUKEBOX_NODE_PRIVATE_IP="192.168.12.$((100 + NODE_INDEX))" ;;
+    us-west-1) JUKEBOX_NODE_PRIVATE_IP="192.168.13.$((100 + NODE_INDEX))" ;;
     *)
         echo "no private IP mapping for CLUSTER_REGION=$CLUSTER_REGION" >&2
         exit 1
@@ -92,8 +92,8 @@ write_files:
     permissions: '0644'
     owner: root:root
     content: |
-      JUKEBOX_CLUSTER_NODE_PRIVATE_IP=${JUKEBOX_CLUSTER_NODE_PRIVATE_IP}
-      APPSTOR_INTERNAL_IPS="${APPSTOR_INTERNAL_IPS}"
+      JUKEBOX_NODE_PRIVATE_IP=${JUKEBOX_NODE_PRIVATE_IP}
+      APPSTOR_NUM=${APPSTOR_NUM}
       NODE_INDEX=${NODE_INDEX}
       FQDN_HOST_PREFIX=${FQDN_HOST_PREFIX}
       CLUSTER_REGION=${CLUSTER_REGION}
@@ -103,7 +103,7 @@ echo "=== launching $SERVER_NAME ==="
 echo "  image:           $IMAGE_NAME"
 echo "  flavor:          $FLAVOR"
 echo "  public network:  $PUBLIC_NETWORK"
-echo "  private network: $PRIVATE_NETWORK (fixed ip: $JUKEBOX_CLUSTER_NODE_PRIVATE_IP)"
+echo "  private network: $PRIVATE_NETWORK (fixed ip: $JUKEBOX_NODE_PRIVATE_IP)"
 echo "  user-data:       $USERDATA_FILE"
 echo "  region:          $CLUSTER_REGION"
 echo
@@ -116,7 +116,7 @@ PRIVATE_NETWORK_ID="$(openstack network show "$PRIVATE_NETWORK" -f value -c id)"
 create_args=(
     --image "$IMAGE_NAME"
     --flavor "$FLAVOR"
-    --nic "net-id=${PRIVATE_NETWORK_ID},v4-fixed-ip=${JUKEBOX_CLUSTER_NODE_PRIVATE_IP}"
+    --nic "net-id=${PRIVATE_NETWORK_ID},v4-fixed-ip=${JUKEBOX_NODE_PRIVATE_IP}"
     --network "$PUBLIC_NETWORK"
     --user-data "$USERDATA_FILE"
     --wait

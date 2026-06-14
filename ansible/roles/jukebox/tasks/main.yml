@@ -1,0 +1,5 @@
+- import_tasks: bake.yml
+  when: deploy_stage in ['bake', 'all']
+
+- import_tasks: runtime.yml
+  when: deploy_stage in ['runtime', 'all']

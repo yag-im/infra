@@ -1,0 +1,13 @@
+192.168.12.200 appstor0-us-east-1
+192.168.12.201 appstor1-us-east-1
+192.168.12.202 appstor2-us-east-1
+192.168.12.203 appstor3-us-east-1
+192.168.12.204 appstor4-us-east-1
+192.168.12.205 appstor5-us-east-1
+
+192.168.13.200 appstor0-us-west-1
+192.168.13.201 appstor1-us-west-1
+192.168.13.202 appstor2-us-west-1
+192.168.13.203 appstor3-us-west-1
+192.168.13.204 appstor4-us-west-1
+192.168.13.205 appstor5-us-west-1

@@ -6,6 +6,12 @@
   with_items:
     - lsyncd
 
+- name: add region hosts entries to /etc/hosts (for master->secondary replication)
+  ansible.builtin.blockinfile:
+    path: /etc/hosts
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - regional hosts"
+    block: "{{ lookup('file', 'hosts.region') }}"
+
 - ansible.builtin.file:
     path: /var/log/lsyncd
     state: directory

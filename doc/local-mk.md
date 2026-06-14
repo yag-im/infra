@@ -135,7 +135,7 @@ Run ansible cluster init playbook:
         --key-file "~/.vagrant.d/insecure_private_keys/vagrant.key.ed25519" \
         --vault-password-file=envs/${INFRA_ENV}/.vault_pwd \
         -i envs/${INFRA_ENV}/hosts_${INFRA_DC}.yml \
-        playbooks/jukebox_cluster.yml
+        playbooks/jukebox.yml
 
 Repeat the same with `INFRA_DC=eu-central-1`.
 

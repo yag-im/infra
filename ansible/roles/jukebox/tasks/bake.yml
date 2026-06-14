@@ -1,9 +1,9 @@
 - name: parent roles
   include_role:
-    name: "{{ jukebox_cluster_parent_roles_item }}"
+    name: "{{ jukebox_parent_roles_item }}"
   with_items: "{{ parent_roles }}"
   loop_control:
-    loop_var: jukebox_cluster_parent_roles_item
+    loop_var: jukebox_parent_roles_item
 
 - ansible.builtin.file:
     path: "{{ app_path }}"
@@ -19,10 +19,16 @@
 
 - name: install deps
   package:
-    name: "{{ jukebox_cluster_deps }}"
+    name: "{{ jukebox_deps }}"
     state: latest
     update_cache: yes
-  with_items: "{{ jukebox_cluster_deps }}"
+  with_items: "{{ jukebox_deps }}"
+
+- name: add region hosts entries to /etc/hosts
+  ansible.builtin.blockinfile:
+    path: /etc/hosts
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - regional hosts"
+    block: "{{ lookup('file', 'hosts.' + cluster_region) }}"
 
 - ansible.builtin.copy:
     src: daemon.json
@@ -55,4 +61,4 @@
 - import_tasks: install_firstboot.yml
 
 - import_tasks: nvidia.yml
-  when: jukebox_cluster_gpu_vendor == 'nvidia'
+  when: jukebox_gpu_vendor == 'nvidia'

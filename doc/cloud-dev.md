@@ -202,6 +202,6 @@ In order to see iGPU devices at /dev/dri you need to disable IOMMU:
         --key-file "/workspaces/infra/tofu/modules/bastion/files/secrets/${INFRA_ENV}/id_ed25519" \
         --vault-password-file=envs/${INFRA_ENV}/.vault_pwd \
         -i envs/${INFRA_ENV}/hosts_${INFRA_DC}.yml \
-        playbooks/jukebox_cluster.yml
+        playbooks/jukebox.yml
 
 Repeat the same for other regions (us-east-1 etc).

@@ -1,15 +1,15 @@
 all:
   children:
-    jukebox_cluster:
+    jukebox:
       hosts:
-        192.168.12.2:
+        jukebox0-us-east-1:
       vars:
-        appstor_internal_ip: "192.168.12.200"
+        appstor_internal_ip: "appstor0-us-east-1"
         fqdn_host_prefix: "jukebox"
-        fqdn_host_group: "jukebox_cluster"
+        fqdn_host_group: "jukebox"
     appstor:
       hosts:
-        192.168.12.200:
+        appstor0-us-east-1:
       vars:
         fqdn_host_prefix: "appstor"
         fqdn_host_group: "appstor"

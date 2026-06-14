@@ -40,7 +40,7 @@ Init replicas (west, ...) first, then master (east):
         --key-file "/workspaces/infra/tofu/modules/bastion/files/secrets/${INFRA_ENV}/id_ed25519" \
         --vault-password-file=envs/${INFRA_ENV}/.vault_pwd \
         -i envs/${INFRA_ENV}/hosts_${INFRA_DC}.yml \
-        playbooks/jukebox_cluster.yml
+        playbooks/jukebox.yml
 
 - Reboot instance after completion.
 

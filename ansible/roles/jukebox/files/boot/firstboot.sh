@@ -26,23 +26,23 @@ require() {
     fi
 }
 
-require JUKEBOX_CLUSTER_NODE_PRIVATE_IP
-require APPSTOR_INTERNAL_IPS
+require JUKEBOX_NODE_PRIVATE_IP
+require APPSTOR_NUM
 require NODE_INDEX
 require FQDN_HOST_PREFIX
 require CLUSTER_REGION
 
 # Cross-check that the private IP from user-data matches an interface on this host.
-if ! ip -4 addr show | grep -qE "inet ${JUKEBOX_CLUSTER_NODE_PRIVATE_IP}/"; then
-    echo "firstboot: JUKEBOX_CLUSTER_NODE_PRIVATE_IP=${JUKEBOX_CLUSTER_NODE_PRIVATE_IP} is not assigned to any interface" >&2
+if ! ip -4 addr show | grep -qE "inet ${JUKEBOX_NODE_PRIVATE_IP}/"; then
+    echo "firstboot: JUKEBOX_NODE_PRIVATE_IP=${JUKEBOX_NODE_PRIVATE_IP} is not assigned to any interface" >&2
     ip -4 addr show >&2
     exit 1
 fi
 
-export JUKEBOX_CLUSTER_NODE_PRIVATE_IP
+export JUKEBOX_NODE_PRIVATE_IP
 
 install -d /etc/systemd/system/docker.service.d
-envsubst '${JUKEBOX_CLUSTER_NODE_PRIVATE_IP}' \
+envsubst '${JUKEBOX_NODE_PRIVATE_IP}' \
     < "${BOOT_DIR}/templates/override.conf.tmpl" \
     > /etc/systemd/system/docker.service.d/override.conf
 
@@ -58,26 +58,22 @@ for _ in $(seq 1 30); do
 done
 docker info >/dev/null
 
-# TEMP: appstor NFS mount disabled for test instances (no appstor reachable).
-# read -ra _appstor_ips <<< "$APPSTOR_INTERNAL_IPS"
-# for i in "${!_appstor_ips[@]}"; do
-#     vol="appstor-vol${i}"
-#     ip="${_appstor_ips[$i]}"
-#     if ! docker volume inspect "$vol" >/dev/null 2>&1; then
-#         docker volume create \
-#             --driver local \
-#             --opt type=nfs \
-#             --opt device=":/clones${i}" \
-#             --opt o="addr=${ip},rw,nfsvers=4,minorversion=2,proto=tcp,fsc,nocto" \
-#             "$vol"
-#     fi
-# done
+# appstors are resolvable by their hostnames (using regional-specific /etc/hosts addition baked into jukebox image)
+for i in $(seq 1 "$APPSTOR_NUM"); do
+    vol="appstor-vol${i}"
+    appstor_host="appstor${i}"
+    if ! docker volume inspect "$vol" >/dev/null 2>&1; then
+        docker volume create \
+            --driver local \
+            --opt type=nfs \
+            --opt device=":/clones" \
+            --opt o="addr=${appstor_host},rw,nfsvers=4,minorversion=2,proto=tcp,fsc,nocto" \
+            "$vol"
+    fi
+done
 
-hostnamectl set-hostname "${FQDN_HOST_PREFIX}${NODE_INDEX}.${CLUSTER_REGION}.yag.im"
+hostnamectl set-hostname "${FQDN_HOST_PREFIX}${NODE_INDEX}-${CLUSTER_REGION}"
 
-# otel-collector: container was created (state=present) during bake with the
-# desired spec and restart_policy=always. Render the config placeholder and
-# start it once; docker will restart it on every subsequent boot.
 if [[ -n "${OTEL_CONFIG_PATH:-}" && -f "${OTEL_CONFIG_PATH}" ]]; then
     export CLUSTER_REGION
     tmp="$(mktemp)"

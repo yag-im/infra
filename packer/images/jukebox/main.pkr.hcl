@@ -21,9 +21,9 @@ build {
   sources = ["source.openstack.ovh-debian13"]
 
   provisioner "ansible" {
-    playbook_file = "${path.root}/../../../ansible/playbooks/jukebox_cluster.yml"
+    playbook_file = "${path.root}/../../../ansible/playbooks/jukebox.yml"
     user          = "debian"
-    groups        = ["jukebox_cluster"]
+    groups        = ["jukebox"]
     use_proxy     = false
     ansible_env_vars = [
       "ANSIBLE_CONFIG=${path.root}/../../../ansible/ansible.cfg",
@@ -32,8 +32,8 @@ build {
     extra_arguments = [
       "--extra-vars", "@${path.root}/../../../ansible/envs/${var.infra_env}/group_vars/all/000_global_vars.yml",
       "--extra-vars", "@${path.root}/../../../ansible/envs/${var.infra_env}/group_vars/all/env_all.yml",
-      "--extra-vars", "jukebox_cluster_stage=bake",
-      "--extra-vars", "jukebox_cluster_gpu_vendor=${var.gpu_vendor}",
+      "--extra-vars", "deploy_stage=bake",
+      "--extra-vars", "jukebox_gpu_vendor=${var.gpu_vendor}",
       "--extra-vars", "ansible_python_interpreter=/usr/bin/python3",
     ]
   }

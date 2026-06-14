@@ -1,5 +1,0 @@
-- import_tasks: bake.yml
-  when: jukebox_cluster_stage in ['bake', 'all']
-
-- import_tasks: runtime.yml
-  when: jukebox_cluster_stage in ['runtime', 'all']

@@ -1,6 +1,6 @@
 all:
   children:
-    jukebox_cluster:
+    jukebox:
       hosts:
         jukebox[1:2].eu-central-1.yag.vm:
       vars:

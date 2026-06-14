@@ -8,7 +8,7 @@
     ipc_mode: host
     pid_mode: host
     image: otel/opentelemetry-collector-contrib:0.93.0
-    state: "{{ 'present' if jukebox_cluster_stage | default('all') == 'bake' else 'started' }}"
+    state: "{{ 'present' if deploy_stage | default('all') == 'bake' else 'started' }}"
     stop_timeout: 10
     etc_hosts: >
       {

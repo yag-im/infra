@@ -21,7 +21,7 @@
     src: otel-config.yml.j2
     dest: "{{ app_path }}/otel-config.yml"
   vars:
-    cluster_region: "{{ '${CLUSTER_REGION}' if jukebox_cluster_stage | default('all') == 'bake' else cluster_region }}"
+    cluster_region: "{{ '${CLUSTER_REGION}' if deploy_stage | default('all') == 'bake' else cluster_region }}"
 
 - name: pre-pull otel-collector image
   community.docker.docker_image:
