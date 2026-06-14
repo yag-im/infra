@@ -4,11 +4,11 @@
 
 # appstor shell
 
-    ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/prod/id_ed25519 -o ServerAliveInterval=10 -o ProxyCommand="ssh -p 2207 -W %h:%p infra@bastion.yag.im" debian@192.168.12.200
+    ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/prod/id_ed25519 -o ServerAliveInterval=10 -o ProxyCommand="ssh -p 2207 -W %h:%p infra@bastion.yag.im" debian@appstor0-us-east-1
 
 # jukebox shell
 
-    ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/prod/id_ed25519 -o ServerAliveInterval=10 -o ProxyCommand="ssh -p 2207 -W %h:%p infra@bastion.yag.im" debian@192.168.12.2
+    ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/prod/id_ed25519 -o ServerAliveInterval=10 -o ProxyCommand="ssh -p 2207 -W %h:%p infra@bastion.yag.im" debian@jukebox0-us-east-1
 
 # init appstor:
 
@@ -54,8 +54,8 @@ Make sure legacy images which are still in use are part of the cloud_prod_all co
 
 ## copy local file to remote machine
 
-    rsync -avz -e "ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/prod/id_ed25519 -o ServerAliveInterval=10 -o ProxyCommand='ssh -p 2207 -W %h:%p infra@bastion.yag.im'" /tmp/aaa debian@192.168.12.200:/tmp
+    rsync -avz -e "ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/prod/id_ed25519 -o ServerAliveInterval=10 -o ProxyCommand='ssh -p 2207 -W %h:%p infra@bastion.yag.im'" /tmp/aaa debian@appstor0-us-east-1:/tmp
 
 ## copy remote file to local machine
 
-    rsync -avz -e "ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/prod/id_ed25519 -o ServerAliveInterval=10 -o ProxyCommand='ssh -p 2207 -W %h:%p infra@bastion.yag.im'" debian@192.168.12.200:/opt/yag/data/appstor/apps/teenagent/3a0921b0-545e-42bd-9479-4f4329d1e8b3/C/TEENAGNT/SOUND.SET /tmp
+    rsync -avz -e "ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/prod/id_ed25519 -o ServerAliveInterval=10 -o ProxyCommand='ssh -p 2207 -W %h:%p infra@bastion.yag.im'" debian@appstor0-us-east-1:/opt/yag/data/appstor/apps/teenagent/3a0921b0-545e-42bd-9479-4f4329d1e8b3/C/TEENAGNT/SOUND.SET /tmp

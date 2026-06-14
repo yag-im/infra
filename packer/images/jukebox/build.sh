@@ -6,7 +6,7 @@
 #   INFRA_ENV      (default: dev)
 #   CLUSTER_REGION (default: us-east-1)
 #   GPU_VENDOR     (default: nvidia) — set to '' for CPU-only image
-#   FLAVOR, IMAGE_NAME, BASE_IMAGE, OPENRC
+#   FLAVOR, IMAGE_NAME, OPENRC
 set -euo pipefail
 
 INFRA_ENV="${INFRA_ENV:-${1:-dev}}"

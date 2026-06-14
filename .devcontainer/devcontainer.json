@@ -23,6 +23,7 @@
 	"mounts": [
 		"source=${env:HOME}${env:USERPROFILE}/.aws,target=/home/vscode/.aws,type=bind",
 		"source=${env:HOME}${env:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind",
-		"source=${env:HOME}${env:USERPROFILE}/.vagrant.d,target=/home/vscode/.vagrant.d,type=bind"
+		"source=${env:HOME}${env:USERPROFILE}/.vagrant.d,target=/home/vscode/.vagrant.d,type=bind",
+		"source=${env:HOME}${env:USERPROFILE}/yag/data/ports,target=/mnt/data,type=bind"
 	]
 }

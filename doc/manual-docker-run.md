@@ -134,5 +134,5 @@
         --gpus 'all' \
         --device=/dev/snd/seq \
         --shm-size="2g" \
-        --mount type=volume,source=appstor-vol,target=/opt/yag,volume-subpath=1/leisure-suit-larry-5-passionate-patti-does-a-little-undercover-work/1471be71-01b4-4fd2-9c01-abb06d54fc58 \
-        x11_gpu-nvidia_scummvm:2.9.0
+        --mount type=volume,source=appstor-vol,target=/opt/yag,volume-subpath=0/schoolhouse-rock-1st-2nd-grade/019ea3be-a24a-70ee-8187-4fcede472d62 \
+        x11_gpu-nvidia_dosbox-x:2025.12.01

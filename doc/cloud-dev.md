@@ -112,7 +112,7 @@ Open in browser:
 
 Then connect to appstor from bastion: 
 
-    ssh debian@192.168.12.200
+    ssh debian@appstor0-us-east-1
 
 ## Cleanup
 

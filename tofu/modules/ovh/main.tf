@@ -78,3 +78,10 @@ resource "local_sensitive_file" "kubeconfig" {
   file_permission = "0644"
   depends_on      = [ovh_cloud_project_kube.k8s_cluster, ovh_cloud_project_kube_nodepool.node_pool]
 }
+
+module "ovh_vms" {
+  source = "../ovh_vms"
+
+  jukebox_nodes = var.jukebox_nodes
+  appstor_nodes = var.appstor_nodes
+}

@@ -67,7 +67,7 @@ SERVER_NAME="${SERVER_NAME:-test-jukebox-$(date +%s)}"
 
 JUKEBOX_CLUSTER_NODE_PRIVATE_IP=""
 APPSTOR_INTERNAL_IPS="${APPSTOR_INTERNAL_IPS:-192.168.12.200}"
-NODE_INDEX="${NODE_INDEX:-1}"
+NODE_INDEX="${NODE_INDEX:-0}"
 FQDN_HOST_PREFIX="${FQDN_HOST_PREFIX:-jukebox}"
 
 # Derive private IP from region + node index:
@@ -156,7 +156,7 @@ cat <<EOF
 Next steps:
   # tail console log until firstboot finishes
   source /workspaces/infra/tofu/envs/${INFRA_ENV}/secrets/openrc
-  export OS_REGION_NAME="${OS_REGION_NAME}" 
+  export OS_REGION_NAME="${OS_REGION_NAME}"
   openstack console log show $SERVER_NAME | tail -80
 
   # ssh in (uses key baked into the image via genesis/files/ssh/${INFRA_ENV}/id_ed25519.pub)

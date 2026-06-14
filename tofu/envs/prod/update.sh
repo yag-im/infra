@@ -11,5 +11,5 @@ else
     set +o allexport
     . ./secrets/openrc
 fi
-#tofu apply
+
 tofu apply -var "create_istio_vs=true"

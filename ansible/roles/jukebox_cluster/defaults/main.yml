@@ -13,7 +13,7 @@ jukebox_cluster_stage: all
 
 # GPU vendor for drivers + container toolkit installation.
 # Set to 'nvidia' to install NVIDIA driver + NVIDIA Container Toolkit.
-# Leave empty (default) to skip GPU setup (dedicated servers with built-in Intel GPUs).
+# Leave empty (default) to skip GPU setup (dedicated servers with integrated GPUs).
 jukebox_cluster_gpu_vendor: ""
 
 nvidia_cuda_repo_distro: "debian{{ ansible_distribution_major_version }}"

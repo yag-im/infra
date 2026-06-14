@@ -21,7 +21,7 @@ OVH admin panel, reboot instance and reattach storage drive. It should appear as
 
 The try plain ssh connect from host:
 
-    ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/dev/id_ed25519 -o ServerAliveInterval=10 -o ProxyCommand="ssh -p 2207 -W %h:%p infra@bastion.dev.yag.im" debian@192.168.13.200
+    ssh -i /workspaces/infra/tofu/modules/bastion/files/secrets/dev/id_ed25519 -o ServerAliveInterval=10 -o ProxyCommand="ssh -p 2207 -W %h:%p infra@bastion.dev.yag.im" debian@appstor0-us-west-1
 
 Note that ProxyCommand is not using keys on the bastion host, instead they should be provided from the host machine.
 
@@ -153,7 +153,7 @@ Q: How to mount appstor locally through NFS?
 A: For prod NFS (K8S based):
 
     # sudo mkdir -p /mnt/appstor_nfs/prod/us-east-1
-    ssh -L 2049:192.168.12.200:2049 -p 2207 -o ServerAliveInterval=10  infra@bastion.yag.im -N & disown
+    ssh -L 2049:appstor0-us-east-1:2049 -p 2207 -o ServerAliveInterval=10  infra@bastion.yag.im -N & disown
     sudo mount -t nfs -o nfsvers=4,minorversion=2,proto=tcp,fsc,nocto,port=2049 localhost: /mnt/appstor_nfs/prod/us-east-1
 
 Q: CPU upgrade

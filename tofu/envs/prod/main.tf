@@ -14,7 +14,7 @@ terraform {
     }
     openstack = {
       source  = "terraform-provider-openstack/openstack"
-      version = "= 1.54.1"
+      version = ">= 2.0.0"
     }
     ovh = {
       source  = "ovh/ovh"
@@ -101,8 +101,8 @@ module "appsvc" {
   replicas        = 2
   # app config
   # should be defined in "West to East" direction for smart RTT configuration
-  dc_regions   = ["us-west-1", "us-east-1"]
-  flask_env    = "production"
+  dc_regions = ["us-west-1", "us-east-1"]
+  flask_env  = "production"
   runners = {
     dosbox-x = {
       ver           = "2024.12.04",
@@ -179,21 +179,21 @@ module "jukeboxsvc" {
   k8s_namespace   = "default"
   replicas        = 2
   # app config
-  appstor_nodes              = local.appstor_nodes
-  appstor_user               = "debian"
-  jukebox_docker_repo_prefix = "${local.docker_repo_prefix}/jukebox"
-  ovh_project_id              = var.ovh_project_id
-  ovh_endpoint                = var.ovh_endpoint
+  appstor_nodes                    = local.appstor_nodes
+  appstor_user                     = "debian"
+  jukebox_docker_repo_prefix       = "${local.docker_repo_prefix}/jukebox"
+  ovh_project_id                   = var.ovh_project_id
+  ovh_endpoint                     = var.ovh_endpoint
   ovh_image_id_us_west_1_nvidia_l4 = local.ovh_image_id_us_west_1_nvidia_l4
   ovh_image_id_us_east_1_nvidia_l4 = local.ovh_image_id_us_east_1_nvidia_l4
-  env                        = "prod"
-  flask_env     = "production"
-  signaler_host = local.public_tld                           # this should go in headers (host) from jukebox to sigsvc for a proper routing
-  signaler_uri  = "wss://${local.public_tld}/webrtc/streamd" # this should be a public gw ip (check kubectl get svc -n istio-gw-public istio-gw-public output)
-  stun_uri      = "stun://stun.l.google.com:19302"
+  env                              = "prod"
+  flask_env                        = "production"
+  signaler_host                    = local.public_tld                           # this should go in headers (host) from jukebox to sigsvc for a proper routing
+  signaler_uri                     = "wss://${local.public_tld}/webrtc/streamd" # this should be a public gw ip (check kubectl get svc -n istio-gw-public istio-gw-public output)
+  stun_uri                         = "stun://stun.l.google.com:19302"
   # secrets
-  signaler_auth_token = data.aws_ssm_parameter.sigsvc_auth_token.value
-  sqldb_password      = data.aws_ssm_parameter.sqldb_jukeboxsvc_password.value
+  signaler_auth_token    = data.aws_ssm_parameter.sigsvc_auth_token.value
+  sqldb_password         = data.aws_ssm_parameter.sqldb_jukeboxsvc_password.value
   ovh_application_key    = data.aws_ssm_parameter.ovh_application_key.value
   ovh_application_secret = data.aws_ssm_parameter.ovh_application_secret.value
   ovh_consumer_key       = data.aws_ssm_parameter.ovh_consumer_key.value
@@ -244,6 +244,30 @@ module "ovh" {
   ]
   project_id = var.ovh_project_id # OS_TENANT_ID from secrets/openrc
   vrack_id   = var.ovh_vrack_id   # check https://us.ovhcloud.com/manager/#/dedicated/vrack
+
+  # for DNS resolution from K8S to VMs
+  jukebox_nodes = [
+    {
+      region         = "us-east-1"
+      base_ip_prefix = "192.168.12"
+    },
+    {
+      region         = "us-west-1"
+      base_ip_prefix = "192.168.13"
+    }
+  ]
+  appstor_nodes = [
+    {
+      region         = "us-east-1"
+      base_ip_prefix = "192.168.12"
+      count          = 1
+    },
+    {
+      region         = "us-west-1"
+      base_ip_prefix = "192.168.13"
+      count          = 1
+    }
+  ]
 }
 
 module "portsvc" {
