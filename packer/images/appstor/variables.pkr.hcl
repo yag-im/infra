@@ -5,12 +5,12 @@ variable "image_name" {
 
 variable "flavor" {
   type    = string
-  default = "l4-90"
+  default = "b3-8"
 }
 
 variable "image_output_name" {
   type    = string
-  # Leave empty to auto-derive from gpu_vendor (recommended).
+  # Leave empty to auto-derive the default name "debian13-appstor" (recommended).
   # Override only when a custom output image name is needed.
   default = ""
 }
@@ -23,16 +23,4 @@ variable "infra_env" {
 variable "network" {
   type    = string
   default = "Ext-Net"
-}
-
-variable "cluster_region" {
-  type    = string
-  default = "us-east-1"
-}
-
-# GPU vendor to install during image bake. Defaults to "nvidia" (GPU-enabled
-# image). Set to "" to bake a CPU-only image.
-variable "gpu_vendor" {
-  type    = string
-  default = "nvidia"
 }

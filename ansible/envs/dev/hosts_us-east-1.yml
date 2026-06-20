@@ -13,6 +13,9 @@ all:
       vars:
         fqdn_host_prefix: "appstor"
         fqdn_host_group: "appstor"
+    appstor_master:
+      hosts:
+        appstor0-us-east-1:
   vars:
     cluster_region: "us-east-1"
     ansible_python_interpreter: /usr/bin/python3

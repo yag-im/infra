@@ -1,11 +1,9 @@
 - name: parent roles
   include_role:
-    name: '{{ var_role_appstor }}'
-  loop:
-    - debian
-    - docker
+    name: "{{ appstor_parent_roles_item }}"
+  with_items: "{{ parent_roles }}"
   loop_control:
-    loop_var: var_role_appstor
+    loop_var: appstor_parent_roles_item
 
 - name: install deps
   apt:
@@ -14,6 +12,8 @@
     update_cache: yes
   with_items:
     - rsync
+    - btrfs-progs
+    - gettext-base
 
 - ansible.builtin.file:
     path: "{{ app_path }}"
@@ -21,41 +21,39 @@
     group: "{{ ansible_user }}"
     state: directory
 
-- name: common privileged tasks
-  include_tasks: "{{ var_task }}"
-  with_items:
-    - btrfs.yml
-    # - zfs.yml
-  loop_control:
-    loop_var: var_task
+- ansible.builtin.copy:
+    src: "exports"
+    dest: "{{ app_path }}/exports"
+    owner: root
+    group: root
+    mode: "0644"
 
-# zfs uses a built-in nfs server
-- name: non-privileged tasks
-  include_tasks: "{{ var_task }}"
-  with_items:
-    - nfs-server.yml
-  loop_control:
-    loop_var: var_task
-  args:
-    apply:
-      become: no
+- name: check if bees is already installed
+  stat:
+    path: /sbin/beesd
+  register: beesd
 
-- name: master privileged tasks
-  include_tasks: "{{ var_task }}"
-  with_items:
-    - lsyncd.yml
-  loop_control:
-    loop_var: var_task
-  when: inventory_hostname == appstor_master
+- name: build and install bees deduplication daemon
+  block:
+    - ansible.builtin.git:
+        repo: https://github.com/Zygo/bees.git
+        dest: /tmp/bees
+        single_branch: yes
+        version: v0.11
+    - make:
+        chdir: /tmp/bees
+        target: install
+    - ansible.builtin.copy:
+        src: /tmp/bees/scripts/beesd@.service
+        dest: /etc/systemd/system/beesd@.service
+        remote_src: true
+  when: not beesd.stat.exists
 
-# TODO: masters' appstor node key is used by both replicas and jukeboxsvc nodes (for creating remote clones)
-# jukeboxsvc nodes should use a different key
-- name: add primary appstors' node key into authorized_keys (TODO only on replicas)
+- name: add primary appstor node key into authorized_keys
   ansible.posix.authorized_key:
     user: "{{ ansible_user }}"
     key: "{{ lookup('file', 'files/secrets/id_ed25519.pub') }}"
     state: present
-  #when: inventory_hostname in appstor_replicas
 
 - ansible.builtin.copy:
     src: "clone_app.sh"
@@ -63,3 +61,10 @@
     owner: 1000
     group: 1000
     mode: '0755'
+
+- name: pre-pull NFS server docker image so first boot does not need to download it
+  community.docker.docker_image:
+    name: erichough/nfs-server@sha256:784ef30907aa318b8324c4c49bd258b11a740ab0eea9f09b5ccf9df378fa77ca
+    source: pull
+
+- import_tasks: install_firstboot.yml

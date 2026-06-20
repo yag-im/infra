@@ -1,5 +1,50 @@
-- import_tasks: bake.yml
-  when: deploy_stage in ['bake', 'all']
+- name: parent roles
+  include_role:
+    name: "{{ jukebox_parent_roles_item }}"
+  with_items: "{{ parent_roles }}"
+  loop_control:
+    loop_var: jukebox_parent_roles_item
 
-- import_tasks: runtime.yml
-  when: deploy_stage in ['runtime', 'all']
+- ansible.builtin.file:
+    path: "{{ app_path }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+
+- ansible.builtin.file:
+    path: "{{ app_data_path }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+
+- name: install deps
+  package:
+    name: "{{ jukebox_deps }}"
+    state: latest
+    update_cache: yes
+  with_items: "{{ jukebox_deps }}"
+
+- ansible.builtin.copy:
+    src: daemon.json
+    dest: /etc/docker/daemon.json
+
+- ansible.builtin.copy:
+    src: runc.conf
+    dest: /etc/criu/
+
+- name: create <service>.service.d directory
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+
+- name: make sure docker service is enabled via systemd
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    enabled: yes
+    daemon_reload: yes
+
+- import_tasks: install_firstboot.yml
+
+- import_tasks: nvidia.yml
+  when: jukebox_gpu_vendor == 'nvidia'

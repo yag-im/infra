@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 # Usage:
-#   ./build.sh [INFRA_ENV [CLUSTER_REGION [GPU_VENDOR]]]
+#   ./build.sh [INFRA_ENV [CLUSTER_REGION]]
 #
 # Env overrides (take precedence over positional args):
 #   INFRA_ENV      (default: dev)
 #   CLUSTER_REGION (default: us-east-1)
-#   GPU_VENDOR     (default: nvidia) — set to '' for CPU-only image
 #   FLAVOR, IMAGE_NAME, OPENRC
 set -euo pipefail
 
@@ -28,25 +27,7 @@ case "$CLUSTER_REGION" in
         ;;
 esac
 
-# GPU vendor to bake into the image. Defaults to 'nvidia' (GPU image);
-# pass an empty string (or set GPU_VENDOR="") for a CPU-only image.
-GPU_VENDOR="${GPU_VENDOR:-${3:-nvidia}}"
-case "$GPU_VENDOR" in
-    nvidia|"") ;;
-    *)
-        echo "GPU_VENDOR must be 'nvidia' or empty, got: $GPU_VENDOR" >&2
-        exit 1
-        ;;
-esac
-
-# Flavor used by the packer builder VM. GPU bakes need a GPU-capable flavor;
-# CPU-only bakes can run on a cheap flavor. Override via FLAVOR env var.
-# t2-45 is cheaper, but it's based on the Tesla V100 which has no support in Debian 13
-if [[ "$GPU_VENDOR" == "nvidia" ]]; then
-    FLAVOR="${FLAVOR:-l4-90}"
-else
-    FLAVOR="${FLAVOR:-b2-7}"
-fi
+FLAVOR="${FLAVOR:-b3-8}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 OPENRC="${OPENRC:-/workspaces/infra/tofu/envs/${INFRA_ENV}/secrets/openrc}"
@@ -68,22 +49,18 @@ cd "$SCRIPT_DIR"
 
 packer version
 packer init .
-packer validate -var "infra_env=${INFRA_ENV}" -var "cluster_region=${CLUSTER_REGION}" -var "gpu_vendor=${GPU_VENDOR}" -var "flavor=${FLAVOR}" .
+packer validate -var "infra_env=${INFRA_ENV}" -var "flavor=${FLAVOR}" .
 
 export PACKER_LOG=1
 export PACKER_LOG_PATH=./packer.log
 
 NETWORK_ID="$(openstack network show Ext-Net -f value -c id)"
 
-if [[ "$GPU_VENDOR" == "nvidia" ]]; then
-    IMAGE_NAME="${IMAGE_NAME:-debian13-jukebox-gpu-nvidia}"
-else
-    IMAGE_NAME="${IMAGE_NAME:-debian13-jukebox-cpu}"
-fi
+IMAGE_NAME="${IMAGE_NAME:-debian13-appstor}"
 echo "Deleting any existing images named '${IMAGE_NAME}'..."
 for img_id in $(openstack image list --private --name "${IMAGE_NAME}" -f value -c ID); do
     echo "  deleting image $img_id"
     openstack image delete "$img_id"
 done
 
-packer build -var "infra_env=${INFRA_ENV}" -var "cluster_region=${CLUSTER_REGION}" -var "network=${NETWORK_ID}" -var "gpu_vendor=${GPU_VENDOR}" -var "flavor=${FLAVOR}" -var "image_output_name=${IMAGE_NAME}" .
+packer build -var "infra_env=${INFRA_ENV}" -var "network=${NETWORK_ID}" -var "flavor=${FLAVOR}" -var "image_output_name=${IMAGE_NAME}" .

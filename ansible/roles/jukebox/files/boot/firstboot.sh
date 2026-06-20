@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # First-boot specialization for jukebox cloud nodes.
-# Reads /etc/jukebox/node.env (delivered via cloud-init user-data) and:
+# Reads /etc/jukebox/boot.env (delivered via cloud-init user-data) and:
 #   1. validates required vars and that the private IP is actually on the host
 #   2. renders /etc/systemd/system/docker.service.d/override.conf
 #   3. restarts docker so dockerd binds to the private IP
@@ -10,18 +10,18 @@
 set -euo pipefail
 
 SENTINEL=/var/lib/jukebox/.bootstrapped
-BOOT_DIR=/opt/jukebox-boot
-BAKED_ENV=/etc/jukebox/baked.env
+BOOT_DIR=/opt/yag/jukebox/boot
+IMAGE_ENV=/etc/jukebox/image.env
 
-if [[ -f "$BAKED_ENV" ]]; then
+if [[ -f "$IMAGE_ENV" ]]; then
     # shellcheck disable=SC1090
-    set -a; source "$BAKED_ENV"; set +a
+    set -a; source "$IMAGE_ENV"; set +a
 fi
 
 require() {
     local name="$1"
     if [[ -z "${!name:-}" ]]; then
-        echo "firstboot: required variable '$name' is not set in /etc/jukebox/node.env" >&2
+        echo "firstboot: required variable '$name' is not set in /etc/jukebox/boot.env" >&2
         exit 1
     fi
 }
@@ -58,7 +58,7 @@ for _ in $(seq 1 30); do
 done
 docker info >/dev/null
 
-# appstors are resolvable by their hostnames (using regional-specific /etc/hosts addition baked into jukebox image)
+# appstors are resolvable by their hostnames (regional /etc/hosts block injected below after CLUSTER_REGION is known)
 for i in $(seq 1 "$APPSTOR_NUM"); do
     vol="appstor-vol${i}"
     appstor_host="appstor${i}"
@@ -72,6 +72,18 @@ for i in $(seq 1 "$APPSTOR_NUM"); do
     fi
 done
 
+# Inject regional /etc/hosts entries so appstor hostnames resolve.
+HOSTS_SRC="${BOOT_DIR}/templates/hosts.${CLUSTER_REGION}"
+if [[ -f "$HOSTS_SRC" ]]; then
+    block="$(cat "$HOSTS_SRC")"
+    # idempotent: only add once (sentinel guarantees this, but be safe)
+    if ! grep -qF 'ANSIBLE MANAGED BLOCK - regional hosts' /etc/hosts; then
+        printf '\n# BEGIN ANSIBLE MANAGED BLOCK - regional hosts\n%s\n# END ANSIBLE MANAGED BLOCK - regional hosts\n' "$block" >> /etc/hosts
+    fi
+else
+    echo "firstboot: no hosts file found for CLUSTER_REGION=${CLUSTER_REGION}" >&2
+fi
+
 hostnamectl set-hostname "${FQDN_HOST_PREFIX}${NODE_INDEX}-${CLUSTER_REGION}"
 
 if [[ -n "${OTEL_CONFIG_PATH:-}" && -f "${OTEL_CONFIG_PATH}" ]]; then
@@ -79,7 +91,26 @@ if [[ -n "${OTEL_CONFIG_PATH:-}" && -f "${OTEL_CONFIG_PATH}" ]]; then
     tmp="$(mktemp)"
     envsubst '${CLUSTER_REGION}' < "${OTEL_CONFIG_PATH}" > "${tmp}"
     mv "${tmp}" "${OTEL_CONFIG_PATH}"
-    docker start otel-collector
+    docker run -d \
+        --name otel-collector \
+        --user 0 \
+        --privileged \
+        --network host \
+        --ipc host \
+        --pid host \
+        --stop-timeout 10 \
+        --hostname "${FQDN_HOST_PREFIX}${NODE_INDEX}-${CLUSTER_REGION}" \
+        --add-host "${OTELCOL_GW_HOST}:${OTELCOL_GW_IP}" \
+        --volume "${OTEL_CONFIG_PATH}:/otel-config.yml:ro" \
+        --volume "/var/run/docker.sock:/var/run/docker.sock:ro" \
+        --volume "/etc/passwd:/etc/passwd:ro" \
+        --volume "/proc:/hostfs/proc:ro" \
+        --log-driver json-file \
+        --log-opt max-size=50m \
+        --log-opt max-file=10 \
+        --restart always \
+        "${OTELCOL_IMAGE}" \
+        --config otel-config.yml
 fi
 
 install -d "$(dirname "$SENTINEL")"

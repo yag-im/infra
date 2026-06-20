@@ -1,0 +1,5 @@
+- hosts:
+    - appstor_master
+  gather_facts: yes
+  roles:
+    - appstor_master

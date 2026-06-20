@@ -1,8 +1,5 @@
 locals {
-  # Derive output image name from gpu_vendor when not explicitly overridden.
-  image_output_name = var.image_output_name != "" ? var.image_output_name : (
-    var.gpu_vendor == "nvidia" ? "debian13-jukebox-gpu-nvidia" : "debian13-jukebox-cpu"
-  )
+  image_output_name = var.image_output_name != "" ? var.image_output_name : "debian13-appstor"
 }
 
 source "openstack" "ovh-debian13" {
@@ -21,9 +18,9 @@ build {
   sources = ["source.openstack.ovh-debian13"]
 
   provisioner "ansible" {
-    playbook_file = "${path.root}/../../../ansible/playbooks/jukebox.yml"
+    playbook_file = "${path.root}/../../../ansible/playbooks/appstor.yml"
     user          = "debian"
-    groups        = ["jukebox"]
+    groups        = ["appstor"]
     use_proxy     = false
     ansible_env_vars = [
       "ANSIBLE_CONFIG=${path.root}/../../../ansible/ansible.cfg",
@@ -32,8 +29,6 @@ build {
     extra_arguments = [
       "--extra-vars", "@${path.root}/../../../ansible/envs/${var.infra_env}/group_vars/all/000_global_vars.yml",
       "--extra-vars", "@${path.root}/../../../ansible/envs/${var.infra_env}/group_vars/all/env_all.yml",
-      "--extra-vars", "jukebox_gpu_vendor=${var.gpu_vendor}",
-      "--extra-vars", "cluster_region=${var.cluster_region}",
       "--extra-vars", "ansible_python_interpreter=/usr/bin/python3",
     ]
   }
@@ -45,7 +40,6 @@ build {
       "sudo rm -f /etc/ssh/ssh_host_*",
       "sudo truncate -s 0 /etc/machine-id",
       "sudo rm -f /var/lib/dbus/machine-id",
-      "sudo rm -f /var/lib/jukebox/.bootstrapped",
     ]
   }
 }

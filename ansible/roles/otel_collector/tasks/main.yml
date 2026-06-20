@@ -1,9 +1,51 @@
-- import_tasks: bake.yml
-  when: deploy_stage | default('all') in ['bake', 'all']
+- name: parent roles
+  include_role:
+    name: '{{ var_role_otel_collector }}'
+  loop:
+    - docker
+  loop_control:
+    loop_var: var_role_otel_collector
 
-# Run the container task in both bake and runtime stages. During bake it creates
-# the container with state=present (does not start). On first boot the firstboot
-# unit substitutes ${CLUSTER_REGION} in the config and starts it; restart_policy
-# handles all subsequent reboots.
-- import_tasks: runtime.yml
-  when: deploy_stage | default('all') in ['bake', 'runtime', 'all']
+- name: ensure app dir
+  ansible.builtin.file:
+    path: "{{ app_path }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+
+- name: pre-pull otel-collector image
+  community.docker.docker_image:
+    name: otel/opentelemetry-collector-contrib:0.93.0
+    source: pull
+
+# literal ${CLUSTER_REGION} placeholder
+- name: render otel-config.yml
+  ansible.builtin.template:
+    src: otel-config.yml.j2
+    dest: "{{ app_path }}/otel-config.yml"
+  vars:
+    cluster_region: "${CLUSTER_REGION}"
+
+# Bake env-static values consumed by firstboot.sh when launching the container.
+- name: ensure image env dir exists
+  ansible.builtin.file:
+    path: "{{ image_env_path | dirname }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: write baked env-static values for firstboot
+  ansible.builtin.blockinfile:
+    path: "{{ image_env_path }}"
+    create: yes
+    owner: root
+    group: root
+    mode: "0644"
+    marker: "# {mark} otel_collector image vars"
+    block: |
+      OTEL_CONFIG_PATH={{ app_path }}/otel-config.yml
+      OTELCOL_IMAGE=otel/opentelemetry-collector-contrib:0.93.0
+      OTELCOL_GW_HOST={{ otelcol_gw_host }}
+      OTELCOL_GW_IP={{ otelcol_gw_ip }}
+

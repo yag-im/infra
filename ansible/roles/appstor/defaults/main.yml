@@ -1,0 +1,6 @@
+parent_roles:
+  - debian
+  - docker
+
+# must match IMAGE_ENV in firstboot.sh
+image_env_path: /etc/appstor/image.env

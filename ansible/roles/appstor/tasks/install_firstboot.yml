@@ -1,0 +1,50 @@
+- name: create appstor boot directory
+  file:
+    path: /opt/yag/appstor/boot
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: install firstboot script
+  copy:
+    src: boot/firstboot.sh
+    dest: /opt/yag/appstor/boot/firstboot.sh
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: install firstboot systemd unit
+  copy:
+    src: boot/appstor-firstboot.service
+    dest: /etc/systemd/system/appstor-firstboot.service
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: create /etc/appstor directory
+  file:
+    path: /etc/appstor
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: write image vars
+  ansible.builtin.blockinfile:
+    path: /etc/appstor/image.env
+    create: yes
+    owner: root
+    group: root
+    mode: "0644"
+    marker: "# {mark} appstor image vars"
+    block: |
+      APP_PATH={{ app_path }}
+      APP_DATA_PATH={{ app_data_path }}
+      ANSIBLE_USER={{ ansible_user }}
+
+- name: enable firstboot unit
+  systemd:
+    name: appstor-firstboot.service
+    enabled: yes
+    daemon_reload: yes

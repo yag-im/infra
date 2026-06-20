@@ -11,6 +11,6 @@
 - name: add infras' user key into allowed list
   ansible.posix.authorized_key:
     user: "{{ ansible_user }}"
-    key: "{{ lookup('file', 'ssh/{{ infra_env }}/id_ed25519.pub') }}"
+    key: "{{ lookup('file', 'ssh/' + infra_env + '/id_ed25519.pub') }}"
     state: present
 

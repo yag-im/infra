@@ -16,7 +16,8 @@
 			"extensions": [
 				"opentofu.vscode-opentofu",
 				"humao.rest-client",
-				"systemticks.c4-dsl-extension"
+				"systemticks.c4-dsl-extension",
+                "eamodio.gitlens"
 			]
 		}
 	},

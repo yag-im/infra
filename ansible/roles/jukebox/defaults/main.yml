@@ -2,14 +2,12 @@ parent_roles:
   - debian
   - docker
 
+# must match IMAGE_ENV in firstboot.sh
+image_env_path: /etc/jukebox/image.env
+
 jukebox_deps:
   - criu
   - nfs-common
-
-# bake    = build image (skips per-node tasks)
-# runtime = apply per-node config (skips one-time bake tasks)
-# all     = run both (dedicated servers)
-deploy_stage: all
 
 # GPU vendor for drivers + container toolkit installation.
 # Set to 'nvidia' to install NVIDIA driver + NVIDIA Container Toolkit.
