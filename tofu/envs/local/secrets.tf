@@ -64,6 +64,10 @@ data "aws_ssm_parameter" "ovh_consumer_key" {
   name = "/ovh/consumer_key"
 }
 
+data "aws_ssm_parameter" "os_password" {
+  name = "/os/password"
+}
+
 # ideally should be part of aws_ssm_parameter, but reddit doesn't allow to share same secret for multiple envs
 variable "reddit_oauth_client_secret" {
   type = string

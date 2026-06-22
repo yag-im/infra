@@ -1,5 +1,4 @@
 locals {
-  # Derive output image name from gpu_vendor when not explicitly overridden.
   image_output_name = var.image_output_name != "" ? var.image_output_name : (
     var.gpu_vendor == "nvidia" ? "debian13-jukebox-gpu-nvidia" : "debian13-jukebox-cpu"
   )
@@ -14,7 +13,8 @@ source "openstack" "ovh-debian13" {
   ssh_ip_version    = "4" # ipv6 is not supported
   networks          = [var.network]
   # optional but helps stability
-  ssh_timeout = "20m"
+  ssh_timeout       = "20m"
+  image_visibility  = "private"
 }
 
 build {

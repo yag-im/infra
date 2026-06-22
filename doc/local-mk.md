@@ -112,13 +112,13 @@ On the host machine:
         -o type=nfs \
         -o o=addr="127.0.0.1,rw,nfsvers=4,minorversion=2,proto=tcp,fsc,nocto,port=12049" \
         -o device=:/clones \
-        appstor-vol-us-west-1
+        appstor0-vol-us-west-1
     
     docker volume create --driver local \
         -o type=nfs \
         -o o=addr="127.0.0.1,rw,nfsvers=4,minorversion=2,proto=tcp,fsc,nocto,port=12050" \
         -o device=:/clones \
-        appstor-vol-eu-central-1
+        appstor0-vol-eu-central-1
 
 #### Init cluster (jukebox) nodes
 

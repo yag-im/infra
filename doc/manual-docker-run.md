@@ -26,7 +26,7 @@
         --device=/dev/dri/card0 \
         --device=/dev/snd/seq \
         --shm-size="2g" \
-        --mount type=volume,source=appstor-vol,target=/opt/yag,volume-subpath=0/bad-mojo/018a9877-1ae1-45b4-a04f-0098a4ceb73f \
+        --mount type=volume,source=appstor0-vol,target=/opt/yag,volume-subpath=0/bad-mojo/018a9877-1ae1-45b4-a04f-0098a4ceb73f \
         ghcr.io/yag-im/jukebox/x11_gpu-intel_dosbox-x:2024.12.04
 
 ### cpu
@@ -51,7 +51,7 @@
         -e SHOW_POINTER=false \
         --device=/dev/snd/seq \
         --shm-size="2g" \
-        --mount type=volume,source=appstor-vol,target=/opt/yag,volume-subpath=0/the-black-mirror/1596ac0f-47e5-4a97-98bc-528e204fc694 \
+        --mount type=volume,source=appstor0-vol,target=/opt/yag,volume-subpath=0/the-black-mirror/1596ac0f-47e5-4a97-98bc-528e204fc694 \
         ghcr.io/yag-im/jukebox/x11_cpu_wine:9.0
 
 ## local host
@@ -80,7 +80,7 @@
         --device=/dev/dri/card0 \
         --device=/dev/snd/seq \
         --shm-size="2g" \
-        --mount type=volume,source=appstor-vol,target=/opt/yag,volume-subpath=0/the-prince-and-the-coward/02959ab5-aefb-44a1-b2ca-4fe5cd515f04 \
+        --mount type=volume,source=appstor0-vol,target=/opt/yag,volume-subpath=0/the-prince-and-the-coward/02959ab5-aefb-44a1-b2ca-4fe5cd515f04 \
         x11_gpu-intel_wine:9.0
 
 ### cpu
@@ -105,7 +105,7 @@
         -e SHOW_POINTER=false \
         --device=/dev/snd/seq \
         --shm-size="2g" \
-        --mount type=volume,source=appstor-vol,target=/opt/yag,volume-subpath=0/versailles-1685/46ba41a8-6a36-45f9-a594-278c2e2d0af0 \
+        --mount type=volume,source=appstor0-vol,target=/opt/yag,volume-subpath=0/versailles-1685/46ba41a8-6a36-45f9-a594-278c2e2d0af0 \
         x11_cpu_scummvm:2.9.0
 
 ### gpu-nvidia
@@ -134,5 +134,5 @@
         --gpus 'all' \
         --device=/dev/snd/seq \
         --shm-size="2g" \
-        --mount type=volume,source=appstor-vol,target=/opt/yag,volume-subpath=0/schoolhouse-rock-1st-2nd-grade/019ea3be-a24a-70ee-8187-4fcede472d62 \
+        --mount type=volume,source=appstor0-vol,target=/opt/yag,volume-subpath=0/schoolhouse-rock-1st-2nd-grade/019ea3be-a24a-70ee-8187-4fcede472d62 \
         x11_gpu-nvidia_dosbox-x:2025.12.01

@@ -20,7 +20,7 @@ data "openstack_images_image_v2" "os_image" {
 
 resource "openstack_compute_instance_v2" "appstor_instance" {
   count       = length(var.appstor.nodes)
-  name        = "appstor-instance"
+  name        = "appstor0-${var.appstor.nodes[count.index].region}"
   flavor_name = var.appstor.flavor
   image_id    = data.openstack_images_image_v2.os_image.id
   key_pair    = openstack_compute_keypair_v2.appstor_keypair[count.index].name

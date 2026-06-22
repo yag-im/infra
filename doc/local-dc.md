@@ -155,13 +155,13 @@ For Mac users, `socat` hack might be required instead:
 
 #### Docker volume
 
-In order to map local folder into the container you need to create a docker volume as shown below:
+In order to map local folder into the runner container you need to create a docker volume as shown below (on the host):
 
     docker volume create --driver local \
         --opt type=none \
         --opt o=bind \
         --opt device=~/yag/data/ports/clones \
-        appstor-vol
+        appstor0-vol
 
 ### The rest of microservices
 

@@ -77,7 +77,7 @@ Local dev:
         --opt type=none \
         --opt o=bind \
         --opt device=~/yag/data/ports/clones \
-        appstor-vol
+        appstor0-vol
 
 or cloud (NFS) mode:
 
@@ -85,7 +85,7 @@ or cloud (NFS) mode:
         -o type=nfs \
         -o o=addr="{appstor_dc_ip},rw,nfsvers=4,minorversion=2,proto=tcp,fsc,nocto" \
         -o device=:/clones \
-        appstor-vol
+        appstor0-vol
 
 ## fstab (deprecated, use docker volume instead)
 

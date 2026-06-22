@@ -103,6 +103,7 @@ resource "kubernetes_config_map" "jukeboxsvc" {
     namespace = var.k8s_namespace
   }
   data = {
+    APP_ENV                                           = var.app_env
     APPSTOR_USER                                      = var.appstor_user
     FLASK_DEBUG                                       = true
     FLASK_ENV                                         = var.flask_env
@@ -118,8 +119,9 @@ resource "kubernetes_config_map" "jukeboxsvc" {
     JUKEBOX_NODE_CLONES_ROOT_DIR                      = "/mnt/appstor"
     OVH_PROJECT_ID                                    = var.ovh_project_id
     OVH_ENDPOINT                                      = var.ovh_endpoint
-    OVH_IMAGE_ID_US_WEST_1_NVIDIA_L4                  = var.ovh_image_id_us_west_1_nvidia_l4
-    OVH_IMAGE_ID_US_EAST_1_NVIDIA_L4                  = var.ovh_image_id_us_east_1_nvidia_l4
+    OS_AUTH_URL                                       = var.os_auth_url
+    OS_IDENTITY_API_VERSION                           = var.os_identity_api_version
+    OS_USERNAME                                       = var.os_username
     RESERVE_ADMIN_CPU_CORE                            = 0
     SESSIONSVC_URL                                    = "http://sessionsvc"
     SIGNALER_HOST                                     = var.signaler_host
@@ -143,6 +145,7 @@ resource "kubernetes_secret" "jukeboxsvc_env" {
     OVH_APPLICATION_KEY    = var.ovh_application_key
     OVH_APPLICATION_SECRET = var.ovh_application_secret
     OVH_CONSUMER_KEY       = var.ovh_consumer_key
+    OS_PASSWORD            = var.os_password
   }
 }
 
@@ -151,8 +154,8 @@ resource "kubernetes_secret" "jukeboxsvc" {
     name = "jukeboxsvc-ssh-keys"
   }
   data = {
-    "id_ed25519"     = "${file("${path.module}/files/secrets/${var.env}/id_ed25519")}"
-    "id_ed25519.pub" = "${file("${path.module}/files/secrets/${var.env}/id_ed25519.pub")}"
+    "id_ed25519"     = "${file("${path.module}/files/secrets/${var.app_env}/id_ed25519")}"
+    "id_ed25519.pub" = "${file("${path.module}/files/secrets/${var.app_env}/id_ed25519.pub")}"
   }
   type = "Opaque"
 }

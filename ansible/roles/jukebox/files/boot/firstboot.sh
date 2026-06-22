@@ -58,20 +58,6 @@ for _ in $(seq 1 30); do
 done
 docker info >/dev/null
 
-# appstors are resolvable by their hostnames (regional /etc/hosts block injected below after CLUSTER_REGION is known)
-for i in $(seq 1 "$APPSTOR_NUM"); do
-    vol="appstor-vol${i}"
-    appstor_host="appstor${i}"
-    if ! docker volume inspect "$vol" >/dev/null 2>&1; then
-        docker volume create \
-            --driver local \
-            --opt type=nfs \
-            --opt device=":/clones" \
-            --opt o="addr=${appstor_host},rw,nfsvers=4,minorversion=2,proto=tcp,fsc,nocto" \
-            "$vol"
-    fi
-done
-
 # Inject regional /etc/hosts entries so appstor hostnames resolve.
 HOSTS_SRC="${BOOT_DIR}/templates/hosts.${CLUSTER_REGION}"
 if [[ -f "$HOSTS_SRC" ]]; then
@@ -84,7 +70,19 @@ else
     echo "firstboot: no hosts file found for CLUSTER_REGION=${CLUSTER_REGION}" >&2
 fi
 
-hostnamectl set-hostname "${FQDN_HOST_PREFIX}${NODE_INDEX}-${CLUSTER_REGION}"
+# appstors are resolvable by their hostnames (regional /etc/hosts block injected below after CLUSTER_REGION is known)
+for i in $(seq 1 "$APPSTOR_NUM"); do
+    vol="appstor${i}-vol"
+    appstor_host="appstor${i}"
+    if ! docker volume inspect "$vol" >/dev/null 2>&1; then
+        docker volume create \
+            --driver local \
+            --opt type=nfs \
+            --opt device=":/clones" \
+            --opt o="addr=${appstor_host},rw,nfsvers=4,minorversion=2,proto=tcp,fsc,nocto" \
+            "$vol"
+    fi
+done
 
 if [[ -n "${OTEL_CONFIG_PATH:-}" && -f "${OTEL_CONFIG_PATH}" ]]; then
     export CLUSTER_REGION
@@ -112,6 +110,8 @@ if [[ -n "${OTEL_CONFIG_PATH:-}" && -f "${OTEL_CONFIG_PATH}" ]]; then
         "${OTELCOL_IMAGE}" \
         --config otel-config.yml
 fi
+
+hostnamectl set-hostname "${FQDN_HOST_PREFIX}${NODE_INDEX}-${CLUSTER_REGION}"
 
 install -d "$(dirname "$SENTINEL")"
 touch "$SENTINEL"

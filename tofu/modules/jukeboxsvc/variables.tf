@@ -33,11 +33,15 @@ variable "ovh_endpoint" {
   type = string
 }
 
-variable "ovh_image_id_us_west_1_nvidia_l4" {
+variable "os_auth_url" {
   type = string
 }
 
-variable "ovh_image_id_us_east_1_nvidia_l4" {
+variable "os_identity_api_version" {
+  type = string
+}
+
+variable "os_username" {
   type = string
 }
 
@@ -57,7 +61,7 @@ variable "stun_uri" {
   type = string
 }
 
-variable "env" {
+variable "app_env" {
   type = string
 }
 
@@ -80,5 +84,9 @@ variable "ovh_application_secret" {
 }
 
 variable "ovh_consumer_key" {
+  type = string
+}
+
+variable "os_password" {
   type = string
 }

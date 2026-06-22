@@ -39,3 +39,15 @@ variable "ovh_vrack_id" {
 variable "ovh_endpoint" {
   type = string
 }
+
+variable "os_auth_url" {
+  type = string
+}
+
+variable "os_identity_api_version" {
+  type = string
+}
+
+variable "os_username" {
+  type = string
+}

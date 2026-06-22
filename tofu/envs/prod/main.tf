@@ -41,7 +41,7 @@ provider "kubernetes" {
 }
 
 provider "openstack" {
-  auth_url    = "https://auth.cloud.ovh.net/v3/"
+  auth_url    = "https://auth.cloud.ovh.us/v3"
   domain_name = "default"
   alias       = "ovh"
 }
@@ -71,8 +71,6 @@ locals {
   docker_repo_prefix = "ghcr.io/yag-im"
   #ovh_project_id = "86a6b6677ce849e8a98a58f08a94a2ae" check .env for prod value
   #ovh_endpoint = "ovh-us" check .env for prod value
-  ovh_image_id_us_west_1_nvidia_l4 = "todo"
-  ovh_image_id_us_east_1_nvidia_l4 = "todo"
   hostnames = {
     bastion    = "bastion.${local.public_tld}"
     grafana    = "grafana.${local.public_tld}"
@@ -84,7 +82,7 @@ locals {
   ver_appsvc     = "0.3.21"
   ver_bastion    = "0.0.5"
   ver_jobs       = "0.1.19"
-  ver_jukeboxsvc = "0.4.23"
+  ver_jukeboxsvc = "0.4.24"
   ver_portsvc    = "0.1.6"
   ver_sessionsvc = "0.1.3"
   ver_sigsvc     = "0.1.8"
@@ -183,9 +181,10 @@ module "jukeboxsvc" {
   jukebox_docker_repo_prefix       = "${local.docker_repo_prefix}/jukebox"
   ovh_project_id                   = var.ovh_project_id
   ovh_endpoint                     = var.ovh_endpoint
-  ovh_image_id_us_west_1_nvidia_l4 = local.ovh_image_id_us_west_1_nvidia_l4
-  ovh_image_id_us_east_1_nvidia_l4 = local.ovh_image_id_us_east_1_nvidia_l4
-  env                              = "prod"
+  os_auth_url                      = var.os_auth_url
+  os_identity_api_version          = var.os_identity_api_version
+  os_username                      = var.os_username
+  app_env                          = "prod"
   flask_env                        = "production"
   signaler_host                    = local.public_tld                           # this should go in headers (host) from jukebox to sigsvc for a proper routing
   signaler_uri                     = "wss://${local.public_tld}/webrtc/streamd" # this should be a public gw ip (check kubectl get svc -n istio-gw-public istio-gw-public output)
@@ -196,6 +195,7 @@ module "jukeboxsvc" {
   ovh_application_key    = data.aws_ssm_parameter.ovh_application_key.value
   ovh_application_secret = data.aws_ssm_parameter.ovh_application_secret.value
   ovh_consumer_key       = data.aws_ssm_parameter.ovh_consumer_key.value
+  os_password            = data.aws_ssm_parameter.os_password.value
 }
 
 module "webapp" {

@@ -50,8 +50,9 @@ locals {
   docker_repo_prefix = "docker.io/library"
   ovh_project_id = "d60289206102496ba63a80be4fa0e921"
   ovh_endpoint = "ovh-us"
-  ovh_image_id_us_west_1_nvidia_l4 = "todo"
-  ovh_image_id_us_east_1_nvidia_l4 = "todo"
+  os_auth_url                      = "https://auth.cloud.ovh.us/v3"
+  os_identity_api_version          = "3"
+  os_username                      = "user-rNHnXtcC2j24"
   hostnames = {
     bastion    = "bastion.${local.public_tld}"
     grafana    = "grafana.${local.public_tld}"
@@ -163,9 +164,10 @@ module "jukeboxsvc" {
   jukebox_docker_repo_prefix = "${local.docker_repo_prefix}/jukebox"
   ovh_project_id              = local.ovh_project_id
   ovh_endpoint                = local.ovh_endpoint
-  ovh_image_id_us_west_1_nvidia_l4 = local.ovh_image_id_us_west_1_nvidia_l4
-  ovh_image_id_us_east_1_nvidia_l4 = local.ovh_image_id_us_east_1_nvidia_l4
-  env                        = "local"
+  os_auth_url                 = local.os_auth_url
+  os_identity_api_version     = local.os_identity_api_version
+  os_username                 = local.os_username
+  app_env                     = "local"
   flask_env     = "development"
   signaler_host = local.public_tld                     # this should go in headers (host) from jukebox to sigsvc for a proper routing
   signaler_uri  = "ws://10.108.160.177/webrtc/streamd" # this should be a public gw ip (check kubectl get svc -n istio-gw-public istio-gw-public output)
@@ -176,6 +178,7 @@ module "jukeboxsvc" {
   ovh_application_key    = data.aws_ssm_parameter.ovh_application_key.value
   ovh_application_secret = data.aws_ssm_parameter.ovh_application_secret.value
   ovh_consumer_key       = data.aws_ssm_parameter.ovh_consumer_key.value
+  os_password            = data.aws_ssm_parameter.os_password.value
 }
 
 module "webapp" {

@@ -113,10 +113,7 @@ else
     docker start appstor
 fi
 
-# --- 5. hostname ---
-hostnamectl set-hostname "${FQDN_HOST_PREFIX}${NODE_INDEX}-${CLUSTER_REGION}"
-
-# --- 6. otel-collector ---
+# --- 5. otel-collector ---
 if [[ -n "${OTEL_CONFIG_PATH:-}" && -f "${OTEL_CONFIG_PATH}" ]]; then
     export CLUSTER_REGION
     tmp="$(mktemp)"
@@ -143,6 +140,9 @@ if [[ -n "${OTEL_CONFIG_PATH:-}" && -f "${OTEL_CONFIG_PATH}" ]]; then
         "${OTELCOL_IMAGE}" \
         --config otel-config.yml
 fi
+
+# --- 6. hostname ---
+hostnamectl set-hostname "${FQDN_HOST_PREFIX}${NODE_INDEX}-${CLUSTER_REGION}"
 
 install -d "$(dirname "$SENTINEL")"
 touch "$SENTINEL"

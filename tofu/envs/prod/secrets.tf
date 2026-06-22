@@ -67,3 +67,7 @@ data "aws_ssm_parameter" "ovh_application_secret" {
 data "aws_ssm_parameter" "ovh_consumer_key" {
   name = "/ovh/consumer_key"
 }
+
+data "aws_ssm_parameter" "os_password" {
+  name = "/os/password"
+}

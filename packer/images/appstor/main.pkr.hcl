@@ -11,7 +11,8 @@ source "openstack" "ovh-debian13" {
   ssh_ip_version    = "4" # ipv6 is not supported
   networks          = [var.network]
   # optional but helps stability
-  ssh_timeout = "20m"
+  ssh_timeout       = "20m"
+  image_visibility  = "private"
 }
 
 build {
