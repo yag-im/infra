@@ -58,13 +58,13 @@ export ANSIBLE_CONFIG="ansible/ansible.cfg"
 
 echo "=== running appstor_master role on $MASTER_HOST ==="
 ansible-playbook \
-    --ssh-common-args "-o ServerAliveInterval=10 -o ProxyCommand='ssh -p 2207 -W %h:%p -q infra@${BASTION_HOST}'" \
+    --ssh-common-args "-o ServerAliveInterval=10 -o StrictHostKeyChecking=accept-new -o ProxyCommand='ssh -p 2207 -W %h:%p -q infra@${BASTION_HOST}'" \
     --user "$ANSIBLE_USER" \
     --key-file "$SSH_KEY_FILE" \
     --vault-password-file "$VAULT_PASSWORD_FILE" \
     -i "ansible/envs/${INFRA_ENV}/hosts_${CLUSTER_REGION}.yml" \
     -l "$MASTER_HOST" \
-    -e "appstor_replicas=${APPSTOR_REPLICAS}" \
+    -e "{\"appstor_replicas\": [\"${APPSTOR_REPLICAS//,/\",\"}\"]}" \
     --become \
     "ansible/playbooks/appstor_master.yml"
 

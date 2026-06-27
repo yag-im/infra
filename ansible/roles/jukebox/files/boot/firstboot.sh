@@ -71,7 +71,7 @@ else
 fi
 
 # appstors are resolvable by their hostnames (regional /etc/hosts block injected below after CLUSTER_REGION is known)
-for i in $(seq 1 "$APPSTOR_NUM"); do
+for i in $(seq 0 $((APPSTOR_NUM - 1))); do
     vol="appstor${i}-vol"
     appstor_host="appstor${i}"
     if ! docker volume inspect "$vol" >/dev/null 2>&1; then

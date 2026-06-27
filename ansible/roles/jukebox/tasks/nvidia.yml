@@ -82,3 +82,20 @@
     state: restarted
     daemon_reload: yes
   when: nvidia_ctk_configure is changed
+
+- name: pre-pull gpu-nvidia runners images
+  community.docker.docker_image:
+    name: "{{ item }}"
+    source: pull
+  loop:
+    - "{{ jukebox_docker_repo }}/x11_gpu-nvidia_dosbox:{{ jukebox_dosbox_ver }}"
+    - "{{ jukebox_docker_repo }}/x11_gpu-nvidia_dosbox-x:{{ jukebox_dosbox_x_ver }}"
+    - "{{ jukebox_docker_repo }}/x11_gpu-nvidia_dosbox-staging:{{ jukebox_dosbox_staging_ver }}"
+    - "{{ jukebox_docker_repo }}/x11_gpu-nvidia_qemu:{{ jukebox_qemu_ver }}"
+    - "{{ jukebox_docker_repo }}/x11_gpu-nvidia_retroarch:{{ jukebox_retroarch_ver }}"
+    - "{{ jukebox_docker_repo }}/x11_gpu-nvidia_scummvm:{{ jukebox_scummvm_ver }}"
+    - "{{ jukebox_docker_repo }}/x11_gpu-nvidia_wine:{{ jukebox_wine_ver }}"
+    - "{{ jukebox_docker_repo }}/x11_gpu-nvidia_wine:10.0"
+    - "{{ jukebox_docker_repo }}/x11_gpu-nvidia_scummvm:2.9.0"
+    - "{{ jukebox_docker_repo }}/x11_gpu-nvidia_scummvm:2.9.1"
+    - "{{ jukebox_docker_repo }}/x11_gpu-nvidia_dosbox-x:2024.12.04"

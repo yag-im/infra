@@ -23,7 +23,8 @@ rm terraform.tfstate || true
 
 tofu init
 
-# need to bootstrap networking and k8s barebone cluster first
-tofu apply -target=module.ovh -auto-approve
+# need to bootstrap OVH infra (networking, k8s) before services
+tofu apply -target=module.ovh_network
+tofu apply -target=module.ovh_k8s
 
 ./update.sh --first-pass

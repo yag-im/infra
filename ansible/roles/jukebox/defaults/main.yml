@@ -16,3 +16,13 @@ jukebox_gpu_vendor: ""
 
 nvidia_cuda_repo_distro: "debian{{ ansible_distribution_major_version }}"
 nvidia_cuda_keyring_version: "1.1-1"
+
+# Docker repo and image versions for gpu-nvidia runner pre-pull
+jukebox_docker_repo: "ghcr.io/yag-im/jukebox"
+jukebox_dosbox_ver: "0.74-3"
+jukebox_dosbox_x_ver: "2025.12.01"
+jukebox_dosbox_staging_ver: "0.82.2"
+jukebox_qemu_ver: "latest"
+jukebox_scummvm_ver: "2026.2.0"
+jukebox_retroarch_ver: "1.21.0"
+jukebox_wine_ver: "11.0"
