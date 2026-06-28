@@ -1,12 +1,15 @@
-# Install NVIDIA driver (via NVIDIA CUDA repo) and NVIDIA Container Toolkit.
+# Install NVIDIA driver (from Debian non-free) and NVIDIA Container Toolkit.
 #
-# `cuda-drivers` is a meta-package that installs the full driver stack (kernel
-# module, firmware, nvidia-smi, libcuda.so) without the CUDA SDK or toolkit.
-# Using the NVIDIA repo rather than Debian non-free gives a much newer driver.
-#
+
 # Refs:
 #   https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
-#   https://developer.download.nvidia.com/compute/cuda/repos/
+#   https://wiki.debian.org/NvidiaGraphicsDrivers
+
+- name: nvidia | enable Debian non-free and non-free-firmware apt components
+  ansible.builtin.apt_repository:
+    repo: "deb http://deb.debian.org/debian {{ ansible_distribution_release }} main contrib non-free non-free-firmware"
+    state: present
+    filename: debian-non-free
 
 - name: nvidia | install prerequisites
   ansible.builtin.apt:
@@ -19,23 +22,11 @@
     state: present
     update_cache: yes
 
-- name: nvidia | download CUDA keyring package
-  ansible.builtin.get_url:
-    url: "https://developer.download.nvidia.com/compute/cuda/repos/{{ nvidia_cuda_repo_distro }}/x86_64/cuda-keyring_{{ nvidia_cuda_keyring_version }}_all.deb"
-    dest: "/tmp/cuda-keyring_{{ nvidia_cuda_keyring_version }}_all.deb"
-    mode: "0644"
-
-- name: nvidia | install CUDA keyring package
+- name: nvidia | install nvidia-driver from Debian non-free
   ansible.builtin.apt:
-    deb: "/tmp/cuda-keyring_{{ nvidia_cuda_keyring_version }}_all.deb"
-
-- name: nvidia | refresh apt cache after adding CUDA repo
-  ansible.builtin.apt:
-    update_cache: yes
-
-- name: nvidia | install cuda-drivers
-  ansible.builtin.apt:
-    name: cuda-drivers
+    name:
+      - nvidia-driver
+      - firmware-misc-nonfree
     state: present
 
 # ---------- NVIDIA Container Toolkit ----------

@@ -103,7 +103,7 @@ module "appsvc" {
   flask_env  = "production"
   runners = {
     dosbox-x = {
-      ver           = "2024.12.04",
+      ver           = "2025.12.01",
       window_system = "x11",
       igpu          = false,
       dgpu          = false
@@ -121,13 +121,13 @@ module "appsvc" {
       dgpu          = false
     },
     scummvm = {
-      ver           = "2.9.0",
+      ver           = "2026.2.0",
       window_system = "x11",
       igpu          = false,
       dgpu          = false
     },
     wine = {
-      ver           = "9.0",
+      ver           = "11.0",
       window_system = "x11",
       igpu          = false,
       dgpu          = false

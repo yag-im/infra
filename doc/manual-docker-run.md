@@ -52,7 +52,7 @@
         --device=/dev/snd/seq \
         --shm-size="2g" \
         --mount type=volume,source=appstor0-vol,target=/opt/yag,volume-subpath=0/the-black-mirror/1596ac0f-47e5-4a97-98bc-528e204fc694 \
-        ghcr.io/yag-im/jukebox/x11_cpu_wine:9.0
+        ghcr.io/yag-im/jukebox/x11_cpu_wine:10.0
 
 ## local host
 
@@ -81,7 +81,7 @@
         --device=/dev/snd/seq \
         --shm-size="2g" \
         --mount type=volume,source=appstor0-vol,target=/opt/yag,volume-subpath=0/the-prince-and-the-coward/02959ab5-aefb-44a1-b2ca-4fe5cd515f04 \
-        x11_gpu-intel_wine:9.0
+        x11_gpu-intel_wine:10.0
 
 ### cpu
 

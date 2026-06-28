@@ -14,9 +14,6 @@ jukebox_deps:
 # Leave empty (default) to skip GPU setup (dedicated servers with integrated GPUs).
 jukebox_gpu_vendor: ""
 
-nvidia_cuda_repo_distro: "debian{{ ansible_distribution_major_version }}"
-nvidia_cuda_keyring_version: "1.1-1"
-
 # Docker repo and image versions for gpu-nvidia runner pre-pull
 jukebox_docker_repo: "ghcr.io/yag-im/jukebox"
 jukebox_dosbox_ver: "0.74-3"

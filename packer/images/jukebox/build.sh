@@ -77,6 +77,8 @@ NETWORK_ID="$(openstack network show Ext-Net -f value -c id)"
 
 if [[ "$GPU_VENDOR" == "nvidia" ]]; then
     IMAGE_NAME="${IMAGE_NAME:-debian13-jukebox-gpu-nvidia}"
+elif [[ "$GPU_VENDOR" == "intel" ]]; then
+    IMAGE_NAME="${IMAGE_NAME:-debian13-jukebox-gpu-intel}"
 else
     IMAGE_NAME="${IMAGE_NAME:-debian13-jukebox-cpu}"
 fi

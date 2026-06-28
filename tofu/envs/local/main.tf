@@ -109,7 +109,7 @@ module "appsvc" {
       dgpu          = false
     },
     wine = {
-      ver           = "9.0",
+      ver           = "11.0",
       window_system = "x11",
       igpu          = false,
       dgpu          = false
