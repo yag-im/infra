@@ -6,6 +6,10 @@ variable "k8s_namespace" {
   type = string
 }
 
+variable "accountsvc_user" {
+  type = string
+}
+
 variable "appsvc_user" {
   type = string
 }
@@ -58,6 +62,10 @@ variable "yag_db" {
 }
 
 # secrets
+
+variable "accountsvc_password" {
+  type = string
+}
 
 variable "appsvc_password" {
   type = string

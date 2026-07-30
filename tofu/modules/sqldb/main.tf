@@ -165,6 +165,7 @@ resource "kubernetes_config_map" "sqldb" {
   }
   data = {
     PGDATA          = "${var.pgdata}/pgdata"
+    ACCOUNTSVC_USER = var.accountsvc_user
     APPSVC_USER     = var.appsvc_user
     AUTHSVC_USER    = var.authsvc_user
     JUKEBOXSVC_USER = var.jukeboxsvc_user
@@ -181,6 +182,7 @@ resource "kubernetes_secret" "sqldb" {
     namespace = var.k8s_namespace
   }
   data = {
+    ACCOUNTSVC_PASSWORD = var.accountsvc_password
     APPSVC_PASSWORD     = var.appsvc_password
     AUTHSVC_PASSWORD    = var.authsvc_password
     JUKEBOXSVC_PASSWORD = var.jukeboxsvc_password

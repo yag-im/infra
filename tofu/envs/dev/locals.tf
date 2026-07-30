@@ -23,6 +23,7 @@ locals {
   }
 
   svc_versions = {
+    accountsvc = "0.0.4"
     appsvc     = "0.3.21"
     bastion    = "0.0.5"
     jobs       = "0.1.19"

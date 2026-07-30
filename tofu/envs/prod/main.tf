@@ -79,6 +79,7 @@ locals {
   }
   public_tld     = "yag.im"
   private_tld    = "yag.internal"
+  ver_accountsvc = "0.0.4"
   ver_appsvc     = "0.3.21"
   ver_bastion    = "0.0.5"
   ver_jobs       = "0.1.19"
@@ -87,8 +88,8 @@ locals {
   ver_sessionsvc = "0.1.3"
   ver_sigsvc     = "0.1.8"
   ver_sqldb      = "0.0.2"
-  ver_webapi     = "0.3.10"
-  ver_webapp     = "0.6.22"
+  ver_webapi     = "0.3.11"
+  ver_webapp     = "0.6.23"
 }
 
 module "appsvc" {
@@ -315,12 +316,14 @@ module "sqldb" {
   timezone           = var.timezone
   yag_db             = "yag"
   # users
+  accountsvc_user = "accountsvc"
   appsvc_user     = "appsvc"
   authsvc_user    = "authsvc"
   jukeboxsvc_user = "jukeboxsvc"
   portsvc_user    = "portsvc"
   sessionsvc_user = "sessionsvc"
   # secrets
+  accountsvc_password = data.aws_ssm_parameter.sqldb_accountsvc_password.value
   appsvc_password     = data.aws_ssm_parameter.sqldb_appsvc_password.value
   authsvc_password    = data.aws_ssm_parameter.sqldb_authsvc_password.value
   jukeboxsvc_password = data.aws_ssm_parameter.sqldb_jukeboxsvc_password.value
@@ -353,6 +356,18 @@ module "webapi" {
   reddit_oauth_client_secret   = data.aws_ssm_parameter.authsvc_reddit_oauth_client_secret.value
   twitch_oauth_client_id       = var.twitch_oauth_client_id
   twitch_oauth_client_secret   = data.aws_ssm_parameter.authsvc_twitch_oauth_client_secret.value
+}
+
+module "accountsvc" {
+  source          = "../../modules/accountsvc"
+  create_istio_vs = var.create_istio_vs
+  docker_image    = "${local.docker_repo_prefix}/accountsvc:${local.ver_accountsvc}"
+  k8s_namespace   = "default"
+  replicas        = 2
+  # app config
+  app_env = "prod"
+  # secrets
+  sqldb_password = data.aws_ssm_parameter.sqldb_accountsvc_password.value
 }
 
 # TODO: istio, misc and otel modules should come at the end, otherwise tofu fails to init

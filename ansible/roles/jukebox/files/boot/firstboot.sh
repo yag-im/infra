@@ -84,6 +84,11 @@ for i in $(seq 0 $((APPSTOR_NUM - 1))); do
     fi
 done
 
+# Set the FQDN hostname before starting any containers so that gethostname()
+# inside containers using --network host returns the correct name from the
+# moment they start (Docker shares the host UTS namespace in host-network mode).
+hostnamectl set-hostname "${FQDN_HOST_PREFIX}${NODE_INDEX}-${CLUSTER_REGION}"
+
 if [[ -n "${OTEL_CONFIG_PATH:-}" && -f "${OTEL_CONFIG_PATH}" ]]; then
     export CLUSTER_REGION
     tmp="$(mktemp)"
@@ -110,8 +115,6 @@ if [[ -n "${OTEL_CONFIG_PATH:-}" && -f "${OTEL_CONFIG_PATH}" ]]; then
         "${OTELCOL_IMAGE}" \
         --config otel-config.yml
 fi
-
-hostnamectl set-hostname "${FQDN_HOST_PREFIX}${NODE_INDEX}-${CLUSTER_REGION}"
 
 install -d "$(dirname "$SENTINEL")"
 touch "$SENTINEL"

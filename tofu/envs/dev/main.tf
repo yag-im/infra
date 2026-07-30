@@ -139,18 +139,20 @@ module "sqldb" {
   timezone           = var.timezone
   yag_db             = "yag"
   # users
+  accountsvc_user = "accountsvc"
   appsvc_user     = "appsvc"
   authsvc_user    = "authsvc"
   jukeboxsvc_user = "jukeboxsvc"
   portsvc_user    = "portsvc"
   sessionsvc_user = "sessionsvc"
   # secrets
-  appsvc_password     = data.aws_ssm_parameter.sqldb_appsvc_password.value
-  authsvc_password    = data.aws_ssm_parameter.sqldb_authsvc_password.value
-  jukeboxsvc_password = data.aws_ssm_parameter.sqldb_jukeboxsvc_password.value
-  portsvc_password    = data.aws_ssm_parameter.sqldb_portsvc_password.value
-  sessionsvc_password = data.aws_ssm_parameter.sqldb_sessionsvc_password.value
-  postgres_password   = data.aws_ssm_parameter.sqldb_postgres_password.value
+  accountsvc_password  = data.aws_ssm_parameter.sqldb_accountsvc_password.value
+  appsvc_password      = data.aws_ssm_parameter.sqldb_appsvc_password.value
+  authsvc_password     = data.aws_ssm_parameter.sqldb_authsvc_password.value
+  jukeboxsvc_password  = data.aws_ssm_parameter.sqldb_jukeboxsvc_password.value
+  portsvc_password     = data.aws_ssm_parameter.sqldb_portsvc_password.value
+  sessionsvc_password  = data.aws_ssm_parameter.sqldb_sessionsvc_password.value
+  postgres_password    = data.aws_ssm_parameter.sqldb_postgres_password.value
 }
 
 # --- Application Services ---
@@ -285,6 +287,18 @@ module "webapi" {
   reddit_oauth_client_secret   = data.aws_ssm_parameter.authsvc_reddit_oauth_client_secret.value
   twitch_oauth_client_id       = local.twitch_oauth_client_id
   twitch_oauth_client_secret   = data.aws_ssm_parameter.authsvc_twitch_oauth_client_secret.value
+}
+
+module "accountsvc" {
+  source          = "../../modules/accountsvc"
+  create_istio_vs = var.create_istio_vs
+  docker_image    = "${local.docker_repo_prefix}/accountsvc:${local.svc_versions.accountsvc}"
+  k8s_namespace   = "default"
+  replicas        = 1
+  # app config
+  app_env         = "dev"
+  # secrets
+  sqldb_password = data.aws_ssm_parameter.sqldb_accountsvc_password.value
 }
 
 # TODO: istio, misc and otel modules should come at the end, otherwise tofu fails to init

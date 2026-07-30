@@ -25,6 +25,7 @@ minikube tunnel & disown
 # TODO: awaiting creds to be created, means "kubectl get secrets" has "awsecr-cred" in the output
 # sleep 60
 
+minikube image load accountsvc:dev --overwrite=true
 minikube image load appsvc:dev --overwrite=true
 minikube image load bastion:dev --overwrite=true
 minikube image load jobs:dev --overwrite=true

@@ -8,6 +8,10 @@ data "aws_ssm_parameter" "sigsvc_auth_token" {
   name = "/sigsvc/auth_token"
 }
 
+data "aws_ssm_parameter" "sqldb_accountsvc_password" {
+  name = "/sqldb/accountsvc_password"
+}
+
 data "aws_ssm_parameter" "sqldb_appsvc_password" {
   name = "/sqldb/appsvc_password"
 }

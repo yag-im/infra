@@ -239,7 +239,7 @@ Obtain public and private gateway addresses in the minikube cluster using:
     127.0.0.1 jukebox1.us-west-1.yag.vm jukebox2.us-west-1.yag.vm
     127.0.0.1 jukebox1.eu-central-1.yag.vm jukebox2.eu-central-1.yag.vm
     # devcontainers
-    127.0.0.1 appsvc.yag.dc jukeboxsvc.yag.dc portsvc.yag.dc sessionsvc.yag.dc sigsvc.yag.dc sqldb.yag.dc webapi.yag.dc yag.dc
+    127.0.0.1 appsvc.yag.dc jukeboxsvc.yag.dc portsvc.yag.dc sessionsvc.yag.dc sigsvc.yag.dc sqldb.yag.dc webapi.yag.dc yag.dc accountsvc.yag.dc
     # minikube: istio public
     10.x.x.x bastion.yag.mk grafana.yag.mk yag.mk
     # minikube: istio private

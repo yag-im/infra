@@ -61,6 +61,7 @@ locals {
   }
   public_tld     = "yag.mk"
   private_tld    = "yag.internal"
+  ver_accountsvc = "dev"
   ver_appsvc     = "dev"
   ver_bastion    = "dev"
   ver_jobs       = "dev"
@@ -237,12 +238,14 @@ module "sqldb" {
   timezone           = var.timezone
   yag_db             = "yag"
   # users
-  appsvc_user     = "appsvc"
-  authsvc_user    = "authsvc"
-  jukeboxsvc_user = "jukeboxsvc"
-  portsvc_user    = "portsvc"
-  sessionsvc_user = "sessionsvc"
+  accountsvc_user  = "accountsvc"
+  appsvc_user      = "appsvc"
+  authsvc_user     = "authsvc"
+  jukeboxsvc_user  = "jukeboxsvc"
+  portsvc_user     = "portsvc"
+  sessionsvc_user  = "sessionsvc"
   # secrets
+  accountsvc_password = data.aws_ssm_parameter.sqldb_accountsvc_password.value
   appsvc_password     = data.aws_ssm_parameter.sqldb_appsvc_password.value
   authsvc_password    = data.aws_ssm_parameter.sqldb_authsvc_password.value
   jukeboxsvc_password = data.aws_ssm_parameter.sqldb_jukeboxsvc_password.value
@@ -275,6 +278,18 @@ module "webapi" {
   reddit_oauth_client_secret   = var.reddit_oauth_client_secret
   twitch_oauth_client_id       = var.twitch_oauth_client_id
   twitch_oauth_client_secret   = data.aws_ssm_parameter.authsvc_twitch_oauth_client_secret.value
+}
+
+module "accountsvc" {
+  source          = "../../modules/accountsvc"
+  create_istio_vs = var.create_istio_vs
+  docker_image    = "${local.docker_repo_prefix}/accountsvc:${local.ver_accountsvc}"
+  k8s_namespace   = "default"
+  replicas        = 3
+  # app config
+  app_env = "dev"
+  # secrets
+  sqldb_password = data.aws_ssm_parameter.sqldb_accountsvc_password.value
 }
 
 # TODO: istio, misc and otel modules should come at the end, otherwise tofu fails to init
