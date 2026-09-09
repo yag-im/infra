@@ -83,13 +83,13 @@ locals {
   ver_appsvc     = "0.3.22"
   ver_bastion    = "0.0.5"
   ver_jobs       = "0.1.19"
-  ver_jukeboxsvc = "0.4.25"
+  ver_jukeboxsvc = "0.4.26"
   ver_portsvc    = "0.1.8"
   ver_sessionsvc = "0.1.3"
   ver_sigsvc     = "0.1.8"
   ver_sqldb      = "0.0.2"
   ver_webapi     = "0.3.12"
-  ver_webapp     = "0.6.23"
+  ver_webapp     = "0.6.25"
 }
 
 module "appsvc" {
@@ -178,18 +178,18 @@ module "jukeboxsvc" {
   k8s_namespace   = "default"
   replicas        = 2
   # app config
-  appstor_user                     = "debian"
-  jukebox_docker_repo_prefix       = "${local.docker_repo_prefix}/jukebox"
-  ovh_project_id                   = var.ovh_project_id
-  ovh_endpoint                     = var.ovh_endpoint
-  os_auth_url                      = var.os_auth_url
-  os_identity_api_version          = var.os_identity_api_version
-  os_username                      = var.os_username
-  app_env                          = "prod"
-  flask_env                        = "production"
-  signaler_host                    = local.public_tld                           # this should go in headers (host) from jukebox to sigsvc for a proper routing
-  signaler_uri                     = "wss://${local.public_tld}/webrtc/streamd" # this should be a public gw ip (check kubectl get svc -n istio-gw-public istio-gw-public output)
-  stun_uri                         = "stun://stun.l.google.com:19302"
+  appstor_user               = "debian"
+  jukebox_docker_repo_prefix = "${local.docker_repo_prefix}/jukebox"
+  ovh_project_id             = var.ovh_project_id
+  ovh_endpoint               = var.ovh_endpoint
+  os_auth_url                = var.os_auth_url
+  os_identity_api_version    = var.os_identity_api_version
+  os_username                = var.os_username
+  app_env                    = "prod"
+  flask_env                  = "production"
+  signaler_host              = local.public_tld                           # this should go in headers (host) from jukebox to sigsvc for a proper routing
+  signaler_uri               = "wss://${local.public_tld}/webrtc/streamd" # this should be a public gw ip (check kubectl get svc -n istio-gw-public istio-gw-public output)
+  stun_uri                   = "stun://stun.l.google.com:19302"
   # secrets
   signaler_auth_token    = data.aws_ssm_parameter.sigsvc_auth_token.value
   sqldb_password         = data.aws_ssm_parameter.sqldb_jukeboxsvc_password.value
@@ -200,13 +200,15 @@ module "jukeboxsvc" {
 }
 
 module "webapp" {
-  source          = "../../modules/webapp"
-  create_istio_vs = var.create_istio_vs
-  docker_image    = "${local.docker_repo_prefix}/webapp:${local.ver_webapp}"
-  k8s_namespace   = "default"
-  replicas        = 2
-  app_env         = "prod"
-  ga_id           = var.ga_id
+  source              = "../../modules/webapp"
+  create_istio_vs     = var.create_istio_vs
+  docker_image        = "${local.docker_repo_prefix}/webapp:${local.ver_webapp}"
+  k8s_namespace       = "default"
+  replicas            = 2
+  app_env             = "prod"
+  ga_id               = var.ga_id
+  adsense_client_id   = var.adsense_client_id
+  adsense_header_slot = var.adsense_header_slot
 }
 
 # https://help.ovhcloud.com/csm/en-public-cloud-compute-terraform?id=kb_article_view&sysparm_article=KB0050797

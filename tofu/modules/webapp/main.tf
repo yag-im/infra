@@ -72,9 +72,11 @@ resource "kubernetes_config_map" "webapp" {
   }
   data = {
     # for the server-side rendered pages
-    API_URL = "http://webapi.default.svc.cluster.local/api"
-    APP_ENV = var.app_env
-    GA_ID   = var.ga_id
-    PORT    = 80
+    API_URL             = "http://webapi.default.svc.cluster.local/api"
+    APP_ENV             = var.app_env
+    GA_ID               = var.ga_id
+    ADSENSE_CLIENT_ID   = var.adsense_client_id
+    ADSENSE_HEADER_SLOT = var.adsense_header_slot
+    PORT                = 80
   }
 }

@@ -25,3 +25,13 @@ variable "ga_id" {
   type    = string
   default = ""
 }
+
+variable "adsense_client_id" {
+  type    = string
+  default = ""
+}
+
+variable "adsense_header_slot" {
+  type    = string
+  default = ""
+}

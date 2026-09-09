@@ -28,6 +28,14 @@ variable "ga_id" {
   type = string
 }
 
+variable "adsense_client_id" {
+  type = string
+}
+
+variable "adsense_header_slot" {
+  type = string
+}
+
 variable "ovh_project_id" {
   type = string
 }
