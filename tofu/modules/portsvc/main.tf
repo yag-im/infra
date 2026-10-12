@@ -76,10 +76,6 @@ resource "kubernetes_config_map" "portsvc" {
     namespace = var.k8s_namespace
   }
   data = {
-    FLASK_DEBUG                     = true
-    FLASK_ENV                       = var.flask_env
-    FLASK_PROPAGATE_EXCEPTIONS      = true
-    FLASK_SQLALCHEMY_ENGINE_OPTIONS = "{\"pool_pre_ping\": true, \"pool_size\": 10, \"pool_recycle\": 120}"
     SQLDB_DBNAME                    = "yag"
     SQLDB_HOST                      = "sqldb.default.svc.cluster.local"
     SQLDB_PORT                      = 5432

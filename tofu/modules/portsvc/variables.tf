@@ -15,12 +15,6 @@ variable "replicas" {
   type = number
 }
 
-# app config
-
-variable "flask_env" {
-  type = string
-}
-
 # app secrets
 
 variable "sqldb_password" {

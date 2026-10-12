@@ -235,8 +235,6 @@ module "portsvc" {
   docker_image    = "${local.docker_repo_prefix}/portsvc:${local.svc_versions.portsvc}"
   k8s_namespace   = "default"
   replicas        = 1
-  # app config
-  flask_env = "development"
   # secrets
   sqldb_password             = data.aws_ssm_parameter.sqldb_portsvc_password.value
   twitch_oauth_client_id     = local.twitch_oauth_client_id

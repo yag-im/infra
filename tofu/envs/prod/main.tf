@@ -84,7 +84,7 @@ locals {
   ver_bastion    = "0.0.5"
   ver_jobs       = "0.1.19"
   ver_jukeboxsvc = "0.5.0"
-  ver_portsvc    = "0.1.9"
+  ver_portsvc    = "0.1.10"
   ver_sessionsvc = "0.1.3"
   ver_sigsvc     = "0.1.8"
   ver_sqldb      = "0.0.2"
@@ -278,8 +278,6 @@ module "portsvc" {
   docker_image    = "${local.docker_repo_prefix}/portsvc:${local.ver_portsvc}"
   k8s_namespace   = "default"
   replicas        = 2
-  # app config
-  flask_env = "production"
   # secrets
   sqldb_password             = data.aws_ssm_parameter.sqldb_portsvc_password.value
   twitch_oauth_client_id     = var.twitch_oauth_client_id
