@@ -1,15 +1,14 @@
-# Install NVIDIA driver (from Debian non-free) and NVIDIA Container Toolkit.
+# Install NVIDIA driver (from NVIDIA CUDA repo) and NVIDIA Container Toolkit.
 #
-
+# The Debian non-free `nvidia-driver` doesn't work on OVH GPU instances (L4);
+# OVH support confirmed the driver from NVIDIA's CUDA repo works.
+# `cuda-drivers` is a meta-package pulling `nvidia-open` (open kernel modules via
+# DKMS, nvidia-smi, libcuda.so) without the CUDA toolkit.
+#
 # Refs:
 #   https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
-#   https://wiki.debian.org/NvidiaGraphicsDrivers
-
-- name: nvidia | enable Debian non-free and non-free-firmware apt components
-  ansible.builtin.apt_repository:
-    repo: "deb http://deb.debian.org/debian {{ ansible_distribution_release }} main contrib non-free non-free-firmware"
-    state: present
-    filename: debian-non-free
+#   https://docs.nvidia.com/datacenter/tesla/driver-installation-guide/
+#   https://developer.download.nvidia.com/compute/cuda/repos/
 
 - name: nvidia | install prerequisites
   ansible.builtin.apt:
@@ -22,11 +21,17 @@
     state: present
     update_cache: yes
 
-- name: nvidia | install nvidia-driver from Debian non-free
+- name: nvidia | install CUDA keyring package
   ansible.builtin.apt:
-    name:
-      - nvidia-driver
-      - firmware-misc-nonfree
+    deb: "https://developer.download.nvidia.com/compute/cuda/repos/{{ nvidia_cuda_repo_distro }}/x86_64/cuda-keyring_{{ nvidia_cuda_keyring_version }}_all.deb"
+
+- name: nvidia | refresh apt cache after adding CUDA repo
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: nvidia | install cuda-drivers from NVIDIA CUDA repo
+  ansible.builtin.apt:
+    name: cuda-drivers
     state: present
 
 # ---------- NVIDIA Container Toolkit ----------

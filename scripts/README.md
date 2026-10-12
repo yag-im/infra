@@ -36,10 +36,11 @@ result into a reusable machine image.
 
 ## Add a new jukebox node
 
-    NODE_INDEX=0 ./add_jukebox.sh dev us-east-1
+    # NOTE: duplicate indexes would cause errors; index 0 can be taken by a dedicated server instance
+    NODE_INDEX=1 ./add_jukebox.sh dev us-east-1
 
 # Cleanup
 
 ## Remove node
 
-    DELETE_VOLUME=false ./rm_node.sh dev us-east-1 xxx
+    DELETE_VOLUME=false ./rm_node.sh dev us-east-1 <server-id>

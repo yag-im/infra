@@ -38,6 +38,18 @@ build {
     ]
   }
 
+  # GPU images: reboot to load the freshly built NVIDIA kernel modules (and any
+  # upgraded kernel), then fail the bake if the driver doesn't work.
+  provisioner "shell" {
+    inline            = ["if [ '${var.gpu_vendor}' = 'nvidia' ]; then sudo systemctl reboot; fi"]
+    expect_disconnect = true
+  }
+
+  provisioner "shell" {
+    pause_before = "30s"
+    inline       = ["if [ '${var.gpu_vendor}' = 'nvidia' ]; then nvidia-smi; fi"]
+  }
+
   # Strip per-instance identity so each cloud node generates its own at first boot.
   provisioner "shell" {
     inline = [
