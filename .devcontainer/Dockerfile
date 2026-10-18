@@ -1,14 +1,11 @@
-FROM mcr.microsoft.com/devcontainers/python:0-3.11
+FROM mcr.microsoft.com/devcontainers/python:3-3.14-trixie
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN rm /etc/apt/sources.list.d/yarn.list
-RUN apt update
-
-# openjdk-17-jre is required for systemticks.c4-dsl-extension
+# openjdk-21-jre (Java 17+) is required for systemticks.c4-dsl-extension
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
-        openjdk-17-jre \
+        openjdk-21-jre \
         jq \
         vim \
         wget \
@@ -29,15 +26,15 @@ RUN pip install --upgrade pip
 RUN python3 -m pip install ansible
 
 # nodejs install (required by aws-cdk)
-ENV NVM_DIR /usr/local/share/nvm
-ENV NODE_VERSION 18
+ENV NVM_DIR=/usr/local/share/nvm
+ENV NODE_VERSION=18
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 RUN echo "source $NVM_DIR/nvm.sh && \
     nvm install $NODE_VERSION && \
     nvm alias default $NODE_VERSION && \
     nvm use default" | bash
-ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
-ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
+ENV NODE_PATH=$NVM_DIR/v$NODE_VERSION/lib/node_modules
+ENV PATH=$NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 # aws-cdk
 RUN npm install -g aws-cdk
