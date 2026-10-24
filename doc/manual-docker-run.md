@@ -12,7 +12,6 @@
         -e FPS='60' \
         -e LOADING_DURATION='5' \
         -e MAX_INACTIVITY_DURATION='600' \
-        -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
         -e SIGNALER_HOST='dev.yag.im' \
         -e SIGNALER_URI='wss://dev.yag.im/webrtc/streamd' \
         -e SCREEN_HEIGHT='480' \
@@ -39,7 +38,6 @@
         -e FPS='60' \
         -e LOADING_DURATION='5' \
         -e MAX_INACTIVITY_DURATION='600' \
-        -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
         -e SIGNALER_HOST='dev.yag.im' \
         -e SIGNALER_URI='wss://dev.yag.im/webrtc/streamd' \
         -e SCREEN_HEIGHT='600' \
@@ -66,7 +64,6 @@
         -e FPS='60' \
         -e LOADING_DURATION='5' \
         -e MAX_INACTIVITY_DURATION='600' \
-        -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
         -e SIGNALER_HOST='yag.dc' \
         -e SIGNALER_URI='ws://0.0.0.0:8081/webrtc' \
         -e SCREEN_HEIGHT='480' \
@@ -93,7 +90,6 @@
         -e FPS='60' \
         -e LOADING_DURATION='5' \
         -e MAX_INACTIVITY_DURATION='600' \
-        -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
         -e SIGNALER_HOST='yag.dc' \
         -e SIGNALER_URI='ws://0.0.0.0:8081/webrtc' \
         -e SCREEN_HEIGHT='480' \
@@ -118,7 +114,6 @@
         -e FPS='60' \
         -e LOADING_DURATION='5' \
         -e MAX_INACTIVITY_DURATION='600' \
-        -e SIGNALER_AUTH_TOKEN='Yx8e4L90' \
         -e SIGNALER_HOST='yag.dc' \
         -e SIGNALER_URI='ws://0.0.0.0:8081/webrtc' \
         -e SCREEN_HEIGHT='480' \

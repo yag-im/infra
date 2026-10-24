@@ -45,10 +45,6 @@ variable "os_username" {
   type = string
 }
 
-variable "flask_env" {
-  type = string
-}
-
 variable "signaler_host" {
   type = string
 }
@@ -66,10 +62,6 @@ variable "app_env" {
 }
 
 # app secrets
-
-variable "signaler_auth_token" {
-  type = string
-}
 
 variable "sqldb_password" {
   type = string

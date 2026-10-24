@@ -4,10 +4,6 @@ data "aws_ssm_parameter" "otel_grafana_admin_password" {
   name = "/otel/grafana_admin_password"
 }
 
-data "aws_ssm_parameter" "sigsvc_auth_token" {
-  name = "/sigsvc/auth_token"
-}
-
 data "aws_ssm_parameter" "sqldb_accountsvc_password" {
   name = "/sqldb/accountsvc_password"
 }
@@ -36,12 +32,8 @@ data "aws_ssm_parameter" "sqldb_sessionsvc_password" {
   name = "/sqldb/sessionsvc_password"
 }
 
-data "aws_ssm_parameter" "authsvc_flask_secret_key" {
+data "aws_ssm_parameter" "authsvc_secret_key" {
   name = "/authsvc/flask_secret_key"
-}
-
-data "aws_ssm_parameter" "authsvc_flask_security_password_salt" {
-  name = "/authsvc/flask_security_password_salt"
 }
 
 data "aws_ssm_parameter" "authsvc_discord_oauth_client_secret" {

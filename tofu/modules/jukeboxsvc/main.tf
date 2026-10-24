@@ -105,10 +105,6 @@ resource "kubernetes_config_map" "jukeboxsvc" {
   data = {
     APP_ENV                                           = var.app_env
     APPSTOR_USER                                      = var.appstor_user
-    FLASK_DEBUG                                       = true
-    FLASK_ENV                                         = var.flask_env
-    FLASK_PROPAGATE_EXCEPTIONS                        = true
-    FLASK_SQLALCHEMY_ENGINE_OPTIONS                   = "{\"pool_pre_ping\": true, \"pool_size\": 10, \"pool_recycle\": 120}"
     FPS                                               = 60
     JUKEBOX_CONTAINER_APP_DIR                         = "/opt/yag"
     JUKEBOX_CONTAINER_ENV_GST_DEBUG                   = "3,ximagesrc:3,webrtcsink:3,pulsesrc:4,webrtcbin:4,webrtcsrc-signaller:3,vadisplay:3,webrtcsrc-signaller:7"
@@ -140,7 +136,6 @@ resource "kubernetes_secret" "jukeboxsvc_env" {
     namespace = var.k8s_namespace
   }
   data = {
-    SIGNALER_AUTH_TOKEN = var.signaler_auth_token
     SQLDB_PASSWORD      = var.sqldb_password
     OVH_APPLICATION_KEY    = var.ovh_application_key
     OVH_APPLICATION_SECRET = var.ovh_application_secret

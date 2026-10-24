@@ -20,10 +20,6 @@ variable "dc_regions" {
   type = list(string)
 }
 
-variable "flask_env" {
-  type = string
-}
-
 variable "runners" {
   type = map(object({
     ver           = string

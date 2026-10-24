@@ -77,10 +77,6 @@ resource "kubernetes_config_map" "appsvc" {
   }
   data = {
     DATA_CENTERS                    = jsonencode(var.dc_regions)
-    FLASK_DEBUG                     = true
-    FLASK_ENV                       = var.flask_env
-    FLASK_PROPAGATE_EXCEPTIONS      = true
-    FLASK_SQLALCHEMY_ENGINE_OPTIONS = "{\"pool_pre_ping\": true, \"pool_size\": 10, \"pool_recycle\": 120}"
     JUKEBOXSVC_URL                  = "http://jukeboxsvc.default.svc.cluster.local"
     RUNNERS_CONF                    = jsonencode(var.runners)
     SQLDB_DBNAME                    = "yag"

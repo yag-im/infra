@@ -23,10 +23,6 @@ variable "behind_proxy" {
   default = false
 }
 
-variable "flask_env" {
-  type = string
-}
-
 variable "oauthlib_insecure_transport" {
   type = string
 }
@@ -45,11 +41,7 @@ variable "discord_oauth_client_secret" {
   type = string
 }
 
-variable "flask_secret_key" {
-  type = string
-}
-
-variable "flask_security_password_salt" {
+variable "secret_key" {
   type = string
 }
 
@@ -66,10 +58,6 @@ variable "reddit_oauth_client_id" {
 }
 
 variable "reddit_oauth_client_secret" {
-  type = string
-}
-
-variable "sigsvc_auth_token" {
   type = string
 }
 

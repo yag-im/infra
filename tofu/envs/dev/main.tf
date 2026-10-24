@@ -165,7 +165,6 @@ module "appsvc" {
   replicas        = 1
   # app config
   dc_regions   = local.dc_regions
-  flask_env    = "development"
   runners      = local.app_runners
   # secrets
   sqldb_password = data.aws_ssm_parameter.sqldb_appsvc_password.value
@@ -201,7 +200,6 @@ module "jukeboxsvc" {
   appstor_user               = "debian"
   jukebox_docker_repo_prefix = "${local.docker_repo_prefix}/jukebox"
   app_env                    = "dev"
-  flask_env                  = "development"
   ovh_project_id             = local.ovh_project_id
   ovh_endpoint               = local.ovh_endpoint
   os_auth_url                = local.os_auth_url
@@ -211,7 +209,6 @@ module "jukeboxsvc" {
   signaler_uri               = "wss://${local.public_tld}/webrtc/streamd" # this should be a public gw ip (check kubectl get svc -n istio-gw-public istio-gw-public output)
   stun_uri                   = "stun://stun.l.google.com:19302"
   # secrets
-  signaler_auth_token    = data.aws_ssm_parameter.sigsvc_auth_token.value
   sqldb_password         = data.aws_ssm_parameter.sqldb_jukeboxsvc_password.value
   ovh_application_key    = data.aws_ssm_parameter.ovh_application_key.value
   ovh_application_secret = data.aws_ssm_parameter.ovh_application_secret.value
@@ -247,8 +244,6 @@ module "sessionsvc" {
   docker_image    = "${local.docker_repo_prefix}/sessionsvc:${local.svc_versions.sessionsvc}"
   k8s_namespace   = "default"
   replicas        = 1
-  # app config
-  flask_env = "development"
   # secrets
   sqldb_password = data.aws_ssm_parameter.sqldb_sessionsvc_password.value
 }
@@ -269,13 +264,10 @@ module "webapi" {
   replicas        = 1
   # app config
   behind_proxy                = true
-  flask_env                   = "development"
   oauthlib_insecure_transport = 1
   oauthlib_relax_token_scope  = 1
   # secrets
-  flask_secret_key             = data.aws_ssm_parameter.authsvc_flask_secret_key.value
-  flask_security_password_salt = data.aws_ssm_parameter.authsvc_flask_security_password_salt.value
-  sigsvc_auth_token            = data.aws_ssm_parameter.sigsvc_auth_token.value
+  secret_key                   = data.aws_ssm_parameter.authsvc_secret_key.value
   sqldb_password               = data.aws_ssm_parameter.sqldb_authsvc_password.value
   discord_oauth_client_id      = local.discord_oauth_client_id
   discord_oauth_client_secret  = data.aws_ssm_parameter.authsvc_discord_oauth_client_secret.value
