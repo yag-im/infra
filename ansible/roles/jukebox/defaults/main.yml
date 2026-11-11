@@ -5,6 +5,16 @@ parent_roles:
 # must match IMAGE_ENV in firstboot.sh
 image_env_path: /etc/jukebox/image.env
 
+# Dedicated (non-cloud) nodes get no cloud-init user-data, so when enabled the role
+# writes /etc/jukebox/boot.env itself and runs the firstboot unit (tasks/dedicated.yml).
+# Enable via inventory; must stay false for packer image bakes.
+jukebox_dedicated: false
+# Values below feed boot.env and can be overridden per host in the inventory.
+# jukebox_node_private_ip comes from envs/<env>/group_vars/all/env_all.yml (eno2 fact).
+# Node index is parsed from the inventory hostname, e.g. jukebox0-us-west-1 -> 0.
+jukebox_node_index: "{{ inventory_hostname | regex_search('^' ~ fqdn_host_prefix ~ '(\\d+)-', '\\1') | default([''], true) | first }}"
+jukebox_appstor_num: "{{ groups['appstor'] | default([]) | length }}"
+
 jukebox_deps:
   - criu
   - nfs-common
@@ -15,15 +25,15 @@ jukebox_deps:
 jukebox_gpu_vendor: ""
 
 # NVIDIA CUDA apt repo (source of the NVIDIA driver)
-nvidia_cuda_repo_distro: "debian{{ ansible_distribution_major_version }}"
+nvidia_cuda_repo_distro: "debian{{ ansible_facts['distribution_major_version'] }}"
 nvidia_cuda_keyring_version: "1.1-1"
 
 # Docker repo and image versions for gpu-nvidia runner pre-pull
 jukebox_docker_repo: "ghcr.io/yag-im/jukebox"
 jukebox_dosbox_ver: "0.74-3"
-jukebox_dosbox_x_ver: "2025.12.01"
+jukebox_dosbox_x_ver: "2026.10.01"
 jukebox_dosbox_staging_ver: "0.82.2"
-jukebox_qemu_ver: "latest"
+jukebox_qemu_ver: "11.1.3"
 jukebox_scummvm_ver: "2026.2.0"
-jukebox_retroarch_ver: "1.21.0"
+jukebox_retroarch_ver: "1.22.2"
 jukebox_wine_ver: "11.0"

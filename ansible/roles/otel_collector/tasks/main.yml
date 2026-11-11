@@ -25,6 +25,7 @@
     dest: "{{ app_path }}/otel-config.yml"
   vars:
     cluster_region: "${CLUSTER_REGION}"
+  register: otel_collector_config
 
 # Bake env-static values consumed by firstboot.sh when launching the container.
 - name: ensure image env dir exists
@@ -48,4 +49,5 @@
       OTELCOL_IMAGE=otel/opentelemetry-collector-contrib:0.93.0
       OTELCOL_GW_HOST={{ otelcol_gw_host }}
       OTELCOL_GW_IP={{ otelcol_gw_ip }}
+  register: otel_collector_image_env
 

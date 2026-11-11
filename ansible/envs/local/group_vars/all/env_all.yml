@@ -3,10 +3,10 @@ infra_env: local
 # TODO: sync with `kubectl get svc -n istio-gw-private istio-gw-private` output
 otelcol_gw_ip: 192.168.1.103
 
-jukebox_node_private_ip: "{{ ansible_eth1.ipv4.address }}"
-jukebox_node_public_ip: "{{ ansible_eth2.ipv4.address }}"
+jukebox_node_private_ip: "{{ ansible_facts['eth1']['ipv4']['address'] }}"
+jukebox_node_public_ip: "{{ ansible_facts['eth2']['ipv4']['address'] }}"
 
-appstor_node_private_ip: "{{ ansible_eth1.ipv4.address }}"
+appstor_node_private_ip: "{{ ansible_facts['eth1']['ipv4']['address'] }}"
 
 appstor_master: "appstor1.us-west-1.yag.vm"
 

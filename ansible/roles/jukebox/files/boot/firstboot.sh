@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
-# First-boot specialization for jukebox cloud nodes.
-# Reads /etc/jukebox/boot.env (delivered via cloud-init user-data) and:
+# First-boot specialization for jukebox nodes.
+# Reads /etc/jukebox/boot.env (delivered via cloud-init user-data on cloud nodes,
+# written by ansible on dedicated nodes, see tasks/dedicated.yml) and:
 #   1. validates required vars and that the private IP is actually on the host
 #   2. renders /etc/systemd/system/docker.service.d/override.conf
 #   3. restarts docker so dockerd binds to the private IP
-#   4. creates the appstor NFS docker volume
+#   4. injects regional /etc/hosts entries and creates the appstor NFS docker volumes
 #   5. sets the FQDN hostname
-#   6. writes a sentinel so the unit never runs again
+#   6. renders the otel config and (re)starts otel-collector
+#   7. writes a sentinel so the unit never runs again (ansible removes it to re-run)
+# Must stay idempotent: dedicated nodes re-run it whenever its inputs change.
 set -euo pipefail
 
 SENTINEL=/var/lib/jukebox/.bootstrapped
@@ -62,10 +65,9 @@ docker info >/dev/null
 HOSTS_SRC="${BOOT_DIR}/templates/hosts.${CLUSTER_REGION}"
 if [[ -f "$HOSTS_SRC" ]]; then
     block="$(cat "$HOSTS_SRC")"
-    # idempotent: only add once (sentinel guarantees this, but be safe)
-    if ! grep -qF 'ANSIBLE MANAGED BLOCK - regional hosts' /etc/hosts; then
-        printf '\n# BEGIN ANSIBLE MANAGED BLOCK - regional hosts\n%s\n# END ANSIBLE MANAGED BLOCK - regional hosts\n' "$block" >> /etc/hosts
-    fi
+    # idempotent: replace any previous block (firstboot is re-run on dedicated nodes)
+    sed -i '/^# BEGIN ANSIBLE MANAGED BLOCK - regional hosts$/,/^# END ANSIBLE MANAGED BLOCK - regional hosts$/d' /etc/hosts
+    printf '# BEGIN ANSIBLE MANAGED BLOCK - regional hosts\n%s\n# END ANSIBLE MANAGED BLOCK - regional hosts\n' "$block" >> /etc/hosts
 else
     echo "firstboot: no hosts file found for CLUSTER_REGION=${CLUSTER_REGION}" >&2
 fi
@@ -91,9 +93,14 @@ hostnamectl set-hostname "${FQDN_HOST_PREFIX}${NODE_INDEX}-${CLUSTER_REGION}"
 
 if [[ -n "${OTEL_CONFIG_PATH:-}" && -f "${OTEL_CONFIG_PATH}" ]]; then
     export CLUSTER_REGION
+    # Render into a separate file so the ansible-managed template stays unchanged
+    # and re-running ansible on dedicated nodes is idempotent.
+    OTEL_RENDERED_CONFIG_PATH="${OTEL_CONFIG_PATH%.yml}.rendered.yml"
     tmp="$(mktemp)"
     envsubst '${CLUSTER_REGION}' < "${OTEL_CONFIG_PATH}" > "${tmp}"
-    mv "${tmp}" "${OTEL_CONFIG_PATH}"
+    chmod 0644 "${tmp}"
+    mv "${tmp}" "${OTEL_RENDERED_CONFIG_PATH}"
+    docker rm -f otel-collector >/dev/null 2>&1 || true
     docker run -d \
         --name otel-collector \
         --user 0 \
@@ -104,10 +111,10 @@ if [[ -n "${OTEL_CONFIG_PATH:-}" && -f "${OTEL_CONFIG_PATH}" ]]; then
         --stop-timeout 10 \
         --hostname "${FQDN_HOST_PREFIX}${NODE_INDEX}-${CLUSTER_REGION}" \
         --add-host "${OTELCOL_GW_HOST}:${OTELCOL_GW_IP}" \
-        --volume "${OTEL_CONFIG_PATH}:/otel-config.yml:ro" \
+        --volume "${OTEL_RENDERED_CONFIG_PATH}:/otel-config.yml:ro" \
         --volume "/var/run/docker.sock:/var/run/docker.sock:ro" \
         --volume "/etc/passwd:/etc/passwd:ro" \
-        --volume "/proc:/hostfs/proc:ro" \
+        --volume "/:/hostfs:ro,rslave" \
         --log-driver json-file \
         --log-opt max-size=50m \
         --log-opt max-file=10 \

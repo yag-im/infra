@@ -7,6 +7,8 @@ all:
         appstor_internal_ip: "appstor0-us-west-1"
         fqdn_host_prefix: "jukebox"
         fqdn_host_group: "jukebox"
+        # no cloud-init on dedicated servers: ansible writes boot.env and runs firstboot
+        jukebox_dedicated: true
     appstor:
       hosts:
         appstor0-us-west-1:

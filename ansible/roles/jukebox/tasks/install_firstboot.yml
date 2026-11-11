@@ -18,6 +18,7 @@
     owner: root
     group: root
     mode: "0644"
+  register: jukebox_firstboot_hosts
 
 - name: install firstboot renderer
   copy:
@@ -26,6 +27,7 @@
     owner: root
     group: root
     mode: "0755"
+  register: jukebox_firstboot_script
 
 - name: install firstboot override.conf template
   copy:
@@ -34,6 +36,7 @@
     owner: root
     group: root
     mode: "0644"
+  register: jukebox_firstboot_override
 
 - name: install firstboot systemd unit
   copy:
@@ -42,6 +45,7 @@
     owner: root
     group: root
     mode: "0644"
+  register: jukebox_firstboot_unit
 
 - name: enable firstboot unit
   systemd:

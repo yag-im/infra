@@ -132,7 +132,7 @@ if [[ -n "${OTEL_CONFIG_PATH:-}" && -f "${OTEL_CONFIG_PATH}" ]]; then
         --volume "${OTEL_CONFIG_PATH}:/otel-config.yml:ro" \
         --volume "/var/run/docker.sock:/var/run/docker.sock:ro" \
         --volume "/etc/passwd:/etc/passwd:ro" \
-        --volume "/proc:/hostfs/proc:ro" \
+        --volume "/:/hostfs:ro,rslave" \
         --log-driver json-file \
         --log-opt max-size=50m \
         --log-opt max-file=10 \

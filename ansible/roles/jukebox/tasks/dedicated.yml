@@ -1,0 +1,66 @@
+# Dedicated nodes: stand in for cloud-init by writing boot.env, then (re)run the
+# firstboot unit whenever its inputs change. firstboot.sh is idempotent, but it
+# restarts docker, so it is skipped when nothing changed.
+
+- name: validate dedicated node settings
+  ansible.builtin.assert:
+    that:
+      - jukebox_node_index | string is match('^[0-9]+$')
+      - jukebox_node_private_ip in ansible_facts['all_ipv4_addresses']
+    fail_msg: >-
+      jukebox_node_index={{ jukebox_node_index }} (parsed from '{{ inventory_hostname }}')
+      jukebox_node_private_ip={{ jukebox_node_private_ip }}; the IP must be configured on
+      the host (eno2, see doc/cloud-dev.md), otherwise override these vars in the inventory.
+
+- name: create /etc/jukebox
+  ansible.builtin.file:
+    path: /etc/jukebox
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: write boot.env (cloud-init user-data equivalent)
+  ansible.builtin.template:
+    src: boot.env.j2
+    dest: /etc/jukebox/boot.env
+    owner: root
+    group: root
+    mode: "0644"
+  register: jukebox_boot_env
+
+- name: check firstboot sentinel
+  ansible.builtin.stat:
+    path: /var/lib/jukebox/.bootstrapped
+  register: jukebox_firstboot_sentinel
+
+- name: (re)run firstboot
+  when: >-
+    not jukebox_firstboot_sentinel.stat.exists
+    or jukebox_boot_env is changed
+    or jukebox_firstboot_script is changed
+    or jukebox_firstboot_hosts is changed
+    or jukebox_firstboot_override is changed
+    or jukebox_firstboot_unit is changed
+    or (otel_collector_config | default({})) is changed
+    or (otel_collector_image_env | default({})) is changed
+  block:
+    - name: remove firstboot sentinel
+      ansible.builtin.file:
+        path: /var/lib/jukebox/.bootstrapped
+        state: absent
+
+    - name: run firstboot unit
+      ansible.builtin.systemd:
+        name: jukebox-firstboot.service
+        state: restarted
+        daemon_reload: yes
+  rescue:
+    - name: collect firstboot logs
+      ansible.builtin.command: journalctl -u jukebox-firstboot.service -n 50 --no-pager
+      register: jukebox_firstboot_journal
+      changed_when: false
+
+    - name: firstboot failed
+      ansible.builtin.fail:
+        msg: "{{ jukebox_firstboot_journal.stdout_lines }}"

@@ -48,3 +48,6 @@
 
 - import_tasks: nvidia.yml
   when: jukebox_gpu_vendor == 'nvidia'
+
+- import_tasks: dedicated.yml
+  when: jukebox_dedicated | bool

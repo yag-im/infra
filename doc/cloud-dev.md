@@ -160,6 +160,10 @@ For /dev/kvm (required for QEMU):
 
     Advanced -> CPU configuration -> Intel Virtualization Technology (VT-x): Enable
 
+In order to see iGPU devices at /dev/dri you need to disable IOMMU:
+
+    Chipset -> System agent -> VT-d: Disabled (sometimes this option reside in `Advanced -> CPU configuration`)
+
 ## OS install
 
 Request Debian (Trixie) installation.
@@ -205,3 +209,13 @@ In order to see iGPU devices at /dev/dri you need to disable IOMMU:
         playbooks/jukebox.yml
 
 Repeat the same for other regions (us-east-1 etc).
+
+Dedicated servers get no cloud-init user-data, so for inventory hosts with `jukebox_dedicated: true` the playbook writes
+`/etc/jukebox/boot.env` itself and runs `jukebox-firstboot.service` (docker TCP listener, regional `/etc/hosts`,
+appstor NFS volumes, hostname, otel-collector). It is re-run automatically whenever its inputs change.
+The node index is parsed from the inventory hostname (`jukebox0-us-west-1` -> `0`) and the private IP is taken from
+`eno2` (configured via netplan above, see `jukebox_node_private_ip` in `envs/<env>/group_vars/all/env_all.yml`);
+override `jukebox_node_index`, `jukebox_node_private_ip` or `jukebox_appstor_num` per host in the inventory if needed. Verify with:
+
+    systemctl status jukebox-firstboot.service
+    cat /etc/jukebox/boot.env

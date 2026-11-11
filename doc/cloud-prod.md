@@ -33,7 +33,7 @@ Init replicas (west, ...) first, then master (east):
 
     export INFRA_ENV=prod; \
     export INFRA_USER=debian; \
-    export INFRA_DC=us-west-1; \
+    export INFRA_DC=us-east-1; \
     ansible-playbook \
         --ssh-common-args '-o ServerAliveInterval=10 -o ProxyCommand="ssh -p 2207 -W %h:%p -q infra@bastion.yag.im"' \
         --user ${INFRA_USER} \
@@ -42,6 +42,9 @@ Init replicas (west, ...) first, then master (east):
         -i envs/${INFRA_ENV}/hosts_${INFRA_DC}.yml \
         playbooks/jukebox.yml
 
+  The playbook also writes `/etc/jukebox/boot.env` and runs `jukebox-firstboot.service` on dedicated nodes
+  (see "Init" in [cloud-dev.md](cloud-dev.md)).
+
 - Reboot instance after completion.
 
 - Update local docker images cache from jukebox project: 
@@ -49,6 +52,12 @@ Init replicas (west, ...) first, then master (east):
     scripts/pull_images.sh cloud_prod_all
 
 Make sure legacy images which are still in use are part of the cloud_prod_all collection.
+
+- Add new flavor to cluster.node_flavor ENUM in SQL DB:
+
+    ALTER TYPE cluster.node_flavor ADD VALUE 'sys-3';
+
+- Update pull_cloud_prod_all (list of dedicated IPs) in jukebox/scripts/pull_images.sh
 
 # useful commands
 
