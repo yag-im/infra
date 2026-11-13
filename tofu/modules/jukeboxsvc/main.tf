@@ -127,6 +127,7 @@ resource "kubernetes_config_map" "jukeboxsvc" {
     SQLDB_HOST                                        = "sqldb.default.svc.cluster.local"
     SQLDB_PORT                                        = 5432
     SQLDB_USERNAME                                    = "jukeboxsvc"
+    SQLDB_ENGINE_OPTIONS                              = jsonencode({"pool_pre_ping": true, "pool_size": 3, "max_overflow": 3, "pool_timeout": 10, "pool_recycle": 120})
   }
 }
 

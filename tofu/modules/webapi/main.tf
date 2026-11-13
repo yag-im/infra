@@ -84,6 +84,7 @@ resource "kubernetes_config_map" "webapi" {
     SQLDB_HOST                      = "sqldb.default.svc.cluster.local"
     SQLDB_PORT                      = 5432
     SQLDB_USERNAME                  = "authsvc"
+    SQLDB_ENGINE_OPTIONS            = jsonencode({"pool_pre_ping": true, "pool_size": 3, "max_overflow": 3, "pool_timeout": 10, "pool_recycle": 120})
     OAUTHLIB_INSECURE_TRANSPORT     = var.oauthlib_insecure_transport
     OAUTHLIB_RELAX_TOKEN_SCOPE      = var.oauthlib_relax_token_scope
   }

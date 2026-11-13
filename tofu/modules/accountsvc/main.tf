@@ -77,16 +77,17 @@ resource "kubernetes_config_map" "accountsvc" {
     namespace = var.k8s_namespace
   }
   data = {
-    APP_ENVIRONMENT         = var.app_env
-    APP_LOG_LEVEL           = "INFO"
-    APP_DB_HOST             = "sqldb.default.svc.cluster.local"
-    APP_DB_PORT             = 5432
-    APP_DB_USER             = "accountsvc"
-    APP_DB_NAME             = "yag"
-    OTEL_SERVICE_NAME       = "accountsvc"
-    OTEL_TRACES_EXPORTER    = "none"
-    OTEL_METRICS_EXPORTER   = "none"
-    OTEL_LOGS_EXPORTER      = "none"
+    APP_ENVIRONMENT          = var.app_env
+    APP_LOG_LEVEL            = "INFO"
+    APP_DB_HOST              = "sqldb.default.svc.cluster.local"
+    APP_DB_PORT              = 5432
+    APP_DB_USER              = "accountsvc"
+    APP_DB_NAME              = "yag"
+    APP_SQLDB_ENGINE_OPTIONS = jsonencode({"pool_pre_ping": true, "pool_size": 3, "max_overflow": 3, "pool_timeout": 10, "pool_recycle": 120})
+    OTEL_SERVICE_NAME        = "accountsvc"
+    OTEL_TRACES_EXPORTER     = "none"
+    OTEL_METRICS_EXPORTER    = "none"
+    OTEL_LOGS_EXPORTER       = "none"
   }
 }
 
